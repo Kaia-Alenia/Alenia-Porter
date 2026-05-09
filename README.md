@@ -34,13 +34,14 @@ We are currently working on extending support to Unity and other engines. Due to
 
 ## License and Legal Terms
 
-This project is distributed under the Standard Licensing: Alenia Studios Standard (CC BY 4.0 + Additional Terms).
+This project is distributed under the **Alenia Studios Tool License**.
 
-Conditions of Use and Attribution:
-1. Shared Attribution: Mandatory credit must be given to Alenia Studios for the creation of the tool and to the person who did the translation to the language being used in the final project.
-2. Commercial Use: Allowed for the creation of games, videos, and commercial projects.
-3. Prohibition of Resale: Independent redistribution, sublicensing, or resale of this tool is prohibited. You may not charge for the tool or its usage.
-4. No AI: Explicitly prohibits the use of this code, documentation, or assets for training Artificial Intelligence models or inclusion in datasets.
+### Tool Conditions:
+1. **Your files are yours:** The assets you convert or process with this tool belong entirely to you. No attribution is required in your game or project for the simple fact of using the optimizer.
+2. **Always free (Recommend us!):** The tool is 100% free for commercial and personal projects. If it saves you time and headaches, the best support you can give us is to recommend it to other indie developers.
+3. **Code Attribution:** If you modify or create a derivative version of the *source code*, you must give credit to Alenia Studios and the corresponding community translators.
+4. **Prohibition of Resale:** It is strictly prohibited to resell, monetize, or charge for access to this tool or its code.
+5. **No AI:** Explicitly prohibits the use of this code and its documentation for the training or feeding of Artificial Intelligence models.
 
 ---
 Developed by Alenia Studios.
