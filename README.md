@@ -44,4 +44,3 @@ Conditions of Use and Attribution:
 
 ---
 Developed by Alenia Studios.
-Black and purple.
