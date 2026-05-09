@@ -5,3 +5,4 @@ dist/
 ALENIA_ERROR.txt
 .env
 bin/
+compilar_alenia.bat
