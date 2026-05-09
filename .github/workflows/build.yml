@@ -27,6 +27,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller pydub requests
 
+      - name: Download and extract FFmpeg
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force -Path bin
+          Invoke-WebRequest -Uri "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip" -OutFile "ffmpeg.zip"
+          Expand-Archive -Path ffmpeg.zip -DestinationPath ffmpeg_temp
+          Get-ChildItem -Path ffmpeg_temp -Filter ffmpeg.exe -Recurse | Copy-Item -Destination bin/
+          Get-ChildItem -Path ffmpeg_temp -Filter ffprobe.exe -Recurse | Copy-Item -Destination bin/
+          Remove-Item -Path ffmpeg.zip
+          Remove-Item -Recurse -Force -Path ffmpeg_temp
+
       - name: Build executable with PyInstaller
         run: |
           pyinstaller --windowed --onedir --contents-directory internal --add-data "logo.ico;." --add-data "locales;locales" --add-data "bin;bin" --icon=logo.ico --name="AleniaPorter" main.py
