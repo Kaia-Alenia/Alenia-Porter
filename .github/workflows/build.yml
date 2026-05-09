@@ -1,0 +1,46 @@
+name: Build Alenia Porter v3.0
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pydub requests
+
+      - name: Build executable with PyInstaller
+        run: |
+          pyinstaller --windowed --onedir --contents-directory internal --add-data "logo.ico;." --add-data "locales;locales" --add-data "bin;bin" --icon=logo.ico --name="AleniaPorter" main.py
+
+      - name: Copy License file to build directory
+        run: |
+          copy LICENSE dist\AleniaPorter\
+
+      - name: Archive build directory
+        run: |
+          powershell Compress-Archive -Path dist/AleniaPorter -DestinationPath AleniaPorter.zip
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AleniaPorter-Windows
+          path: AleniaPorter.zip
