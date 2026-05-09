@@ -75,13 +75,12 @@ try:
         root_window.title(active_translation["title"])
         header_label.config(text=active_translation["header"])
         format_label.config(text=active_translation["select_format"])
-        ogg_radiobutton.config(text=active_translation["format_ogg"])
-        opus_radiobutton.config(text=active_translation["format_opus"])
         engine_label.config(text=active_translation["select_engine"])
         select_folder_button.config(text=active_translation["btn_select"])
         info_status_label.config(text=active_translation["info_desc"])
         language_toggle_button.config(text=active_translation["btn_lang"])
         patreon_link_button.config(text=active_translation["btn_patreon"])
+        adjust_opus_button_state()
 
     def on_progressbar_increment(current_value, total_value):
         root_window.after(0, lambda: progressbar_widget.config(maximum=total_value, value=current_value))
@@ -135,11 +134,18 @@ try:
         conversion_worker_thread.start()
 
     def adjust_opus_button_state(*args):
+        active_translation = languages_dictionary[current_language_code]
+        base_ogg = active_translation["format_ogg"]
+        base_opus = active_translation["format_opus"]
         if engine_variable.get() == "godot":
             format_variable.set("ogg")
             opus_radiobutton.config(state=tk.DISABLED)
+            ogg_radiobutton.config(text=f"{base_ogg} / OGV")
+            opus_radiobutton.config(text=f"{base_opus} / OGV")
         else:
             opus_radiobutton.config(state=tk.NORMAL)
+            ogg_radiobutton.config(text=f"{base_ogg} / WebM")
+            opus_radiobutton.config(text=f"{base_opus} / WebM")
 
     def on_button_hover_enter(event_args):
         select_folder_button.config(bg="#a78bfa")
@@ -305,6 +311,8 @@ try:
         fg="#a3a3a3"
     )
     info_status_label.pack()
+
+    adjust_opus_button_state()
 
     root_window.mainloop()
 

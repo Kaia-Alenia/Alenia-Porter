@@ -2,12 +2,11 @@ name: Build Alenia Porter v3.0
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -55,3 +54,8 @@ jobs:
         with:
           name: AleniaPorter-Windows
           path: AleniaPorter.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: AleniaPorter.zip
