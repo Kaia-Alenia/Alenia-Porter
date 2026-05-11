@@ -33,7 +33,8 @@ def load_locales():
             "msg_success_t": "Success",
             "msg_success_m": "Optimized {} files for {}!\n\nPath: {}\n\nInstructions opened.",
             "btn_lang": "ES",
-            "btn_patreon": "☕ Support Alenia"
+            "btn_patreon": "☕ Support Alenia",
+            "instructions_filename": "ALENIA_INSTRUCTIONS.txt"
         },
         "es": {
             "title": "Alenia Porter v3.0",
@@ -50,7 +51,8 @@ def load_locales():
             "msg_success_t": "¡Éxito!",
             "msg_success_m": "¡{} archivos optimizados para {}!\n\nRuta: {}\n\nInstrucciones abiertas.",
             "btn_lang": "FR",
-            "btn_patreon": "☕ Apoyar a Alenia"
+            "btn_patreon": "☕ Apoyar a Alenia",
+            "instructions_filename": "INSTRUCCIONES_ALENIA.txt"
         },
         "fr": {
             "title": "Alenia Porter v3.0",
@@ -67,7 +69,8 @@ def load_locales():
             "msg_success_t": "Succès",
             "msg_success_m": "Optimisation de {} fichiers pour {} réussie !\n\nChemin : {}\n\nInstructions ouvertes.",
             "btn_lang": "JA",
-            "btn_patreon": "☕ Soutenir Alenia"
+            "btn_patreon": "☕ Soutenir Alenia",
+            "instructions_filename": "INSTRUCTIONS_ALENIA.txt"
         },
         "ja": {
             "title": "Alenia Porter v3.0",
@@ -84,7 +87,8 @@ def load_locales():
             "msg_success_t": "成功",
             "msg_success_m": "{} 個のファイルを {} 向けに最適化しました！\n\nパス: {}\n\n説明書を開きました。",
             "btn_lang": "ZH",
-            "btn_patreon": "☕ Alenia を支援する"
+            "btn_patreon": "☕ Alenia を支援する",
+            "instructions_filename": "ALENIA_指示.txt"
         },
         "zh": {
             "title": "Alenia Porter v3.0",
@@ -100,8 +104,27 @@ def load_locales():
             "msg_err": "转换出错。",
             "msg_success_t": "成功",
             "msg_success_m": "已为 {} 优化了 {} 个文件！\n\n路径: {}\n\n已打开说明文档。",
+            "btn_lang": "RU",
+            "btn_patreon": "☕ 支持 Alenia",
+            "instructions_filename": "ALENIA_说明.txt"
+        },
+        "ru": {
+            "title": "Alenia Porter v3.0",
+            "header": "Alenia Studios - Оптимизатор медиа",
+            "select_format": "Экспортировать аудио в:",
+            "format_ogg": "OGG (Стандарт)",
+            "format_opus": "OPUS (Высокое сжатие)",
+            "select_engine": "Целевой движок:",
+            "btn_select": "Выбрать папку для конвертации",
+            "info_wait": "Обработка файлов... Пожалуйста, подождите.",
+            "info_desc": "Поддерживает аудио и видео (MP4, MKV, WebM, AVI, MOV)",
+            "msg_done": "Готово! Обработано {} файлов.",
+            "msg_err": "Ошибка при конвертации.",
+            "msg_success_t": "Успех",
+            "msg_success_m": "Оптимизировано {} файлов для {}!\n\nПуть: {}\n\nИнструкции открыты.",
             "btn_lang": "EN",
-            "btn_patreon": "☕ 支持 Alenia"
+            "btn_patreon": "☕ Поддержать Alenia",
+            "instructions_filename": "ALENIA_ИНСТРУКЦИИ.txt"
         }
     }
 
@@ -214,7 +237,28 @@ def convert_media(input_directory, target_engine, target_audio_format, progress_
             processed_files_count += 1
             progress_update_callback(processed_files_count, total_files_count)
 
-        instructions_file_path = os.path.join(output_directory_path, "INSTRUCCIONES_ALENIA.txt")
+        # Obtener el nombre del archivo de instrucciones de acuerdo al idioma configurado
+        try:
+            if os.name == "nt":
+                local_app_data_path = os.getenv("LOCALAPPDATA") or os.path.expanduser("~\\AppData\\Local")
+                config_folder_path = os.path.join(local_app_data_path, "AleniaStudios", "AleniaPorter")
+            else:
+                config_folder_path = os.path.expanduser("~/.config/AleniaStudios/AleniaPorter")
+            config_file_path = os.path.join(config_folder_path, "config.json")
+            
+            lang_code = "es"
+            if os.path.exists(config_file_path):
+                with open(config_file_path, "r", encoding="utf-8") as config_file:
+                    user_config = json.load(config_file)
+                    lang_code = user_config.get("lang", "es")
+        except Exception:
+            lang_code = "es"
+
+        locales_dict = load_locales()
+        current_locale = locales_dict.get(lang_code, locales_dict.get("es", {}))
+        filename = current_locale.get("instructions_filename", "ALENIA_INSTRUCTIONS.txt")
+
+        instructions_file_path = os.path.join(output_directory_path, filename)
         with open(instructions_file_path, "w", encoding="utf-8") as instructions_file:
             instructions_file.write(f"ALENIA PORTER - QUICK GUIDE / GUÍA RÁPIDA ({target_engine.upper()})\n")
             instructions_file.write("=" * 70 + "\n\n")

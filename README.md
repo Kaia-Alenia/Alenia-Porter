@@ -13,6 +13,7 @@ Alenia Porter is a tool designed to automate the conversion and optimization of 
 * 🇫🇷 Français - Translated by KXLT - Alenia Studios
 * 🇯🇵 日本語 - Translated by KXLT - Alenia Studios
 * 🇨🇳 简体中文 - Translated by KXLT - Alenia Studios
+* 🇷🇺 Русский - Translated by KXLT - Alenia Studios
 
 ### Community Contributors (Translations)
 Your name here. If you have contributed a translation for Alenia Porter, add your name to this list in your Pull Request:
