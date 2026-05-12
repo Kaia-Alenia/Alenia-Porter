@@ -34,7 +34,10 @@ def load_locales():
             "msg_success_m": "Optimized {} files for {}!\n\nPath: {}\n\nInstructions opened.",
             "btn_lang": "ES",
             "btn_patreon": "☕ Support Alenia",
-            "instructions_filename": "ALENIA_INSTRUCTIONS.txt"
+            "instructions_filename": "ALENIA_INSTRUCTIONS.txt",
+            "instructions_title": "ALENIA PORTER - QUICK GUIDE",
+            "instructions_renpy": "1. Copy files to your /game folder.\n2. CODE EXAMPLE:\n   label start:\n       play audio track_name\n       show movie_name",
+            "instructions_godot": "1. Setup: Project -> Project Settings -> Globals (Autoload).\n2. Add 'AudioRegistry.gd' as 'Audio'.\n3. CODE EXAMPLE:\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'track_name')\n       Audio.play_video($VideoStreamPlayer, 'video_name')"
         },
         "es": {
             "title": "Alenia Porter v3.0",
@@ -52,7 +55,10 @@ def load_locales():
             "msg_success_m": "¡{} archivos optimizados para {}!\n\nRuta: {}\n\nInstrucciones abiertas.",
             "btn_lang": "FR",
             "btn_patreon": "☕ Apoyar a Alenia",
-            "instructions_filename": "INSTRUCCIONES_ALENIA.txt"
+            "instructions_filename": "INSTRUCCIONES_ALENIA.txt",
+            "instructions_title": "ALENIA PORTER - GUÍA RÁPIDA",
+            "instructions_renpy": "1. Copia los archivos a tu carpeta /game.\n2. EJEMPLO DE CÓDIGO:\n   label start:\n       play audio nombre_pista\n       show nombre_video",
+            "instructions_godot": "1. Configuración: Proyecto -> Ajustes del Proyecto -> Globales (Autoload).\n2. Añade 'AudioRegistry.gd' con el nombre 'Audio'.\n3. EJEMPLO DE CÓDIGO:\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'nombre_pista')\n       Audio.play_video($VideoStreamPlayer, 'nombre_video')"
         },
         "fr": {
             "title": "Alenia Porter v3.0",
@@ -70,7 +76,10 @@ def load_locales():
             "msg_success_m": "Optimisation de {} fichiers pour {} réussie !\n\nChemin : {}\n\nInstructions ouvertes.",
             "btn_lang": "JA",
             "btn_patreon": "☕ Soutenir Alenia",
-            "instructions_filename": "INSTRUCTIONS_ALENIA.txt"
+            "instructions_filename": "INSTRUCTIONS_ALENIA.txt",
+            "instructions_title": "ALENIA PORTER - GUIDE RAPIDE",
+            "instructions_renpy": "1. Copiez les fichiers dans votre dossier /game.\n2. EXEMPLE DE CODE :\n   label start:\n       play audio nom_piste\n       show nom_video",
+            "instructions_godot": "1. Configuration : Projet -> Paramètres du Projet -> Globaux (Autoload).\n2. Ajoutez 'AudioRegistry.gd' sous le nom 'Audio'.\n3. EXEMPLE DE CODE :\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'nom_piste')\n       Audio.play_video($VideoStreamPlayer, 'nom_video')"
         },
         "ja": {
             "title": "Alenia Porter v3.0",
@@ -88,7 +97,10 @@ def load_locales():
             "msg_success_m": "{} 個のファイルを {} 向けに最適化しました！\n\nパス: {}\n\n説明書を開きました。",
             "btn_lang": "ZH",
             "btn_patreon": "☕ Alenia を支援する",
-            "instructions_filename": "ALENIA_指示.txt"
+            "instructions_filename": "ALENIA_指示.txt",
+            "instructions_title": "ALENIA PORTER - クイックガイド",
+            "instructions_renpy": "1. ファイルを /game フォルダにコピーします。\n2. コード例:\n   label start:\n       play audio track_name\n       show movie_name",
+            "instructions_godot": "1. 設定: プロジェクト -> プロジェクト設定 -> グローバル (Autoload)。\n2. 'AudioRegistry.gd' を 'Audio' として追加します。\n3. コード例:\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'track_name')\n       Audio.play_video($VideoStreamPlayer, 'video_name')"
         },
         "zh": {
             "title": "Alenia Porter v3.0",
@@ -106,7 +118,10 @@ def load_locales():
             "msg_success_m": "已为 {} 优化了 {} 个文件！\n\n路径: {}\n\n已打开说明文档。",
             "btn_lang": "RU",
             "btn_patreon": "☕ 支持 Alenia",
-            "instructions_filename": "ALENIA_说明.txt"
+            "instructions_filename": "ALENIA_说明.txt",
+            "instructions_title": "ALENIA PORTER - 快速指南",
+            "instructions_renpy": "1. 将文件复制到您的 /game 文件夹中。\n2. 代码示例:\n   label start:\n       play audio track_name\n       show movie_name",
+            "instructions_godot": "1. 设置: 项目 -> 项目设置 -> 全局 (Autoload)。\n2. 将 'AudioRegistry.gd' 添加为 'Audio'。\n3. 代码示例:\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'track_name')\n       Audio.play_video($VideoStreamPlayer, 'video_name')"
         },
         "ru": {
             "title": "Alenia Porter v3.0",
@@ -124,7 +139,10 @@ def load_locales():
             "msg_success_m": "Оптимизировано {} файлов для {}!\n\nПуть: {}\n\nИнструкции открыты.",
             "btn_lang": "EN",
             "btn_patreon": "☕ Поддержать Alenia",
-            "instructions_filename": "ALENIA_ИНСТРУКЦИИ.txt"
+            "instructions_filename": "ALENIA_ИНСТРУКЦИИ.txt",
+            "instructions_title": "ALENIA PORTER - КРАТКОЕ РУКОВОДСТВО",
+            "instructions_renpy": "1. Скопируйте файлы в папку /game.\n2. ПРИМЕР КОДА:\n   label start:\n       play audio track_name\n       show movie_name",
+            "instructions_godot": "1. Настройка: Проект -> Настройки проекта -> Глобальные переменные (Autoload).\n2. Добавьте 'AudioRegistry.gd' как 'Audio'.\n3. ПРИМЕР КОДА:\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'track_name')\n       Audio.play_video($VideoStreamPlayer, 'video_name')"
         }
     }
 
@@ -260,28 +278,14 @@ def convert_media(input_directory, target_engine, target_audio_format, progress_
 
         instructions_file_path = os.path.join(output_directory_path, filename)
         with open(instructions_file_path, "w", encoding="utf-8") as instructions_file:
-            instructions_file.write(f"ALENIA PORTER - QUICK GUIDE / GUÍA RÁPIDA ({target_engine.upper()})\n")
+            instructions_title = current_locale.get("instructions_title", "ALENIA PORTER - QUICK GUIDE")
+            instructions_file.write(f"{instructions_title} ({target_engine.upper()})\n")
             instructions_file.write("=" * 70 + "\n\n")
             if target_engine == "godot":
-                instructions_file.write("[ENGLISH]\n1. Setup: Project -> Project Settings -> Globals (Autoload).\n")
-                instructions_file.write("2. Add 'AudioRegistry.gd' as 'Audio'.\n")
-                instructions_file.write("3. CODE EXAMPLE:\n")
-                instructions_file.write("   func _ready():\n")
-                instructions_file.write("       Audio.play_track($AudioStreamPlayer, 'track_name')\n")
-                instructions_file.write("       Audio.play_video($VideoStreamPlayer, 'video_name')\n\n")
-                instructions_file.write("[ESPAÑOL]\n1. Configuración: Proyecto -> Ajustes del Proyecto -> Globales (Autoload).\n")
-                instructions_file.write("2. Añade 'AudioRegistry.gd' con el nombre 'Audio'.\n")
-                instructions_file.write("3. EJEMPLO DE CÓDIGO:\n")
-                instructions_file.write("   func _ready():\n")
-                instructions_file.write("       Audio.play_track($AudioStreamPlayer, 'nombre_pista')\n")
-                instructions_file.write("       Audio.play_video($VideoStreamPlayer, 'nombre_video')\n")
+                instructions_content = current_locale.get("instructions_godot", "")
             else:
-                instructions_file.write("[ENGLISH]\n1. Copy files to your /game folder.\n")
-                instructions_file.write("2. CODE EXAMPLE:\n   label start:\n       play audio track_name\n")
-                instructions_file.write("       show movie_name\n\n")
-                instructions_file.write("[ESPAÑOL]\n1. Copia los archivos a tu carpeta /game.\n")
-                instructions_file.write("2. EJEMPLO DE CÓDIGO:\n   label start:\n       play audio nombre_pista\n")
-                instructions_file.write("       show nombre_video\n")
+                instructions_content = current_locale.get("instructions_renpy", "")
+            instructions_file.write(instructions_content + "\n")
 
         if target_engine == "renpy":
             if renpy_audio_defines:

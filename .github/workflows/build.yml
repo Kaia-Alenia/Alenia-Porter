@@ -30,13 +30,10 @@ jobs:
         shell: powershell
         run: |
           New-Item -ItemType Directory -Force -Path bin
-          Invoke-WebRequest -Uri "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip" -OutFile "ffmpeg.zip"
+          Invoke-WebRequest -Uri "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip" -OutFile "ffmpeg.zip"
           Expand-Archive -Path ffmpeg.zip -DestinationPath ffmpeg_temp
-          Get-ChildItem -Path ffmpeg_temp -Filter ffmpeg.exe -Recurse | Copy-Item -Destination bin\
-          Get-ChildItem -Path ffmpeg_temp -Filter ffprobe.exe -Recurse | Copy-Item -Destination bin\
-          Remove-Item -Path ffmpeg.zip
-          Remove-Item -Recurse -Force -Path ffmpeg_temp
-          Get-ChildItem bin\
+          Get-ChildItem -Path ffmpeg_temp -Filter ffmpeg.exe -Recurse | Copy-Item -Destination bin\ffmpeg.exe
+          Get-ChildItem -Path ffmpeg_temp -Filter ffprobe.exe -Recurse | Copy-Item -Destination bin\ffprobe.exe
 
       - name: Build executable with Nuitka
         run: |
