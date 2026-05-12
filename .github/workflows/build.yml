@@ -36,7 +36,7 @@ jobs:
 
       - name: Build executable with Nuitka
         run: |
-          python -m nuitka --standalone --assume-yes-for-downloads --windows-console-mode=disable --enable-plugin=tk-inter --include-data-files=logo.ico=logo.ico --include-data-dir=locales=locales --include-data-dir=bin=bin --windows-icon-from-ico=logo.ico --output-filename=AleniaPorter.exe main.py
+          python -m nuitka --standalone --assume-yes-for-downloads --windows-console-mode=disable --enable-plugin=tk-inter --include-data-files=logo.ico=logo.ico --include-data-dir=locales=locales --include-data-files=bin/ffmpeg.exe=bin/ffmpeg.exe --include-data-files=bin/ffprobe.exe=bin/ffprobe.exe --windows-icon-from-ico=logo.ico --output-filename=AleniaPorter.exe main.py
 
       - name: Package build
         run: |
