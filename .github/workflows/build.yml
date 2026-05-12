@@ -114,11 +114,11 @@ jobs:
       - name: Download and extract FFmpeg for Linux
         run: |
           mkdir bin
-          wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
-          tar -xf ffmpeg-release-amd64-static.tar.xz
-          cp ffmpeg-*-static/ffmpeg bin/
-          cp ffmpeg-*-static/ffprobe bin/
-          rm -rf ffmpeg-*
+          wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz
+          tar -xf ffmpeg-master-latest-linux64-gpl.tar.xz
+          cp ffmpeg-master-latest-linux64-gpl/bin/ffmpeg bin/
+          cp ffmpeg-master-latest-linux64-gpl/bin/ffprobe bin/
+          rm -rf ffmpeg-master-latest-linux64-gpl*
 
       - name: Build executable with Nuitka
         run: |
