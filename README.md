@@ -1,8 +1,18 @@
 # Alenia Porter
 **by Alenia Studios**
 
-## 1. Description
-Alenia Porter is an automated media optimizer designed specifically for game developers. It batch-converts, compresses, and perfectly formats your media assets to be seamlessly integrated into popular game engines like Ren'Py and Godot, ensuring optimal performance and compatibility for your projects.
+## 1. Description & Workflow
+
+### What it does
+Alenia Porter is an automated, high-efficiency media optimizer built explicitly for indie game developers. Its core purpose is to take massive, unoptimized directories of audio and video assets and automatically batch-convert them into highly compressed, engine-ready formats (such as WebM/Opus and OGG/Opus), specifically tailored for game engines like **Ren'Py** and **Godot**.
+
+### How it works
+Under the hood, Alenia Porter utilizes a streamlined integration of `FFmpeg` and `FFprobe`. It deeply analyzes the input directory tree, maintains your exact folder hierarchy, and intelligently applies next-generation codecs to compress media files without noticeable perceptual loss. The tool handles complex ffmpeg flags automatically based on the selected game engine target, ensuring 100% engine compatibility right out of the box.
+
+### The Developer Workflow
+1. **Develop:** You create your game using high-quality `.wav`, `.mp4`, or uncompressed audio/video files.
+2. **Optimize:** Right before packaging your game, you point Alenia Porter to your game's asset folder.
+3. **Deploy:** Porter processes everything in batch, drastically reducing the final game size (often by up to 80%) while maintaining high quality, completely ready for a lightweight steam or itch.io release.
 
 ## 2. Architecture & Performance
 Built with efficiency in mind, Alenia Porter integrates the **Alenia Zenith** speculative background engine. This technology delegates heavy visual and audio processing loads to ensure ultra-fast startup times and is heavily optimized to run smoothly on workstations with limited memory (specifically designed and tested for 8GB RAM environments).
