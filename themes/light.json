@@ -1,0 +1,13 @@
+{
+  "name": "Light Mode",
+  "bg_main": "#f3f4f6",
+  "fg_main": "#111827",
+  "fg_dim": "#4b5563",
+  "accent": "#6366f1",
+  "accent_hover": "#818cf8",
+  "link": "#e11d48",
+  "success": "#16a34a",
+  "error": "#dc2626",
+  "warning": "#d97706",
+  "progressbar_trough": "#e5e7eb"
+}

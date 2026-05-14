@@ -1,3 +1,8 @@
+__license__ = """ALENIA STUDIOS TOOL LICENSE Version 1.0 Copyright (c) 2026 Alenia Studios This tool is designed to be free and accessible for the indie developer community. By using this software, you agree to the following terms: 1. OUTPUT OWNERSHIP & USE: The audio, video, or data files processed by this Software remain 100% your property. No attribution to Alenia Studios is required in your final project for simply using this tool to process your files. 2. ALWAYS FREE & SPREAD THE WORD: This Software is completely free for commercial and non-commercial projects. If you find it useful, we strongly encourage you to recommend it to other developers. 3. CODE ATTRIBUTION: If you modify, fork, or distribute the source code of this Software, you must provide appropriate credit to Alenia Studios and the respective community translators. 4. NO RESALE: Standalone redistribution, sublicensing, or resale of this Software or its source code for profit is strictly prohibited. It must remain free. 5. NO AI TRAINING: The source code, documentation, and logic of this Software may not be used, scraped, or included in datasets for the training of Artificial Intelligence models or machine learning algorithms. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND."""
+
+import zenith
+zenith.ignite()
+
 import sys
 import os
 import json
@@ -19,15 +24,15 @@ def load_locales():
             pass
     return {
         "en": {
-            "title": "Alenia Porter v3.0",
+            "title": "Alenia Porter v4.0",
             "header": "Alenia Studios - Media Optimizer",
-            "select_format": "Export audio to:",
-            "format_ogg": "OGG (Standard)",
-            "format_opus": "OPUS (High Comp)",
+            "select_format": "Export to:",
+            "format_ogg": "OGG",
+            "format_opus": "OPUS",
             "select_engine": "Target Engine:",
             "btn_select": "Select Folder to Convert",
             "info_wait": "Processing files... Please wait.",
-            "info_desc": "Supports audio and video (MP4, MKV, WebM, AVI, MOV)",
+            "info_desc": "Ready.",
             "msg_done": "Done! {} files processed.",
             "msg_err": "Error in conversion.",
             "msg_success_t": "Success",
@@ -36,19 +41,21 @@ def load_locales():
             "btn_patreon": "☕ Support Alenia",
             "instructions_filename": "ALENIA_INSTRUCTIONS.txt",
             "instructions_title": "ALENIA PORTER - QUICK GUIDE",
-            "instructions_renpy": "1. Copy files to your /game folder.\n2. CODE EXAMPLE:\n   label start:\n       play audio track_name\n       show movie_name",
-            "instructions_godot": "1. Setup: Project -> Project Settings -> Globals (Autoload).\n2. Add 'AudioRegistry.gd' as 'Audio'.\n3. CODE EXAMPLE:\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'track_name')\n       Audio.play_video($VideoStreamPlayer, 'video_name')"
+            "instructions_renpy": "1. Copy files to your /game folder.\n2. CODE EXAMPLE:\n   label start:\n       play audio track_name\n       show movie_name\n       show image_name",
+            "instructions_godot": "1. Setup: Project -> Project Settings -> Globals (Autoload).\n2. Add 'MediaRegistry.gd' as 'Media'.\n3. CODE EXAMPLE:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'track_name')\n       Media.play_video($VideoStreamPlayer, 'video_name')\n       $Sprite.texture = Media.get_image('image_name')",
+            "formats_title": "Supported Formats",
+            "formats_info": "🖼️ IMAGES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "es": {
-            "title": "Alenia Porter v3.0",
+            "title": "Alenia Porter v4.0",
             "header": "Alenia Studios - Optimizador de Medios",
-            "select_format": "Exportar audio en:",
-            "format_ogg": "OGG (Estándar)",
-            "format_opus": "OPUS (Alta Compresión)",
+            "select_format": "Exportar a:",
+            "format_ogg": "OGG",
+            "format_opus": "OPUS",
             "select_engine": "Motor de Destino:",
             "btn_select": "Seleccionar Directorio a Convertir",
             "info_wait": "Procesando archivos... Por favor espera.",
-            "info_desc": "Soporta audio y video (MP4, MKV, WebM, AVI, MOV)",
+            "info_desc": "Listo.",
             "msg_done": "¡Listo! {} archivos procesados.",
             "msg_err": "Error en la conversión.",
             "msg_success_t": "¡Éxito!",
@@ -57,19 +64,21 @@ def load_locales():
             "btn_patreon": "☕ Apoyar a Alenia",
             "instructions_filename": "INSTRUCCIONES_ALENIA.txt",
             "instructions_title": "ALENIA PORTER - GUÍA RÁPIDA",
-            "instructions_renpy": "1. Copia los archivos a tu carpeta /game.\n2. EJEMPLO DE CÓDIGO:\n   label start:\n       play audio nombre_pista\n       show nombre_video",
-            "instructions_godot": "1. Configuración: Proyecto -> Ajustes del Proyecto -> Globales (Autoload).\n2. Añade 'AudioRegistry.gd' con el nombre 'Audio'.\n3. EJEMPLO DE CÓDIGO:\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'nombre_pista')\n       Audio.play_video($VideoStreamPlayer, 'nombre_video')"
+            "instructions_renpy": "1. Copia los archivos a tu carpeta /game.\n2. EJEMPLO DE CÓDIGO:\n   label start:\n       play audio nombre_pista\n       show nombre_video\n       show nombre_imagen",
+            "instructions_godot": "1. Configuración: Proyecto -> Ajustes del Proyecto -> Globales (Autoload).\n2. Añade 'MediaRegistry.gd' con el nombre 'Media'.\n3. EJEMPLO DE CÓDIGO:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'nombre_pista')\n       Media.play_video($VideoStreamPlayer, 'nombre_video')\n       $Sprite.texture = Media.get_image('nombre_imagen')",
+            "formats_title": "Formatos Soportados",
+            "formats_info": "🖼️ IMÁGENES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "fr": {
-            "title": "Alenia Porter v3.0",
+            "title": "Alenia Porter v4.0",
             "header": "Alenia Studios - Optimiseur de Médias",
-            "select_format": "Exporter l'audio en :",
-            "format_ogg": "OGG (Standard)",
-            "format_opus": "OPUS (Haute Comp.)",
+            "select_format": "Exporter vers :",
+            "format_ogg": "OGG",
+            "format_opus": "OPUS",
             "select_engine": "Moteur de Destination :",
             "btn_select": "Sélectionner le Dossier à Convertir",
             "info_wait": "Traitement des fichiers... Veuillez patienter.",
-            "info_desc": "Prend en charge l'audio et la vidéo (MP4, MKV, WebM, AVI, MOV)",
+            "info_desc": "Prêt.",
             "msg_done": "Terminé ! {} fichiers traités.",
             "msg_err": "Erreur lors de la conversion.",
             "msg_success_t": "Succès",
@@ -78,19 +87,21 @@ def load_locales():
             "btn_patreon": "☕ Soutenir Alenia",
             "instructions_filename": "INSTRUCTIONS_ALENIA.txt",
             "instructions_title": "ALENIA PORTER - GUIDE RAPIDE",
-            "instructions_renpy": "1. Copiez les fichiers dans votre dossier /game.\n2. EXEMPLE DE CODE :\n   label start:\n       play audio nom_piste\n       show nom_video",
-            "instructions_godot": "1. Configuration : Projet -> Paramètres du Projet -> Globaux (Autoload).\n2. Ajoutez 'AudioRegistry.gd' sous le nom 'Audio'.\n3. EXEMPLE DE CODE :\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'nom_piste')\n       Audio.play_video($VideoStreamPlayer, 'nom_video')"
+            "instructions_renpy": "1. Copiez les fichiers dans votre dossier /game.\n2. EXEMPLE DE CODE :\n   label start:\n       play audio nom_piste\n       show nom_video\n       show nom_image",
+            "instructions_godot": "1. Configuration : Projet -> Paramètres du Projet -> Globaux (Autoload).\n2. Ajoutez 'MediaRegistry.gd' sous le nom 'Media'.\n3. EXEMPLE DE CODE :\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'nom_piste')\n       Media.play_video($VideoStreamPlayer, 'nom_video')\n       $Sprite.texture = Media.get_image('nom_image')",
+            "formats_title": "Formats Pris en Charge",
+            "formats_info": "🖼️ IMAGES :\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDÉO :\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO :\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "ja": {
-            "title": "Alenia Porter v3.0",
+            "title": "Alenia Porter v4.0",
             "header": "Alenia Studios - メディアオプティマイザー",
-            "select_format": "オーディオ書き出し形式:",
-            "format_ogg": "OGG (標準)",
-            "format_opus": "OPUS (高圧縮)",
+            "select_format": "書き出し先:",
+            "format_ogg": "OGG",
+            "format_opus": "OPUS",
             "select_engine": "対象エンジン:",
             "btn_select": "変換するフォルダを選択",
             "info_wait": "ファイルを処理中... しばらくお待ちください。",
-            "info_desc": "オーディオおよびビデオをサポート (MP4, MKV, WebM, AVI, MOV)",
+            "info_desc": "準備完了。",
             "msg_done": "完了しました！{} 個のファイルを処理しました。",
             "msg_err": "変換エラー。",
             "msg_success_t": "成功",
@@ -99,19 +110,21 @@ def load_locales():
             "btn_patreon": "☕ Alenia を支援する",
             "instructions_filename": "ALENIA_指示.txt",
             "instructions_title": "ALENIA PORTER - クイックガイド",
-            "instructions_renpy": "1. ファイルを /game フォルダにコピーします。\n2. コード例:\n   label start:\n       play audio track_name\n       show movie_name",
-            "instructions_godot": "1. 設定: プロジェクト -> プロジェクト設定 -> グローバル (Autoload)。\n2. 'AudioRegistry.gd' を 'Audio' として追加します。\n3. コード例:\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'track_name')\n       Audio.play_video($VideoStreamPlayer, 'video_name')"
+            "instructions_renpy": "1. ファイルを /game フォルダにコピーします。\n2. コード例:\n   label start:\n       play audio track_name\n       show movie_name\n       show image_name",
+            "instructions_godot": "1. 設定: プロジェクト -> プロジェクト設定 -> グローバル (Autoload)。\n2. 'MediaRegistry.gd' を 'Media' として追加します。\n3. コード例:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'track_name')\n       Media.play_video($VideoStreamPlayer, 'video_name')\n       $Sprite.texture = Media.get_image('image_name')",
+            "formats_title": "対応フォーマット",
+            "formats_info": "🖼️ 画像:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 ビデオ:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 オーディオ:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "zh": {
-            "title": "Alenia Porter v3.0",
+            "title": "Alenia Porter v4.0",
             "header": "Alenia Studios - 媒体优化器",
-            "select_format": "音频导出格式:",
-            "format_ogg": "OGG (标准)",
-            "format_opus": "OPUS (高压缩)",
+            "select_format": "导出至:",
+            "format_ogg": "OGG",
+            "format_opus": "OPUS",
             "select_engine": "目标引擎:",
             "btn_select": "选择要转换的文件夹",
             "info_wait": "正在处理文件... 请稍候。",
-            "info_desc": "支持音频与视频 (MP4, MKV, WebM, AVI, MOV)",
+            "info_desc": "就绪。",
             "msg_done": "完成！已处理 {} 个文件。",
             "msg_err": "转换出错。",
             "msg_success_t": "成功",
@@ -120,19 +133,21 @@ def load_locales():
             "btn_patreon": "☕ 支持 Alenia",
             "instructions_filename": "ALENIA_说明.txt",
             "instructions_title": "ALENIA PORTER - 快速指南",
-            "instructions_renpy": "1. 将文件复制到您的 /game 文件夹中。\n2. 代码示例:\n   label start:\n       play audio track_name\n       show movie_name",
-            "instructions_godot": "1. 设置: 项目 -> 项目设置 -> 全局 (Autoload)。\n2. 将 'AudioRegistry.gd' 添加为 'Audio'。\n3. 代码示例:\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'track_name')\n       Audio.play_video($VideoStreamPlayer, 'video_name')"
+            "instructions_renpy": "1. 将文件复制到您的 /game 文件夹中。\n2. 代码示例:\n   label start:\n       play audio track_name\n       show movie_name\n       show image_name",
+            "instructions_godot": "1. 设置: 项目 -> 项目设置 -> 全局 (Autoload)。\n2. 将 'MediaRegistry.gd' 添加为 'Media'。\n3. 代码示例:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'track_name')\n       Media.play_video($VideoStreamPlayer, 'video_name')\n       $Sprite.texture = Media.get_image('image_name')",
+            "formats_title": "支持的格式",
+            "formats_info": "🖼️ 图像:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 视频:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 音频:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "ru": {
-            "title": "Alenia Porter v3.0",
+            "title": "Alenia Porter v4.0",
             "header": "Alenia Studios - Оптимизатор медиа",
-            "select_format": "Экспортировать аудио в:",
-            "format_ogg": "OGG (Стандарт)",
-            "format_opus": "OPUS (Высокое сжатие)",
+            "select_format": "Экспортировать в:",
+            "format_ogg": "OGG",
+            "format_opus": "OPUS",
             "select_engine": "Целевой движок:",
             "btn_select": "Выбрать папку для конвертации",
             "info_wait": "Обработка файлов... Пожалуйста, подождите.",
-            "info_desc": "Поддерживает аудио и видео (MP4, MKV, WebM, AVI, MOV)",
+            "info_desc": "Готово.",
             "msg_done": "Готово! Обработано {} файлов.",
             "msg_err": "Ошибка при конвертации.",
             "msg_success_t": "Успех",
@@ -141,8 +156,10 @@ def load_locales():
             "btn_patreon": "☕ Поддержать Alenia",
             "instructions_filename": "ALENIA_ИНСТРУКЦИИ.txt",
             "instructions_title": "ALENIA PORTER - КРАТКОЕ РУКОВОДСТВО",
-            "instructions_renpy": "1. Скопируйте файлы в папку /game.\n2. ПРИМЕР КОДА:\n   label start:\n       play audio track_name\n       show movie_name",
-            "instructions_godot": "1. Настройка: Проект -> Настройки проекта -> Глобальные переменные (Autoload).\n2. Добавьте 'AudioRegistry.gd' как 'Audio'.\n3. ПРИМЕР КОДА:\n   func _ready():\n       Audio.play_track($AudioStreamPlayer, 'track_name')\n       Audio.play_video($VideoStreamPlayer, 'video_name')"
+            "instructions_renpy": "1. Скопируйте файлы в папку /game.\n2. ПРИМЕР КОДА:\n   label start:\n       play audio track_name\n       show movie_name\n       show image_name",
+            "instructions_godot": "1. Настройка: Проект -> Настройки проекта -> Глобальные переменные (Autoload).\n2. Добавьте 'MediaRegistry.gd' как 'Media'.\n3. ПРИМЕР КОДА:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'track_name')\n       Media.play_video($VideoStreamPlayer, 'video_name')\n       $Sprite.texture = Media.get_image('image_name')",
+            "formats_title": "Поддерживаемые форматы",
+            "formats_info": "🖼️ ИЗОБРАЖЕНИЯ:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 ВИДЕО:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 АУДИО:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         }
     }
 
@@ -166,19 +183,27 @@ def log_error_to_file(error_message):
 
 def convert_media(input_directory, target_engine, target_audio_format, progress_update_callback, status_update_callback, completion_callback, error_callback):
     try:
-        audio_extensions = (".wav", ".mp3", ".flac", ".m4a", ".ogg", ".opus", ".aac", ".wma")
-        video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov")
+        audio_extensions = (".wav", ".mp3", ".flac", ".m4a", ".ogg", ".opus", ".aac", ".wma", ".aiff", ".aif", ".alac", ".amr", ".mid", ".midi", ".mp2", ".mpga", ".au", ".snd", ".ra", ".rm")
+        video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".m2v", ".3gp", ".3g2", ".ts", ".m2ts", ".vob", ".ogv", ".asf", ".divx")
+        image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".tga", ".webp")
         
         media_files_list = []
         for root_path, sub_directories, files_list in os.walk(input_directory):
             sub_directories[:] = [dir_name for dir_name in sub_directories if dir_name not in ["Alenia_RenPy_Ready", "Alenia_Godot_Ready"]]
             for file_name in files_list:
                 file_name_lower = file_name.lower()
-                if file_name_lower.endswith(audio_extensions) or file_name_lower.endswith(video_extensions):
+                if file_name_lower.endswith(audio_extensions):
                     absolute_file_path = os.path.join(root_path, file_name)
                     relative_file_path = os.path.relpath(absolute_file_path, input_directory)
-                    is_video_file = file_name_lower.endswith(video_extensions)
-                    media_files_list.append((absolute_file_path, relative_file_path, is_video_file))
+                    media_files_list.append((absolute_file_path, relative_file_path, "audio"))
+                elif file_name_lower.endswith(video_extensions):
+                    absolute_file_path = os.path.join(root_path, file_name)
+                    relative_file_path = os.path.relpath(absolute_file_path, input_directory)
+                    media_files_list.append((absolute_file_path, relative_file_path, "video"))
+                elif file_name_lower.endswith(image_extensions):
+                    absolute_file_path = os.path.join(root_path, file_name)
+                    relative_file_path = os.path.relpath(absolute_file_path, input_directory)
+                    media_files_list.append((absolute_file_path, relative_file_path, "image"))
         
         total_files_count = len(media_files_list)
         if total_files_count == 0:
@@ -189,6 +214,7 @@ def convert_media(input_directory, target_engine, target_audio_format, progress_
         output_directory_path = os.path.join(input_directory, target_folder_name)
         audio_output_directory = os.path.join(output_directory_path, "audio")
         video_output_directory = os.path.join(output_directory_path, "video")
+        image_output_directory = os.path.join(output_directory_path, "images")
 
         ffmpeg_executable_path = get_ffmpeg_path()
         subprocess_creation_flags = 0
@@ -199,18 +225,20 @@ def convert_media(input_directory, target_engine, target_audio_format, progress_
         renpy_video_defines = []
         godot_audio_defines = []
         godot_video_defines = []
+        godot_image_defines = []
 
         processed_files_count = 0
-        for absolute_path, relative_path, is_video in media_files_list:
+        for absolute_path, relative_path, media_type in media_files_list:
             cleaned_base_name = os.path.splitext(relative_path)[0].replace(os.sep, "_").replace(" ", "_").lower()
             
-            if is_video:
+            if media_type == "video":
                 if not os.path.exists(video_output_directory):
                     os.makedirs(video_output_directory)
                 output_file_name = f"{cleaned_base_name}.webm"
                 output_file_path = os.path.join(video_output_directory, output_file_name)
                 ffmpeg_command = [
                     ffmpeg_executable_path, "-y", "-i", absolute_path,
+                    "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
                     "-c:v", "libvpx-vp9", "-crf", "30", "-b:v", "0",
                     "-cpu-used", "4", "-row-mt", "1",
                     "-c:a", "libopus", "-b:a", "128k",
@@ -221,6 +249,20 @@ def convert_media(input_directory, target_engine, target_audio_format, progress_
                     renpy_video_defines.append(f'image {cleaned_base_name} = Movie(play="video/{output_file_name}")')
                 else:
                     godot_video_defines.append(f'    "{cleaned_base_name}": preload("res://video/{output_file_name}"),')
+            elif media_type == "image":
+                if not os.path.exists(image_output_directory):
+                    os.makedirs(image_output_directory)
+                output_file_name = f"{cleaned_base_name}.webp"
+                output_file_path = os.path.join(image_output_directory, output_file_name)
+                ffmpeg_command = [
+                    ffmpeg_executable_path, "-y", "-i", absolute_path,
+                    "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
+                    "-c:v", "libwebp", "-quality", "80",
+                    output_file_path
+                ]
+                
+                if target_engine != "renpy":
+                    godot_image_defines.append(f'    "{cleaned_base_name}": preload("res://images/{output_file_name}"),')
             else:
                 if not os.path.exists(audio_output_directory):
                     os.makedirs(audio_output_directory)
@@ -229,12 +271,14 @@ def convert_media(input_directory, target_engine, target_audio_format, progress_
                 if target_audio_format == "ogg":
                     ffmpeg_command = [
                         ffmpeg_executable_path, "-y", "-i", absolute_path,
+                        "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
                         "-c:a", "libvorbis", "-b:a", "192k",
                         output_file_path
                     ]
                 else:
                     ffmpeg_command = [
                         ffmpeg_executable_path, "-y", "-i", absolute_path,
+                        "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
                         "-c:a", "libopus", "-b:a", "128k",
                         output_file_path
                     ]
@@ -255,7 +299,6 @@ def convert_media(input_directory, target_engine, target_audio_format, progress_
             processed_files_count += 1
             progress_update_callback(processed_files_count, total_files_count)
 
-        # Obtener el nombre del archivo de instrucciones de acuerdo al idioma configurado
         try:
             if os.name == "nt":
                 local_app_data_path = os.getenv("LOCALAPPDATA") or os.path.expanduser("~\\AppData\\Local")
@@ -303,6 +346,9 @@ def convert_media(input_directory, target_engine, target_audio_format, progress_
             godot_registry_lines.append("const VIDEOS = {")
             godot_registry_lines.extend(godot_video_defines)
             godot_registry_lines.append("}\n")
+            godot_registry_lines.append("const IMAGES = {")
+            godot_registry_lines.extend(godot_image_defines)
+            godot_registry_lines.append("}\n")
             godot_registry_lines.append("func play_track(player, track_name: String):")
             godot_registry_lines.append("    if TRACKS.has(track_name):")
             godot_registry_lines.append("        player.stream = TRACKS[track_name]")
@@ -314,9 +360,15 @@ def convert_media(input_directory, target_engine, target_audio_format, progress_
             godot_registry_lines.append("        player.stream = VIDEOS[video_name]")
             godot_registry_lines.append("        player.play()")
             godot_registry_lines.append("    else:")
-            godot_registry_lines.append("        print('Alenia Error: Video ', video_name, ' not found')")
+            godot_registry_lines.append("        print('Alenia Error: Video ', video_name, ' not found')\n")
+            godot_registry_lines.append("func get_image(image_name: String):")
+            godot_registry_lines.append("    if IMAGES.has(image_name):")
+            godot_registry_lines.append("        return IMAGES[image_name]")
+            godot_registry_lines.append("    else:")
+            godot_registry_lines.append("        print('Alenia Error: Image ', image_name, ' not found')")
+            godot_registry_lines.append("        return null")
             
-            with open(os.path.join(output_directory_path, "AudioRegistry.gd"), "w", encoding="utf-8") as file_handle:
+            with open(os.path.join(output_directory_path, "MediaRegistry.gd"), "w", encoding="utf-8") as file_handle:
                 file_handle.write("\n".join(godot_registry_lines))
 
         completion_callback(processed_files_count, output_directory_path)
