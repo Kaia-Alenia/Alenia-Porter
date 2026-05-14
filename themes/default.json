@@ -1,0 +1,13 @@
+{
+  "name": "Default Dark",
+  "bg_main": "#1e1e1e",
+  "fg_main": "#ffffff",
+  "fg_dim": "#a3a3a3",
+  "accent": "#8b5cf6",
+  "accent_hover": "#a78bfa",
+  "link": "#F96854",
+  "success": "#4ade80",
+  "error": "#f87171",
+  "warning": "#fbbf24",
+  "progressbar_trough": "#2d2d2d"
+}
