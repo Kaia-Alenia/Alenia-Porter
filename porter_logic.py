@@ -24,7 +24,7 @@ def load_locales():
             pass
     return {
         "en": {
-            "title": "Alenia Porter v4.1",
+            "title": "Alenia Porter v4.2",
             "header": "Alenia Studios - Media Optimizer",
             "select_format": "Export to:",
             "format_ogg": "OGG",
@@ -47,7 +47,7 @@ def load_locales():
             "formats_info": "🖼️ IMAGES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "es": {
-            "title": "Alenia Porter v4.1",
+            "title": "Alenia Porter v4.2",
             "header": "Alenia Studios - Optimizador de Medios",
             "select_format": "Exportar a:",
             "format_ogg": "OGG",
@@ -70,7 +70,7 @@ def load_locales():
             "formats_info": "🖼️ IMÁGENES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "fr": {
-            "title": "Alenia Porter v4.1",
+            "title": "Alenia Porter v4.2",
             "header": "Alenia Studios - Optimiseur de Médias",
             "select_format": "Exporter vers :",
             "format_ogg": "OGG",
@@ -93,7 +93,7 @@ def load_locales():
             "formats_info": "🖼️ IMAGES :\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDÉO :\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO :\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "ja": {
-            "title": "Alenia Porter v4.1",
+            "title": "Alenia Porter v4.2",
             "header": "Alenia Studios - メディアオプティマイザー",
             "select_format": "書き出し先:",
             "format_ogg": "OGG",
@@ -116,7 +116,7 @@ def load_locales():
             "formats_info": "🖼️ 画像:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 ビデオ:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 オーディオ:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "zh": {
-            "title": "Alenia Porter v4.1",
+            "title": "Alenia Porter v4.2",
             "header": "Alenia Studios - 媒体优化器",
             "select_format": "导出至:",
             "format_ogg": "OGG",
@@ -139,7 +139,7 @@ def load_locales():
             "formats_info": "🖼️ 图像:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 视频:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 音频:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "ru": {
-            "title": "Alenia Porter v4.1",
+            "title": "Alenia Porter v4.2",
             "header": "Alenia Studios - Оптимизатор медиа",
             "select_format": "Экспортировать в:",
             "format_ogg": "OGG",
