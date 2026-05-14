@@ -6,3 +6,5 @@ ALENIA_ERROR.txt
 .env
 bin/
 compilar_alenia.bat
+demo_assets/
+.zenith_cache.json
