@@ -1,0 +1,13 @@
+{
+    "name": "Eye Care Cream",
+    "bg_main": "#fffcf2",
+    "fg_main": "#252422",
+    "fg_dim": "#403d39",
+    "accent": "#eb5e28",
+    "accent_hover": "#ff8c00",
+    "link": "#eb5e28",
+    "success": "#2b9348",
+    "error": "#d00000",
+    "warning": "#ffba08",
+    "progressbar_trough": "#ccc5b9"
+}

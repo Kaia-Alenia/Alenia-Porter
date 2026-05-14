@@ -12,16 +12,16 @@ from tkinter import filedialog, ttk
 import porter_logic
 import updater
 
-CURRENT_VERSION = "v4.1"
+CURRENT_VERSION = "v4.2"
 
 try:
-    myappid = "alenia.porter.v4.1"
+    myappid = "alenia.porter.v4.2"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except Exception:
     pass
 
 with open("ALENIA_ERROR.txt", "w", encoding="utf-8") as startup_log_file:
-    startup_log_file.write("Starting Alenia Porter v4.1...\n")
+    startup_log_file.write("Starting Alenia Porter v4.2...\n")
 
 try:
     if os.name == "nt":
