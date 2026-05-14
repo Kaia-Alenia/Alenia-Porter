@@ -10,15 +10,18 @@ import glob
 import tkinter as tk
 from tkinter import filedialog, ttk
 import porter_logic
+import updater
+
+CURRENT_VERSION = "v4.1"
 
 try:
-    myappid = "alenia.porter.v4.0"
+    myappid = "alenia.porter.v4.1"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except Exception:
     pass
 
 with open("ALENIA_ERROR.txt", "w", encoding="utf-8") as startup_log_file:
-    startup_log_file.write("Starting Alenia Porter v4.0...\n")
+    startup_log_file.write("Starting Alenia Porter v4.1...\n")
 
 try:
     if os.name == "nt":
@@ -564,6 +567,57 @@ try:
     info_status_label.pack()
 
     adjust_opus_button_state()
+
+    def perform_update_check():
+        has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
+        if has_update:
+            root_window.after(1000, lambda: prompt_update(new_ver, dl_url))
+
+    def prompt_update(new_ver, dl_url):
+        trans = languages_dictionary[current_language_code]
+        title = trans.get("update_available_title", "Update Available")
+        desc = trans.get("update_available_desc", "Version {} is available. Update now?").format(new_ver)
+        
+        bg = current_theme.get("bg_main", "#1e1e1e")
+        fg = current_theme.get("fg_main", "#ffffff")
+        accent = current_theme.get("accent", "#8b5cf6")
+        
+        upd_win = tk.Toplevel(root_window)
+        upd_win.title(title)
+        upd_win.configure(bg=bg)
+        upd_win.geometry("350x150")
+        upd_win.transient(root_window)
+        upd_win.grab_set()
+        
+        lbl = tk.Label(upd_win, text=desc, bg=bg, fg=fg, wraplength=300)
+        lbl.pack(pady=20)
+        
+        btn_frame = tk.Frame(upd_win, bg=bg)
+        btn_frame.pack()
+        
+        def do_update():
+            lbl.config(text=trans.get("update_downloading", "Downloading update..."))
+            for widget in btn_frame.winfo_children():
+                widget.destroy()
+                
+            prog = ttk.Progressbar(upd_win, style="Purple.Horizontal.TProgressbar", orient="horizontal", length=250, mode="determinate")
+            prog.pack(pady=10)
+            
+            def on_progress(p):
+                prog["value"] = p
+                upd_win.update_idletasks()
+                
+            def on_ready():
+                upd_win.destroy()
+                root_window.destroy()
+                sys.exit(0)
+                
+            threading.Thread(target=updater.download_and_apply_update, args=(dl_url, on_progress, on_ready), daemon=True).start()
+            
+        tk.Button(btn_frame, text="Yes", bg=accent, fg="white", command=do_update, width=8).pack(side=tk.LEFT, padx=10)
+        tk.Button(btn_frame, text="No", bg="#555555", fg="white", command=upd_win.destroy, width=8).pack(side=tk.LEFT, padx=10)
+
+    threading.Thread(target=perform_update_check, daemon=True).start()
 
     root_window.mainloop()
 
