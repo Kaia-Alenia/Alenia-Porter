@@ -1,6 +1,6 @@
 {
     "en": {
-        "title": "Alenia Porter v4.0",
+        "title": "Alenia Porter v4.1",
         "header": "Alenia Studios - Media Optimizer",
         "select_format": "Export to:",
         "format_ogg": "OGG",
@@ -20,10 +20,13 @@
         "instructions_renpy": "1. Copy files to your /game folder.\n2. CODE EXAMPLE:\n   label start:\n       play audio track_name\n       show movie_name\n       show image_name",
         "instructions_godot": "1. Setup: Project -> Project Settings -> Globals (Autoload).\n2. Add 'MediaRegistry.gd' as 'Media'.\n3. CODE EXAMPLE:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'track_name')\n       Media.play_video($VideoStreamPlayer, 'video_name')\n       $Sprite.texture = Media.get_image('image_name')",
         "formats_title": "Supported Formats",
-        "formats_info": "🖼️ IMAGES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
+        "formats_info": "🖼️ IMAGES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm",
+        "update_available_title": "Update Available",
+        "update_available_desc": "Version {} is available. Do you want to update now?",
+        "update_downloading": "Downloading update..."
     },
     "es": {
-        "title": "Alenia Porter v4.0",
+        "title": "Alenia Porter v4.1",
         "header": "Alenia Studios - Optimizador de Medios",
         "select_format": "Exportar a:",
         "format_ogg": "OGG",
@@ -43,10 +46,13 @@
         "instructions_renpy": "1. Copia los archivos a tu carpeta /game.\n2. EJEMPLO DE CÓDIGO:\n   label start:\n       play audio nombre_pista\n       show nombre_video\n       show nombre_imagen",
         "instructions_godot": "1. Configuración: Proyecto -> Ajustes del Proyecto -> Globales (Autoload).\n2. Añade 'MediaRegistry.gd' con el nombre 'Media'.\n3. EJEMPLO DE CÓDIGO:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'nombre_pista')\n       Media.play_video($VideoStreamPlayer, 'nombre_video')\n       $Sprite.texture = Media.get_image('nombre_imagen')",
         "formats_title": "Formatos Soportados",
-        "formats_info": "🖼️ IMÁGENES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
+        "formats_info": "🖼️ IMÁGENES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm",
+        "update_available_title": "Actualización Disponible",
+        "update_available_desc": "La versión {} está disponible. ¿Deseas actualizar ahora?",
+        "update_downloading": "Descargando actualización..."
     },
     "fr": {
-        "title": "Alenia Porter v4.0",
+        "title": "Alenia Porter v4.1",
         "header": "Alenia Studios - Optimiseur de Médias",
         "select_format": "Exporter vers :",
         "format_ogg": "OGG",
@@ -66,10 +72,13 @@
         "instructions_renpy": "1. Copiez les fichiers dans votre dossier /game.\n2. EXEMPLE DE CODE :\n   label start:\n       play audio nom_piste\n       show nom_video\n       show nom_image",
         "instructions_godot": "1. Configuration : Projet -> Paramètres du Projet -> Globaux (Autoload).\n2. Ajoutez 'MediaRegistry.gd' sous le nom 'Media'.\n3. EXEMPLE DE CODE :\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'nom_piste')\n       Media.play_video($VideoStreamPlayer, 'nom_video')\n       $Sprite.texture = Media.get_image('nom_image')",
         "formats_title": "Formats Pris en Charge",
-        "formats_info": "🖼️ IMAGES :\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDÉO :\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO :\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
+        "formats_info": "🖼️ IMAGES :\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDÉO :\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO :\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm",
+        "update_available_title": "Mise à Jour Disponible",
+        "update_available_desc": "La version {} est disponible. Voulez-vous mettre à jour maintenant ?",
+        "update_downloading": "Téléchargement de la mise à jour..."
     },
     "ja": {
-        "title": "Alenia Porter v4.0",
+        "title": "Alenia Porter v4.1",
         "header": "Alenia Studios - メディアオプティマイザー",
         "select_format": "書き出し先:",
         "format_ogg": "OGG",
@@ -89,10 +98,13 @@
         "instructions_renpy": "1. ファイルを /game フォルダにコピーします。\n2. コード例:\n   label start:\n       play audio track_name\n       show movie_name\n       show image_name",
         "instructions_godot": "1. 設定: プロジェクト -> プロジェクト設定 -> グローバル (Autoload)。\n2. 'MediaRegistry.gd' を 'Media' として追加します。\n3. コード例:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'track_name')\n       Media.play_video($VideoStreamPlayer, 'video_name')\n       $Sprite.texture = Media.get_image('image_name')",
         "formats_title": "対応フォーマット",
-        "formats_info": "🖼️ 画像:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 ビデオ:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 オーディオ:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
+        "formats_info": "🖼️ 画像:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 ビデオ:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 オーディオ:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm",
+        "update_available_title": "利用可能なアップデート",
+        "update_available_desc": "バージョン {} が利用可能です。今すぐ更新しますか？",
+        "update_downloading": "アップデートをダウンロード中..."
     },
     "zh": {
-        "title": "Alenia Porter v4.0",
+        "title": "Alenia Porter v4.1",
         "header": "Alenia Studios - 媒体优化器",
         "select_format": "导出至:",
         "format_ogg": "OGG",
@@ -112,10 +124,13 @@
         "instructions_renpy": "1. 将文件复制到您的 /game 文件夹中。\n2. 代码示例:\n   label start:\n       play audio track_name\n       show movie_name\n       show image_name",
         "instructions_godot": "1. 设置: 项目 -> 项目设置 -> 全局 (Autoload)。\n2. 将 'MediaRegistry.gd' 添加为 'Media'。\n3. 代码示例:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'track_name')\n       Media.play_video($VideoStreamPlayer, 'video_name')\n       $Sprite.texture = Media.get_image('image_name')",
         "formats_title": "支持的格式",
-        "formats_info": "🖼️ 图像:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 视频:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 音频:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
+        "formats_info": "🖼️ 图像:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 视频:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 音频:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm",
+        "update_available_title": "可用更新",
+        "update_available_desc": "版本 {} 可用。您想现在更新吗？",
+        "update_downloading": "正在下载更新..."
     },
     "ru": {
-        "title": "Alenia Porter v4.0",
+        "title": "Alenia Porter v4.1",
         "header": "Alenia Studios - Оптимизатор медиа",
         "select_format": "Экспортировать в:",
         "format_ogg": "OGG",
@@ -135,6 +150,9 @@
         "instructions_renpy": "1. Скопируйте файлы в папку /game.\n2. ПРИМЕР КОДА:\n   label start:\n       play audio track_name\n       show movie_name\n       show image_name",
         "instructions_godot": "1. Настройка: Проект -> Настройки проекта -> Глобальные переменные (Autoload).\n2. Добавьте 'MediaRegistry.gd' как 'Media'.\n3. ПРИМЕР КОДА:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'track_name')\n       Media.play_video($VideoStreamPlayer, 'video_name')\n       $Sprite.texture = Media.get_image('image_name')",
         "formats_title": "Поддерживаемые форматы",
-        "formats_info": "🖼️ ИЗОБРАЖЕНИЯ:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 ВИДЕО:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 АУДИО:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
+        "formats_info": "🖼️ ИЗОБРАЖЕНИЯ:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 ВИДЕО:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 АУДИО:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm",
+        "update_available_title": "Доступно обновление",
+        "update_available_desc": "Доступна версия {}. Хотите обновить сейчас?",
+        "update_downloading": "Загрузка обновления..."
     }
 }
