@@ -8,3 +8,4 @@ bin/
 compilar_alenia.bat
 demo_assets/
 .zenith_cache.json
+clean_assets.py

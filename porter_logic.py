@@ -24,7 +24,7 @@ def load_locales():
             pass
     return {
         "en": {
-            "title": "Alenia Porter v4.2",
+            "title": "Alenia Porter v4.9",
             "header": "Alenia Studios - Media Optimizer",
             "select_format": "Export to:",
             "format_ogg": "OGG",
@@ -47,7 +47,7 @@ def load_locales():
             "formats_info": "🖼️ IMAGES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "es": {
-            "title": "Alenia Porter v4.2",
+            "title": "Alenia Porter v4.9",
             "header": "Alenia Studios - Optimizador de Medios",
             "select_format": "Exportar a:",
             "format_ogg": "OGG",

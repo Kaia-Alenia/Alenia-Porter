@@ -14,7 +14,7 @@ import updater
 import zenith
 zenith.ignite()
 
-CURRENT_VERSION = "v4.7"
+CURRENT_VERSION = "v4.9"
 update_info = {"found": False, "ver": None, "url": None}
 try:
     has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
@@ -27,13 +27,13 @@ except: pass
 import porter_logic
 
 try:
-    myappid = "alenia.porter.v4.1"
+    myappid = "alenia.porter.v4.9"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except Exception:
     pass
 
 with open("ALENIA_ERROR.txt", "w", encoding="utf-8") as startup_log_file:
-    startup_log_file.write("Starting Alenia Porter v4.1...\n")
+    startup_log_file.write("Starting Alenia Porter v4.9...\n")
 
 try:
     if os.name == "nt":
