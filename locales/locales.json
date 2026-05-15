@@ -1,6 +1,6 @@
 {
     "en": {
-        "title": "Alenia Porter v5.4",
+        "title": "Alenia Porter v5.5",
         "header": "Alenia Studios - Media Optimizer",
         "select_format": "Export to:",
         "format_ogg": "OGG",
@@ -26,7 +26,7 @@
         "update_downloading": "Downloading update..."
     },
     "es": {
-        "title": "Alenia Porter v5.4",
+        "title": "Alenia Porter v5.5",
         "header": "Alenia Studios - Optimizador de Medios",
         "select_format": "Exportar a:",
         "format_ogg": "OGG",
@@ -52,7 +52,7 @@
         "update_downloading": "Descargando actualización..."
     },
     "fr": {
-        "title": "Alenia Porter v5.4",
+        "title": "Alenia Porter v5.5",
         "header": "Alenia Studios - Optimiseur de Médias",
         "select_format": "Exporter vers :",
         "format_ogg": "OGG",
@@ -78,7 +78,7 @@
         "update_downloading": "Téléchargement de la mise à jour..."
     },
     "ja": {
-        "title": "Alenia Porter v5.4",
+        "title": "Alenia Porter v5.5",
         "header": "Alenia Studios - メディアオプティマイザー",
         "select_format": "書き出し先:",
         "format_ogg": "OGG",
@@ -104,7 +104,7 @@
         "update_downloading": "アップデートをダウンロード中..."
     },
     "zh": {
-        "title": "Alenia Porter v5.4",
+        "title": "Alenia Porter v5.5",
         "header": "Alenia Studios - 媒体优化器",
         "select_format": "导出至:",
         "format_ogg": "OGG",
@@ -130,7 +130,7 @@
         "update_downloading": "正在下载更新..."
     },
     "ru": {
-        "title": "Alenia Porter v5.4",
+        "title": "Alenia Porter v5.5",
         "header": "Alenia Studios - Оптимизатор медиа",
         "select_format": "Экспортировать в:",
         "format_ogg": "OGG",

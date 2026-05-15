@@ -16,7 +16,7 @@ zenith.ignite()
 
 import porter_logic
 
-CURRENT_VERSION = "v5.4"
+CURRENT_VERSION = "v5.5"
 update_info = {"found": False, "ver": None, "url": None}
 try:
     has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
@@ -27,13 +27,13 @@ try:
 except: pass
 
 try:
-    myappid = "alenia.porter.v5.4"
+    myappid = "alenia.porter.v5.5"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except Exception:
     pass
 
 with open("ALENIA_ERROR.txt", "w", encoding="utf-8") as startup_log_file:
-    startup_log_file.write("Starting Alenia Porter v5.4...\n")
+    startup_log_file.write("Starting Alenia Porter v5.5...\n")
 
 try:
     if os.name == "nt":
@@ -227,58 +227,59 @@ try:
         adjust_opus_button_state()
 
     def show_custom_popup(title, message, is_error=False, is_accordion=False):
-        accent_color = current_theme.get("error" if is_error else "success", "#4ade80")
-        popup = tk.Toplevel(root_window)
-        popup.title(title)
-        popup.geometry("450x380") 
-        popup.configure(bg=current_theme["bg_main"])
-        popup.resizable(False, False)
-        popup.transient(root_window)
-        popup.grab_set()
-        
         bg = current_theme.get("bg_main", "#1e1e1e")
         fg = current_theme.get("fg_main", "#ffffff")
         fg_dim = current_theme.get("fg_dim", "#a3a3a3")
         accent = current_theme.get("accent", "#8b5cf6")
         accent_hover = current_theme.get("accent_hover", "#a78bfa")
+        
+        popup = tk.Toplevel(root_window)
+        popup.title(title)
+        popup.geometry("480x420") 
+        popup.configure(bg=bg)
+        popup.resizable(False, False)
+        popup.transient(root_window)
+        popup.grab_set()
 
         content_frame = tk.Frame(popup, bg=bg)
-        content_frame.pack(expand=True, fill="both", padx=25, pady=20)
+        content_frame.pack(expand=True, fill="both", padx=20, pady=10)
         
         if not is_error and not is_accordion:
             success_path = current_theme.get("char_success", "assets/kaia_success.png")
             image_cache["success_kaia"] = load_theme_image(success_path)
             if image_cache["success_kaia"]:
-                tk.Label(content_frame, image=image_cache["success_kaia"], bg=bg).pack(pady=(0, 10))
+                tk.Label(content_frame, image=image_cache["success_kaia"], bg=bg).pack(pady=(5, 5))
 
         if is_accordion:
-            popup.geometry("552x236")
-            columns_frame = tk.Frame(content_frame, bg=bg)
-            columns_frame.pack(fill="both", expand=True)
-            scroll_container = tk.Frame(columns_frame, bg=bg)
-            scroll_container.pack(side="left", fill="both", expand=True)
-            canvas = tk.Canvas(scroll_container, bg=bg, highlightthickness=0)
-            scrollable_frame = tk.Frame(canvas, bg=bg)
-            scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+            popup.geometry("580x300")
+            cols_f = tk.Frame(content_frame, bg=bg)
+            cols_f.pack(fill="both", expand=True)
+            scroll_f = tk.Frame(cols_f, bg=bg)
+            scroll_f.pack(side="left", fill="both", expand=True)
+            canvas = tk.Canvas(scroll_f, bg=bg, highlightthickness=0)
+            inner_f = tk.Frame(canvas, bg=bg)
+            inner_f.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+            canvas.create_window((0, 0), window=inner_f, anchor="nw")
             canvas.pack(side="left", fill="both", expand=True)
 
             image_cache["info_kaia"] = load_theme_image("assets/kaia_info.png")
             if image_cache["info_kaia"]:
-                tk.Label(columns_frame, image=image_cache["info_kaia"], bg=bg).pack(side="right", anchor="ne", padx=(15, 0), pady=(10, 0))
+                tk.Label(cols_f, image=image_cache["info_kaia"], bg=bg).pack(side="right", anchor="ne", padx=(10, 0))
 
             sections = message.split("\n\n")
-            for section in sections:
-                lines = section.split("\n")
-                if len(lines) >= 1:
-                    tk.Label(scrollable_frame, text=lines[0], bg=bg, fg=fg, font=("Arial", 10, "bold"), anchor="w").pack(fill="x", pady=(5, 0))
+            for sec in sections:
+                lines = sec.split("\n")
+                if lines:
+                    tk.Label(inner_f, text=lines[0], bg=bg, fg=fg, font=("Arial", 10, "bold"), anchor="w").pack(fill="x", pady=(5, 0))
                     if len(lines) > 1:
-                        tk.Label(scrollable_frame, text="\n".join(lines[1:]), bg=bg, fg=fg_dim, font=("Arial", 9), justify="left", wraplength=320, anchor="w").pack(fill="x", padx=15)
+                        tk.Label(inner_f, text="\n".join(lines[1:]), bg=bg, fg=fg_dim, font=("Arial", 9), justify="left", wraplength=350, anchor="w").pack(fill="x", padx=15)
         else:
-            tk.Label(content_frame, text=message, bg=bg, fg=fg, font=("Arial", 10), justify="left").pack(expand=True, fill="both")
+            tk.Label(content_frame, text=message, bg=bg, fg=fg, font=("Arial", 10), justify="center", wraplength=400).pack(expand=True, fill="both")
         
-        ok_btn = tk.Button(popup, text="OK", command=popup.destroy, bg=accent, fg="white", padx=30, pady=8, borderwidth=0, highlightthickness=0, cursor="hand2", font=("Arial", 9, "bold"))
-        ok_btn.pack(pady=(0, 20))
+        btn_frame = tk.Frame(popup, bg=bg)
+        btn_frame.pack(fill="x", side="bottom", pady=20)
+        ok_btn = tk.Button(btn_frame, text="OK", command=popup.destroy, bg=accent, fg="white", padx=40, pady=8, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold"))
+        ok_btn.pack()
         ok_btn.bind("<Enter>", lambda e: ok_btn.config(bg=accent_hover))
         ok_btn.bind("<Leave>", lambda e: ok_btn.config(bg=accent))
 
