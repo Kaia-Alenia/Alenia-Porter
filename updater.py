@@ -20,11 +20,6 @@ def get_os_asset_name():
         return "AleniaPorter-Linux.tar.gz"
 
 def check_for_updates(current_version):
-    """
-    Checks GitHub for a newer release.
-    Returns (True, latest_version, download_url) if an update is found,
-    else (False, None, None).
-    """
     try:
         req = urllib.request.Request(REPO_API_URL, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=5) as response:
@@ -51,10 +46,6 @@ def check_for_updates(current_version):
     return False, None, None
 
 def download_and_apply_update(download_url, progress_callback, on_ready_to_restart):
-    """
-    Downloads the update, extracts it to a temporary folder, creates the trampolin script,
-    and calls on_ready_to_restart() so the main app can close itself.
-    """
     try:
         temp_dir = "AleniaPorter_UpdateTemp"
         if os.path.exists(temp_dir):
@@ -72,7 +63,6 @@ def download_and_apply_update(download_url, progress_callback, on_ready_to_resta
                 
         urllib.request.urlretrieve(download_url, download_path, reporthook)
         
-        # Extract
         if is_zip:
             with zipfile.ZipFile(download_path, 'r') as zip_ref:
                 zip_ref.extractall(temp_dir)
@@ -82,10 +72,8 @@ def download_and_apply_update(download_url, progress_callback, on_ready_to_resta
                 
         os.remove(download_path)
         
-        # The extracted folder from Nuitka is usually named "AleniaPorter"
         extracted_base = os.path.join(temp_dir, "AleniaPorter")
         if not os.path.exists(extracted_base):
-            # Fallback if structure is different
             extracted_base = temp_dir
             
         create_and_run_trampoline(extracted_base, system)
@@ -101,7 +89,6 @@ def create_and_run_trampoline(update_source_dir, system):
     
     if system == "windows":
         script_path = os.path.join(parent_dir, "update_alenia.bat")
-        # .bat script: wait 3s, delete all files in current_dir except some, move from source to current, start new exe, delete temp, delete self
         bat_content = f"""@echo off
 timeout /t 3 /nobreak > NUL
 echo Updating Alenia Porter...
@@ -114,7 +101,6 @@ del "%~f0"
         with open(script_path, "w") as f:
             f.write(bat_content)
             
-        # Run detached
         subprocess.Popen([script_path], creationflags=subprocess.CREATE_NEW_CONSOLE)
         
     else:
@@ -134,5 +120,4 @@ rm -- "$0"
             f.write(sh_content)
             
         os.chmod(script_path, 0o777)
-        # Run detached
         subprocess.Popen([script_path], start_new_session=True)
