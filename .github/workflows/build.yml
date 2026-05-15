@@ -1,4 +1,4 @@
-name: Build Alenia Porter v5.0
+name: Build Alenia Porter v5.1
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
 
       - name: Build executable with Nuitka
         run: |
-          python -m nuitka --standalone --assume-yes-for-downloads --windows-console-mode=disable --enable-plugin=tk-inter --include-data-files=logo.ico=logo.ico --include-data-dir=locales=locales --include-data-files=bin/ffmpeg.exe=bin/ffmpeg.exe --include-data-files=bin/ffprobe.exe=bin/ffprobe.exe --windows-icon-from-ico=logo.ico --output-filename=AleniaPorter.exe main.py
+          python -m nuitka --standalone --assume-yes-for-downloads --windows-console-mode=disable --enable-plugin=tk-inter --include-data-files=logo.ico=logo.ico --include-data-dir=locales=locales --include-data-dir=assets=assets --include-data-dir=themes=themes --include-data-files=bin/ffmpeg.exe=bin/ffmpeg.exe --include-data-files=bin/ffprobe.exe=bin/ffprobe.exe --windows-icon-from-ico=logo.ico --output-filename=AleniaPorter.exe main.py
 
       - name: Package build
         run: |
@@ -78,7 +78,7 @@ jobs:
 
       - name: Build executable with Nuitka
         run: |
-          python -m nuitka --standalone --macos-disable-console --enable-plugin=tk-inter --include-data-files=logo.ico=logo.ico --include-data-dir=locales=locales --include-data-dir=bin=bin --macos-app-icon=logo.ico --output-filename=AleniaPorter main.py
+          python -m nuitka --standalone --macos-disable-console --enable-plugin=tk-inter --include-data-files=logo.ico=logo.ico --include-data-dir=locales=locales --include-data-dir=assets=assets --include-data-dir=themes=themes --include-data-dir=bin=bin --macos-app-icon=logo.ico --output-filename=AleniaPorter main.py
 
       - name: Package build
         run: |
@@ -121,7 +121,7 @@ jobs:
 
       - name: Build executable with Nuitka
         run: |
-          python -m nuitka --standalone --enable-plugin=tk-inter --include-data-files=logo.ico=logo.ico --include-data-dir=locales=locales --include-data-dir=bin=bin --output-filename=AleniaPorter main.py
+          python -m nuitka --standalone --enable-plugin=tk-inter --include-data-files=logo.ico=logo.ico --include-data-dir=locales=locales --include-data-dir=assets=assets --include-data-dir=themes=themes --include-data-dir=bin=bin --output-filename=AleniaPorter main.py
 
       - name: Package build
         run: |
