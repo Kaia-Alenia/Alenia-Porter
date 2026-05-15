@@ -1,0 +1,18 @@
+{
+    "name": "Kaia Theme",
+    "bg_main": "#f472b6",
+    "fg_main": "#ffffff",
+    "fg_dim": "#ffffff",
+    "accent": "#9d174d",
+    "accent_hover": "#831843",
+    "link": "#ffffff",
+    "success": "#4ade80",
+    "error": "#f43f5e",
+    "warning": "#fbbf24",
+    "progressbar_trough": "#fbcfe8",
+    "bg_image": "",
+    "char_sprite": "assets/kaia_default.png",
+    "char_sprite_2": "",
+    "char_success": "assets/kaia_success.png",
+    "progress_icon": "assets/kaia_mini.png"
+}

@@ -1,13 +1,30 @@
-# Contributing Guidelines - Alenia Studios
+# Contributing to Alenia Porter
 
-Thank you for wanting to improve Alenia Porter! This project is free and open for the indie developer community.
+We love community contributions! Here is how you can help:
 
-### How Can You Help?
-1. **Translations:** Edit the `locales/locales.json` file to add your language.
-2. **Suggestions:** If you have an idea to improve the user interface or the conversion logic, open an **Issue** in this repository.
-3. **Code:** If you know Python and want to optimize the tool, submit a **Pull Request**.
+## 🎨 Creating New Themes
+You can add your own visual identity to Alenia Porter by creating a new JSON file in the `themes/` directory.
 
-### Golden Rules:
-* **Credits:** If your contribution is accepted (especially with translations), add your name to the contributors section in `README.md`.
-* **License:** By collaborating, you agree that your code will be distributed under the **Alenia Studios Tool License** (always free, no resale, no AI).
-* **Aesthetics:** Keep the code clean and respect the official color palette (black and purple) if you make visual changes.
+### How to do it:
+1. Copy an existing theme like `default.json`.
+2. Edit the color hex codes (`bg_main`, `accent`, etc.).
+3. Point to your own transparent assets in the `assets/` folder.
+4. Your theme will automatically appear in the app's theme cycle (the 🎨 button).
+
+## 💻 Improving the Code
+If you want to optimize the conversion logic or enhance the UI:
+
+### Files to edit:
+- `main.py`: Contains all the UI logic, window management, and theme application.
+- `porter_logic.py`: Contains the core conversion engine (FFmpeg calls and file processing).
+- `clean_assets.py`: If you want to improve how images are processed and cleaned.
+
+### Guidelines:
+- **No comments in scripts:** Please do not add comments to the `.py` files. Keep the code clean and self-explanatory.
+- **Maintain the License:** All contributions must respect the ALENIA STUDIOS TOOL LICENSE.
+
+## 🌍 Translations
+To add a new language, simply add a new key to the JSON structure within `locales/`.
+
+---
+Thank you for helping Alenia Porter grow! 🐧✨

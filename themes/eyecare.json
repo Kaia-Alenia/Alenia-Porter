@@ -1,13 +1,17 @@
 {
-    "name": "Eye Care Cream",
-    "bg_main": "#fffcf2",
-    "fg_main": "#252422",
-    "fg_dim": "#403d39",
-    "accent": "#eb5e28",
-    "accent_hover": "#ff8c00",
-    "link": "#eb5e28",
-    "success": "#2b9348",
-    "error": "#d00000",
-    "warning": "#ffba08",
-    "progressbar_trough": "#ccc5b9"
+    "name": "Eye Care Theme",
+    "bg_main": "#fdf6e3",
+    "fg_main": "#657b83",
+    "fg_dim": "#93a1a1",
+    "accent": "#268bd2",
+    "accent_hover": "#2aa198",
+    "link": "#d33682",
+    "success": "#859900",
+    "error": "#dc322f",
+    "warning": "#b58900",
+    "progressbar_trough": "#eee8d5",
+    "char_sprite": "assets/kaia_default.png",
+    "char_sprite_2": "",
+    "char_success": "assets/kaia_success.png",
+    "progress_icon": "assets/kaia_mini.png"
 }

@@ -1,13 +1,17 @@
 {
-  "name": "Light Mode",
-  "bg_main": "#f3f4f6",
-  "fg_main": "#111827",
-  "fg_dim": "#4b5563",
-  "accent": "#6366f1",
-  "accent_hover": "#818cf8",
-  "link": "#e11d48",
-  "success": "#16a34a",
-  "error": "#dc2626",
-  "warning": "#d97706",
-  "progressbar_trough": "#e5e7eb"
+    "name": "Light Theme",
+    "bg_main": "#ffffff",
+    "fg_main": "#000000",
+    "fg_dim": "#555555",
+    "accent": "#000000",
+    "accent_hover": "#333333",
+    "link": "#0000EE",
+    "success": "#008000",
+    "error": "#FF0000",
+    "warning": "#FFA500",
+    "progressbar_trough": "#E0E0E0",
+    "char_sprite": "assets/kaia_default.png",
+    "char_sprite_2": "",
+    "char_success": "assets/kaia_success.png",
+    "progress_icon": "assets/kaia_mini.png"
 }
