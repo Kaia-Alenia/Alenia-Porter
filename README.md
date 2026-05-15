@@ -1,26 +1,27 @@
-# Alenia Porter v5.1 🐧✨
+# Alenia Porter v5.2 🐧✨
 
 **The ultimate media optimizer for indie game developers.**
 
-Alenia Porter is a professional, zero-dependency tool designed to streamline asset optimization for **Ren'Py** and **Godot**. It automatically handles images, videos, and audio files with production-ready compression settings, ensuring high performance and minimal file sizes for your projects.
+Alenia Porter is a professional, standalone tool designed to automate asset optimization for **Ren'Py** and **Godot**. It ensures your game assets are production-ready with high-performance compression and minimal file sizes.
 
-## ✨ Features
-- **Multi-Platform Support:** Fully compatible with Windows, macOS, and Linux.
+## ✨ Key Features
+- **Standalone Tool:** No installation or Python knowledge required. Just run and optimize.
 - **Engine-Specific Presets:** Tailored optimization for Ren'Py (WebM/WebP) and Godot (OGV/WebP).
-- **Zero Dependencies:** No external Python libraries required (Pillow-free).
-- **Dynamic UI Themes:** Switch between Pink, Dark, Light, and Eye Care aesthetics.
+- **Multi-Platform:** Fully compatible with Windows, macOS, and Linux.
+- **Dynamic UI Themes:** Switch between Pink, Dark, Light, and Eye Care designs.
 - **Kaia Assistant:** An interactive companion that guides you through the process.
-- **Zenith Engine:** Powered by the Alenia Zenith core for maximum performance.
 
-## 🚀 Getting Started
-1. Run the application: `python main.py`.
-2. Choose your target engine (Ren'Py or Godot).
-3. Select your desired audio format (OGG or OPUS).
-4. Select the source folder and let Kaia optimize your assets!
+## 🚀 How to Use
+1. Launch the **AleniaPorter** executable.
+2. Select your target engine and audio format.
+3. Choose the source folder and let Kaia do the rest!
 
 ## 🤝 Community & Support
-We welcome contributions, from new themes to code improvements. Please refer to [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+We welcome themes and feature suggestions! For more details on how to contribute, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 **License:** ALENIA STUDIOS TOOL LICENSE Version 1.0. 
 *Designed to be free and accessible for the indie developer community.*
+
+**Translated by KXLT Alenia Studios**
+🇺🇸 🇪🇸 🇫🇷 🇯🇵 🇨🇳
