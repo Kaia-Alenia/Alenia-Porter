@@ -16,7 +16,7 @@ zenith.ignite()
 
 import porter_logic
 
-CURRENT_VERSION = "v5.2"
+CURRENT_VERSION = "v5.3"
 update_info = {"found": False, "ver": None, "url": None}
 try:
     has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
@@ -27,13 +27,13 @@ try:
 except: pass
 
 try:
-    myappid = "alenia.porter.v5.2"
+    myappid = "alenia.porter.v5.3"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except Exception:
     pass
 
 with open("ALENIA_ERROR.txt", "w", encoding="utf-8") as startup_log_file:
-    startup_log_file.write("Starting Alenia Porter v5.2...\n")
+    startup_log_file.write("Starting Alenia Porter v5.3...\n")
 
 try:
     if os.name == "nt":
@@ -223,6 +223,7 @@ try:
         info_status_label.config(text=active_translation["info_desc"])
         language_toggle_button.config(text=active_translation["btn_lang"])
         patreon_link_button.config(text=active_translation["btn_patreon"])
+        hamburger_button.config(command=lambda: show_custom_popup(active_translation["formats_title"], active_translation["formats_info"], is_accordion=True))
         adjust_opus_button_state()
 
     def show_custom_popup(title, message, is_error=False, is_accordion=False):
