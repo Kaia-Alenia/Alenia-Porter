@@ -1,7 +1,3 @@
-from PIL import Image, ImageTk
-import PIL
-OriginalPhotoImage = ImageTk.PhotoImage
-OriginalImageOpen = Image.open
 import sys
 import os
 import threading
@@ -18,7 +14,7 @@ import updater
 import zenith
 zenith.ignite()
 
-CURRENT_VERSION = "v4.6"
+CURRENT_VERSION = "v4.7"
 update_info = {"found": False, "ver": None, "url": None}
 try:
     has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
