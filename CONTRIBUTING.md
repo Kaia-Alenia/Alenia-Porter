@@ -1,30 +1,30 @@
 # Contributing to Alenia Porter 🐧✨
 
-We love community contributions! Help us make Alenia Porter the best tool for indie developers.
+We appreciate your interest in helping Alenia Studios! Here is how you can contribute to the project:
 
-## 🎨 Themes & Aesthetics
-Add your own visual identity by creating new JSON files in `/themes/`. You can customize colors and link your own character sprites in `/assets/`.
+## 🎨 Theme Development
+Create your own visual style by adding a new JSON file to the `themes/` directory. You can customize colors and link specific character sprites from the `assets/` folder.
 
-## 💻 Code & Logic
-Improve the core conversion engine or UI:
-- **UI & Themes:** Edit `main.py` (No comments allowed).
-- **Conversion Engine:** Edit `porter_logic.py` (No comments allowed).
-- **Core Infrastructure:** Powered by **Zenith Core** (Internal).
+## 💻 Code Contributions
+Help us optimize the conversion engine or enhance the user interface:
+- **UI Logic:** Managed in `main.py` (Strictly no comments allowed).
+- **Core Engine:** Managed in `porter_logic.py` (Strictly no comments allowed).
+- **Architecture:** Powered by the internal **Zenith Core**.
 
 ## 🌍 Localization
-Alenia Porter is global! You can contribute by adding new languages to `locales/locales.json`.
+Help us reach more developers by adding new languages to the `locales/` system.
 
 **Current Languages:**
 🇺🇸 English | 🇪🇸 Español | 🇫🇷 Français | 🇯🇵 日本語 | 🇨🇳 简体中文
 
 > [!IMPORTANT]
-> **Traducido por KXLT Alenia Studios**
+> **Translated by KXLT Alenia Studios**
 > *Professional localization and community support.*
 
 ---
-### Guidelines
-- **Zero Dependencies:** Keep the code clean of external Python libraries.
-- **No Comments:** Keep the scripts minimal and self-explanatory.
-- **License:** All contributions follow the ALENIA STUDIOS TOOL LICENSE.
+### Contribution Guidelines
+- **Zero Dependencies:** Ensure the code remains free of external Python libraries (like Pillow).
+- **No Comments in Scripts:** Keep the source code clean and self-documenting.
+- **Licensing:** All contributions must comply with the ALENIA STUDIOS TOOL LICENSE.
 
 Thank you for being part of Alenia Studios! 🚀🌸🌑
