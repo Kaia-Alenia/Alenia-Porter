@@ -1,30 +1,30 @@
-# Contributing to Alenia Porter
+# Contributing to Alenia Porter 🐧✨
 
-We love community contributions! Here is how you can help:
+We love community contributions! Help us make Alenia Porter the best tool for indie developers.
 
-## 🎨 Creating New Themes
-You can add your own visual identity to Alenia Porter by creating a new JSON file in the `themes/` directory.
+## 🎨 Themes & Aesthetics
+Add your own visual identity by creating new JSON files in `/themes/`. You can customize colors and link your own character sprites in `/assets/`.
 
-### How to do it:
-1. Copy an existing theme like `default.json`.
-2. Edit the color hex codes (`bg_main`, `accent`, etc.).
-3. Point to your own transparent assets in the `assets/` folder.
-4. Your theme will automatically appear in the app's theme cycle (the 🎨 button).
+## 💻 Code & Logic
+Improve the core conversion engine or UI:
+- **UI & Themes:** Edit `main.py` (No comments allowed).
+- **Conversion Engine:** Edit `porter_logic.py` (No comments allowed).
+- **Core Infrastructure:** Powered by **Zenith Core** (Internal).
 
-## 💻 Improving the Code
-If you want to optimize the conversion logic or enhance the UI:
+## 🌍 Localization
+Alenia Porter is global! You can contribute by adding new languages to `locales/locales.json`.
 
-### Files to edit:
-- `main.py`: Contains all the UI logic, window management, and theme application.
-- `porter_logic.py`: Contains the core conversion engine (FFmpeg calls and file processing).
-- `clean_assets.py`: If you want to improve how images are processed and cleaned.
+**Current Languages:**
+🇺🇸 English | 🇪🇸 Español | 🇫🇷 Français | 🇯🇵 日本語 | 🇨🇳 简体中文
 
-### Guidelines:
-- **No comments in scripts:** Please do not add comments to the `.py` files. Keep the code clean and self-explanatory.
-- **Maintain the License:** All contributions must respect the ALENIA STUDIOS TOOL LICENSE.
-
-## 🌍 Translations
-To add a new language, simply add a new key to the JSON structure within `locales/`.
+> [!IMPORTANT]
+> **Traducido por KXLT Alenia Studios**
+> *Professional localization and community support.*
 
 ---
-Thank you for helping Alenia Porter grow! 🐧✨
+### Guidelines
+- **Zero Dependencies:** Keep the code clean of external Python libraries.
+- **No Comments:** Keep the scripts minimal and self-explanatory.
+- **License:** All contributions follow the ALENIA STUDIOS TOOL LICENSE.
+
+Thank you for being part of Alenia Studios! 🚀🌸🌑
