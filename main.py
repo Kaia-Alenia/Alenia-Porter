@@ -15,7 +15,10 @@ import tkinter as tk
 from tkinter import filedialog, ttk
 import updater
 
-CURRENT_VERSION = "v4.2"
+import zenith
+zenith.ignite()
+
+CURRENT_VERSION = "v4.6"
 update_info = {"found": False, "ver": None, "url": None}
 try:
     has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
