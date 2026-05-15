@@ -15,7 +15,7 @@ Help us optimize the conversion engine or enhance the user interface:
 Help us reach more developers by adding new languages to the `locales/` system.
 
 **Current Languages:**
-🇺🇸 English | 🇪🇸 Español | 🇫🇷 Français | 🇯🇵 日本語 | 🇨🇳 简体中文
+🇺🇸 English | 🇪🇸 Español | 🇫🇷 Français | 🇯🇵 日本語 | 🇨🇳 简体中文 | 🇷🇺 Русский
 
 > [!IMPORTANT]
 > **Translated by KXLT Alenia Studios**
