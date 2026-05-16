@@ -16,7 +16,7 @@ zenith.ignite()
 
 import porter_logic
 
-CURRENT_VERSION = "v5.5"
+CURRENT_VERSION = "v5.6"
 update_info = {"found": False, "ver": None, "url": None}
 try:
     has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
@@ -27,13 +27,10 @@ try:
 except: pass
 
 try:
-    myappid = "alenia.porter.v5.5"
+    myappid = "alenia.porter.v5.6"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except Exception:
     pass
-
-with open("ALENIA_ERROR.txt", "w", encoding="utf-8") as startup_log_file:
-    startup_log_file.write("Starting Alenia Porter v5.5...\n")
 
 try:
     if os.name == "nt":
@@ -339,7 +336,7 @@ try:
         select_folder_button.config(state=tk.DISABLED)
         info_status_label.config(text=active_translation["info_wait"], fg=warning_color)
         draw_progress(0)
-        threading.Thread(target=porter_logic.convert_media, args=(selected_directory, engine_variable.get(), format_variable.get(), on_progressbar_increment, None, on_conversion_success, on_conversion_failure), daemon=True).start()
+        threading.Thread(target=porter_logic.convert_media, args=(selected_directory, engine_variable.get(), format_variable.get(), on_progressbar_increment, None, on_conversion_success, on_conversion_failure, current_language_code), daemon=True).start()
 
     def adjust_opus_button_state(*args):
         active_translation = languages_dictionary[current_language_code]
