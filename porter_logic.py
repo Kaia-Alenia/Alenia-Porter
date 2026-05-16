@@ -1,7 +1,8 @@
-__license__ = """ALENIA STUDIOS TOOL LICENSE Version 1.0 Copyright (c) 2026 Alenia Studios This tool is designed to be free and accessible for the indie developer community. By using this software, you agree to the following terms: 1. OUTPUT OWNERSHIP & USE: The audio, video, or data files processed by this Software remain 100% your property. No attribution to Alenia Studios is required in your final project for simply using this tool to process your files. 2. ALWAYS FREE & SPREAD THE WORD: This Software is completely free for commercial and non-commercial projects. If you find it useful, we strongly encourage you to recommend it to other developers. 3. CODE ATTRIBUTION: If you modify, fork, or distribute the source code of this Software, you must provide appropriate credit to Alenia Studios and the respective community translators. 4. NO RESALE: Standalone redistribution, sublicensing, or resale of this Software or its source code for profit is strictly prohibited. It must remain free. 5. NO AI TRAINING: The source code, documentation, and logic of this Software may not be used, scraped, or included in datasets for the training of Artificial Intelligence models or machine learning algorithms. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND."""
+__license__ = """
+ALENIA STUDIOS TOOL LICENSE Version 1.0 Copyright (c) 2026 Alenia Studios This tool is designed to be free and accessible for the indie developer community. By using this software, you agree to the following terms: 1. OUTPUT OWNERSHIP & USE: The audio, video, or data files processed by this Software remain 100% your property. No attribution to Alenia Studios is required in your final project for simply using this tool to process your files. 2. ALWAYS FREE & SPREAD THE WORD: This Software is completely free for commercial and non-commercial projects. If you find it useful, we strongly encourage you to recommend it to other developers. 3. CODE ATTRIBUTION: If you modify, fork, or distribute the source code of this Software, you must provide appropriate credit to Alenia Studios and the respective community translators. 4. NO RESALE: Standalone redistribution, sublicensing, or resale of this Software or its source code for profit is strictly prohibited. It must remain free. 5. NO AI TRAINING: The source code, documentation, and logic of this Software may not be used, scraped, or included in datasets for the training of Artificial Intelligence models or machine learning algorithms. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+"""
 
 import zenith
-zenith.ignite()
 
 import sys
 import os
@@ -12,7 +13,8 @@ import traceback
 def resource_path(relative_path):
     if hasattr(sys, "_MEIPASS"):
         return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_path, relative_path)
 
 def load_locales():
     locales_file_path = resource_path(os.path.join("locales", "locales.json"))
@@ -24,7 +26,7 @@ def load_locales():
             pass
     return {
         "en": {
-            "title": "Alenia Porter v5.5",
+            "title": "Alenia Porter v5.6",
             "header": "Alenia Studios - Media Optimizer",
             "select_format": "Export to:",
             "format_ogg": "OGG",
@@ -47,7 +49,7 @@ def load_locales():
             "formats_info": "🖼️ IMAGES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         },
         "es": {
-            "title": "Alenia Porter v5.5",
+            "title": "Alenia Porter v5.6",
             "header": "Alenia Studios - Optimizador de Medios",
             "select_format": "Exportar a:",
             "format_ogg": "OGG",
@@ -89,7 +91,7 @@ def log_error_to_file(error_message):
     except Exception:
         pass
 
-def convert_media(input_directory, target_engine, target_audio_format, progress_update_callback, status_update_callback, completion_callback, error_callback):
+def convert_media(input_directory, target_engine, target_audio_format, progress_update_callback, status_update_callback, completion_callback, error_callback, lang_code="es"):
     try:
         audio_extensions = (".wav", ".mp3", ".flac", ".m4a", ".ogg", ".opus", ".aac", ".wma", ".aiff", ".aif", ".alac", ".amr", ".mid", ".midi", ".mp2", ".mpga", ".au", ".snd", ".ra", ".rm")
         video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".m2v", ".3gp", ".3g2", ".ts", ".m2ts", ".vob", ".ogv", ".asf", ".divx")
@@ -196,32 +198,21 @@ def convert_media(input_directory, target_engine, target_audio_format, progress_
                 else:
                     godot_audio_defines.append(f'    "{cleaned_base_name}": preload("res://audio/{output_file_name}"),')
 
-            process_handle = subprocess.Popen(
-                ffmpeg_command,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                creationflags=subprocess_creation_flags
-            )
-            process_handle.communicate()
+            try:
+                process_handle = subprocess.Popen(
+                    ffmpeg_command,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    creationflags=subprocess_creation_flags
+                )
+                process_handle.communicate()
+            except FileNotFoundError:
+                raise Exception("FFmpeg not found. Please ensure FFmpeg is installed and added to your PATH. / No se encontró FFmpeg. Por favor, asegúrate de que FFmpeg esté instalado y en tu PATH.")
 
             processed_files_count += 1
             progress_update_callback(processed_files_count, total_files_count)
 
-        try:
-            if os.name == "nt":
-                local_app_data_path = os.getenv("LOCALAPPDATA") or os.path.expanduser("~\\AppData\\Local")
-                config_folder_path = os.path.join(local_app_data_path, "AleniaStudios", "AleniaPorter")
-            else:
-                config_folder_path = os.path.expanduser("~/.config/AleniaStudios/AleniaPorter")
-            config_file_path = os.path.join(config_folder_path, "config.json")
-            
-            lang_code = "es"
-            if os.path.exists(config_file_path):
-                with open(config_file_path, "r", encoding="utf-8") as config_file:
-                    user_config = json.load(config_file)
-                    lang_code = user_config.get("lang", "es")
-        except Exception:
-            lang_code = "es"
+
 
         locales_dict = load_locales()
         current_locale = locales_dict.get(lang_code, locales_dict.get("es", {}))
