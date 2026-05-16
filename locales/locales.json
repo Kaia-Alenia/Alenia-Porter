@@ -1,6 +1,6 @@
 {
     "en": {
-        "title": "Alenia Porter v5.5",
+        "title": "Alenia Porter v5.6",
         "header": "Alenia Studios - Media Optimizer",
         "select_format": "Export to:",
         "format_ogg": "OGG",
@@ -26,7 +26,7 @@
         "update_downloading": "Downloading update..."
     },
     "es": {
-        "title": "Alenia Porter v5.5",
+        "title": "Alenia Porter v5.6",
         "header": "Alenia Studios - Optimizador de Medios",
         "select_format": "Exportar a:",
         "format_ogg": "OGG",
@@ -52,7 +52,7 @@
         "update_downloading": "Descargando actualización..."
     },
     "fr": {
-        "title": "Alenia Porter v5.5",
+        "title": "Alenia Porter v5.6",
         "header": "Alenia Studios - Optimiseur de Médias",
         "select_format": "Exporter vers :",
         "format_ogg": "OGG",
@@ -78,7 +78,7 @@
         "update_downloading": "Téléchargement de la mise à jour..."
     },
     "ja": {
-        "title": "Alenia Porter v5.5",
+        "title": "Alenia Porter v5.6",
         "header": "Alenia Studios - メディアオプティマイザー",
         "select_format": "書き出し先:",
         "format_ogg": "OGG",
@@ -104,7 +104,7 @@
         "update_downloading": "アップデートをダウンロード中..."
     },
     "zh": {
-        "title": "Alenia Porter v5.5",
+        "title": "Alenia Porter v5.6",
         "header": "Alenia Studios - 媒体优化器",
         "select_format": "导出至:",
         "format_ogg": "OGG",
@@ -117,7 +117,7 @@
         "msg_err": "转换出错。",
         "msg_success_t": "成功",
         "msg_success_m": "已为 {} 优化了 {} 个文件！\n\n路径: {}\n\n已打开说明文档。",
-        "btn_lang": "RU",
+        "btn_lang": "EN",
         "btn_patreon": "☕ 支持 Alenia",
         "instructions_filename": "ALENIA_说明.txt",
         "instructions_title": "ALENIA PORTER - 快速指南",
@@ -128,31 +128,5 @@
         "update_available_title": "可用更新",
         "update_available_desc": "版本 {} 可用。您想现在更新吗？",
         "update_downloading": "正在下载更新..."
-    },
-    "ru": {
-        "title": "Alenia Porter v5.5",
-        "header": "Alenia Studios - Оптимизатор медиа",
-        "select_format": "Экспортировать в:",
-        "format_ogg": "OGG",
-        "format_opus": "OPUS",
-        "select_engine": "Целевой движок:",
-        "btn_select": "Выбрать папку для конвертации",
-        "info_wait": "Обработка файлов... Пожалуйста, подождите.",
-        "info_desc": "Готово.",
-        "msg_done": "Готово! Обработано {} файлов.",
-        "msg_err": "Ошибка при конвертации.",
-        "msg_success_t": "Успех",
-        "msg_success_m": "Оптимизировано {} файлов для {}!\n\nПуть: {}\n\nИнструкции открыты.",
-        "btn_lang": "EN",
-        "btn_patreon": "☕ Поддержать Alenia",
-        "instructions_filename": "ALENIA_ИНСТРУКЦИИ.txt",
-        "instructions_title": "ALENIA PORTER - КРАТКОЕ РУКОВОДСТВО",
-        "instructions_renpy": "1. Скопируйте файлы в папку /game.\n2. ПРИМЕР КОДА:\n   label start:\n       play audio track_name\n       show movie_name\n       show image_name",
-        "instructions_godot": "1. Настройка: Проект -> Настройки проекта -> Глобальные переменные (Autoload).\n2. Добавьте 'MediaRegistry.gd' как 'Media'.\n3. ПРИМЕР КОДА:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'track_name')\n       Media.play_video($VideoStreamPlayer, 'video_name')\n       $Sprite.texture = Media.get_image('image_name')",
-        "formats_title": "Поддерживаемые форматы",
-        "formats_info": "🖼️ ИЗОБРАЖЕНИЯ:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 ВИДЕО:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 АУディオ:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm",
-        "update_available_title": "Доступно обновление",
-        "update_available_desc": "Доступна версия {}. Хотите обновить сейчас?",
-        "update_downloading": "Загрузка обновления..."
     }
 }
