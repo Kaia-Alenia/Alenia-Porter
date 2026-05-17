@@ -19,9 +19,6 @@ Alenia Porter is a professional, standalone tool designed to automate asset opti
 ## 🤝 Community & Support
 We welcome themes and feature suggestions! For more details on how to contribute, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## 🛠️ Internal Tools
-- **clean_assets.py**: Script responsible for cleaning and resizing assets for the themes.
-
 ---
 **License:** ALENIA STUDIOS TOOL LICENSE Version 1.0. 
 *Designed to be free and accessible for the indie developer community.*
