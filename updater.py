@@ -63,12 +63,17 @@ def download_and_apply_update(download_url, progress_callback, on_ready_to_resta
                 
         urllib.request.urlretrieve(download_url, download_path, reporthook)
         
+        def is_within_directory(directory, target):
+            return not os.path.relpath(os.path.abspath(target), os.path.abspath(directory)).startswith("..")
+            
         if is_zip:
             with zipfile.ZipFile(download_path, 'r') as zip_ref:
-                zip_ref.extractall(temp_dir)
+                safe_members = [m for m in zip_ref.namelist() if is_within_directory(temp_dir, os.path.join(temp_dir, m))]
+                zip_ref.extractall(temp_dir, members=safe_members)
         else:
             with tarfile.open(download_path, 'r:gz') as tar_ref:
-                tar_ref.extractall(temp_dir)
+                safe_members = [m for m in tar_ref.getmembers() if is_within_directory(temp_dir, os.path.join(temp_dir, m.name))]
+                tar_ref.extractall(temp_dir, members=safe_members)
                 
         os.remove(download_path)
         
@@ -119,5 +124,5 @@ rm -- "$0"
         with open(script_path, "w") as f:
             f.write(sh_content)
             
-        os.chmod(script_path, 0o777)
+        os.chmod(script_path, 0o755)
         subprocess.Popen([script_path], start_new_session=True)
