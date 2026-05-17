@@ -11,11 +11,23 @@ Help us optimize the conversion engine or enhance the user interface:
 - **Core Engine:** Managed in `porter_logic.py` (Strictly no comments allowed).
 - **Architecture:** Powered by the internal **Zenith Core**.
 
+## 📏 Asset Specifications
+To maintain UI integrity, please follow these exact dimensions:
+
+| Asset Type | Path/Example | Dimensions (px) | Notes |
+| :--- | :--- | :--- | :--- |
+| **Main Character** | `kaia_default.png` | **180 × 260** | Main UI assistant (bottom-right). |
+| **Success/Info Character** | `kaia_success.png` | **140 × 180** | Used in popup windows. |
+| **Progress Icon** | `kaia_mini.png` | **24 × 24** | Icon that follows the progress bar. |
+| **Studio Logo** | `studio_logo.png` | **200 × 50** | Branding at the bottom. |
+| **App Icon** | `logo.ico` | **256 × 256** | Standard Windows icon format. |
+
+---
 ## 🌍 Localization
 Help us reach more developers by adding new languages to the `locales/` system.
 
 **Current Languages:**
-🇺🇸 English | 🇪🇸 Español | 🇫🇷 Français | 🇯🇵 日本語 | 🇨🇳 简体中文 | 🇷🇺 Русский
+🇺🇸 English | 🇪🇸 Español | 🇫🇷 Français | 🇯🇵 日本語 | 🇨🇳 简体中文 | 🇷🇺 Русский | 🇧🇷 Português | 🇩🇪 Deutsch
 
 > [!IMPORTANT]
 > **Translated by KXLT Alenia Studios**

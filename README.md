@@ -1,4 +1,4 @@
-# Alenia Porter v5.6 🐧✨
+# Alenia Porter v5.7 🐧✨
 
 **The ultimate media optimizer for indie game developers.**
 
@@ -27,4 +27,4 @@ We welcome themes and feature suggestions! For more details on how to contribute
 *Designed to be free and accessible for the indie developer community.*
 
 **Translated by KXLT Alenia Studios**
-🇺🇸 🇪🇸 🇫🇷 🇯🇵 🇨🇳
+🇺🇸 🇪🇸 🇫🇷 🇯🇵 🇨🇳 🇷🇺 🇧🇷 🇩🇪 🇷🇺

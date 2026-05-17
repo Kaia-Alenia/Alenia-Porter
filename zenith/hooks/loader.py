@@ -13,6 +13,7 @@ STRICT_EXCLUSIONS: set[str] = {
     "typing", "warnings", "traceback", "linecache", "re", "enum",
     "os", "os.path", "posixpath", "pathlib", "stat",
     "posix", "_io", "site", "ast",
+    "PIL", "Pillow", "tkinter", "_tkinter", "webview", "clr", "ctypes", "_ctypes", "gi", "pkg_resources", "pkgutil",
 }
 
 
@@ -53,7 +54,9 @@ class ZenithLazyModule(types.ModuleType):
         with lock:
             if object.__getattribute__(self, "_zenith_loaded"):
                 return
-
+            
+            object.__setattr__(self, "_zenith_loaded", True)
+            
             spec = object.__getattribute__(self, "_zenith_spec")
             loader = object.__getattribute__(self, "_zenith_loader")
             predictor = object.__getattribute__(self, "_zenith_predictor")
@@ -63,12 +66,13 @@ class ZenithLazyModule(types.ModuleType):
             _bypass_lazy.active = True
             try:
                 loader.exec_module(self)
+            except Exception:
+                object.__setattr__(self, "_zenith_loaded", False)
+                raise
             finally:
                 _bypass_lazy.active = False
 
-            object.__setattr__(self, "_zenith_loaded", True)
             _sys.modules[spec.name] = self
-
             if predictor is not None:
                 predictor.save_module(spec.name)
             if engine is not None:
@@ -122,7 +126,9 @@ class ZenithLazyFinder(importlib.abc.MetaPathFinder):
             return None
 
         root_pkg = fullname.split(".")[0]
-        if root_pkg in self.ignored_packages:
+        
+        # SENIOR SAFETY RULE: Ignore stdlib, internal modules, and already ignored packages
+        if root_pkg in self.ignored_packages or root_pkg.startswith("_") or root_pkg in sys.stdlib_module_names:
             return None
 
         self._active_searches.add(fullname)

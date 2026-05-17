@@ -1,3 +1,6 @@
+import zenith
+zenith.ignite(file=__file__, show_banner=False)
+
 import sys
 import os
 import threading
@@ -10,13 +13,9 @@ import glob
 import tkinter as tk
 from tkinter import filedialog, ttk
 import updater
-
-import zenith
-zenith.ignite()
-
 import porter_logic
 
-CURRENT_VERSION = "v5.6"
+CURRENT_VERSION = "v5.7"
 update_info = {"found": False, "ver": None, "url": None}
 try:
     has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
@@ -27,7 +26,7 @@ try:
 except: pass
 
 try:
-    myappid = "alenia.porter.v5.6"
+    myappid = "alenia.porter.v5.7"
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 except Exception:
     pass
@@ -100,6 +99,7 @@ try:
     
     current_theme = available_themes[current_theme_name]
     languages_dictionary = porter_logic.load_locales()
+    if current_language_code not in languages_dictionary: current_language_code = "en"
 
     image_cache = {"bg": None, "char": None, "progress": None, "studio": None, "success_kaia": None, "info_kaia": None, "support_kaia": None}
 
@@ -220,7 +220,13 @@ try:
         info_status_label.config(text=active_translation["info_desc"])
         language_toggle_button.config(text=active_translation["btn_lang"])
         patreon_link_button.config(text=active_translation["btn_patreon"])
-        hamburger_button.config(command=lambda: show_custom_popup(active_translation["formats_title"], active_translation["formats_info"], is_accordion=True))
+        
+        # Construir info de formatos traducida
+        f_info = active_translation.get("formats_images", "IMAGES:") + "\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n"
+        f_info += active_translation.get("formats_videos", "VIDEO:") + "\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n"
+        f_info += active_translation.get("formats_audio", "AUDIO:") + "\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
+        
+        hamburger_button.config(command=lambda: show_custom_popup(active_translation["formats_title"], f_info, is_accordion=True))
         adjust_opus_button_state()
 
     def show_custom_popup(title, message, is_error=False, is_accordion=False):
@@ -236,6 +242,7 @@ try:
         popup.configure(bg=bg)
         popup.resizable(False, False)
         popup.transient(root_window)
+        popup.wait_visibility()
         popup.grab_set()
 
         content_frame = tk.Frame(popup, bg=bg)
@@ -281,14 +288,16 @@ try:
         ok_btn.bind("<Leave>", lambda e: ok_btn.config(bg=accent))
 
     def show_support_info():
+        active_translation = languages_dictionary[current_language_code]
         bg = current_theme.get("bg_main", "#1e1e1e")
         fg = current_theme.get("fg_main", "#ffffff")
         accent = current_theme.get("accent", "#8b5cf6")
         popup = tk.Toplevel(root_window)
-        popup.title("Support Alenia Studios")
+        popup.title(active_translation.get("support_title", "Support Alenia Studios"))
         popup.geometry("472x226")
         popup.configure(bg=bg)
         popup.transient(root_window)
+        popup.wait_visibility()
         popup.grab_set()
         content_frame = tk.Frame(popup, bg=bg)
         content_frame.pack(expand=True, fill="both", padx=25, pady=20)
@@ -296,7 +305,7 @@ try:
         columns_frame.pack(fill="both", expand=True)
         left_column = tk.Frame(columns_frame, bg=bg)
         left_column.pack(side="left", fill="both", expand=True)
-        tk.Label(left_column, text="Support us on:", bg=bg, fg=fg, font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 10))
+        tk.Label(left_column, text=active_translation.get("support_label", "Support us on:"), bg=bg, fg=fg, font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 10))
         links = [("Patreon", "https://patreon.com/alenia_studios"), ("Ko-fi", "https://ko-fi.com/alenia_studios"), ("GitHub", "https://github.com/Kaia-Alenia"), ("Itch.io", "https://alenia-studios.itch.io/"), ("PayPal", "https://www.paypal.com/ncp/payment/TCCYMCFSVMV8E")]
         btn_f = tk.Frame(left_column, bg=bg)
         btn_f.pack(anchor="w")
@@ -312,15 +321,29 @@ try:
         draw_progress(percent)
         root_window.update_idletasks()
 
-    def on_conversion_success(processed_count, output_path):
+    def on_conversion_success(processed_count, output_path, original_size, final_size):
         active_translation = languages_dictionary[current_language_code]
         success_color = current_theme.get("success", "#4ade80")
+        
+        saved_bytes = max(0, original_size - final_size)
+        saved_percent = (saved_bytes / original_size * 100) if original_size > 0 else 0
+        saved_mb = saved_bytes / (1024 * 1024)
+        
+        saving_report = f"\n\n📊 Total Savings: {saved_mb:.2f} MB ({saved_percent:.1f}%)"
+        
         root_window.after(0, lambda: info_status_label.config(text=active_translation["msg_done"].format(processed_count), fg=success_color))
         draw_progress(100)
         root_window.after(0, lambda: select_folder_button.config(state=tk.NORMAL))
-        if os.name == "nt": os.startfile(output_path)
-        else: subprocess.Popen(["xdg-open" if sys.platform.startswith("linux") else "open", output_path])
-        root_window.after(0, lambda: show_custom_popup(active_translation["msg_success_t"], active_translation["msg_success_m"].format(processed_count, engine_variable.get().upper(), output_path)))
+        
+        if os.name == "nt": 
+            try: os.startfile(output_path)
+            except: pass
+        else: 
+            try: subprocess.Popen(["xdg-open" if sys.platform.startswith("linux") else "open", output_path])
+            except: pass
+            
+        msg = active_translation["msg_success_m"].format(processed_count, engine_variable.get().upper(), output_path) + saving_report
+        root_window.after(0, lambda: show_custom_popup(active_translation["msg_success_t"], msg))
 
     def on_conversion_failure(error_details):
         active_translation = languages_dictionary[current_language_code]
@@ -413,6 +436,7 @@ try:
         upd_win.configure(bg=bg)
         upd_win.geometry("350x150")
         upd_win.transient(root_window)
+        upd_win.wait_visibility()
         upd_win.grab_set()
         tk.Label(upd_win, text=trans.get("update_available_desc", "Version {} is available.").format(new_ver), bg=bg, fg=fg, wraplength=300).pack(pady=20)
         btn_f = tk.Frame(upd_win, bg=bg)
