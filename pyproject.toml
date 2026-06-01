@@ -12,14 +12,12 @@ dependencies = []
 [project.scripts]
 porter = "alenia_porter.cli:main"
 
-[tool.uv]
-package-dir = "src"
-
 [build-system]
 requires = ["uv_build>=0.11.17,<0.12.0"]
 build-backend = "uv_build"
 
 [tool.setuptools]
+package-dir = {"" = "src"}
 packages = ["alenia_porter"]
 
 [tool.setuptools.package-data]
