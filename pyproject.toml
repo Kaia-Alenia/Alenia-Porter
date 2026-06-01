@@ -1,7 +1,7 @@
 [project]
 name = "alenia-porter"
 version = "0.1.0"
-description = "Add your description here"
+description = "Python code transformation and analysis tool"
 readme = "README.md"
 authors = [
     { name = "Kevin Turcios", email = "turcioskevinr@gmail.com" }
@@ -9,6 +9,18 @@ authors = [
 requires-python = ">=3.13"
 dependencies = []
 
+[project.scripts]
+porter = "alenia_porter.cli:main"
+
+[tool.uv]
+package-dir = "src"
+
 [build-system]
 requires = ["uv_build>=0.11.17,<0.12.0"]
 build-backend = "uv_build"
+
+[tool.setuptools]
+packages = ["alenia_porter"]
+
+[tool.setuptools.package-data]
+alenia_porter = ["py.typed", "zenith/py.typed"]
