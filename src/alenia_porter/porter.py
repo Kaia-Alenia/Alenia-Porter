@@ -18,7 +18,7 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 def load_locales():
-    locales_file_path = resource_path(os.path.join("locales", "locales.json"))
+    locales_file_path = resource_path(os.path.join("assets", "locales", "locales.json"))
     if os.path.exists(locales_file_path):
         try:
             with open(locales_file_path, "r", encoding="utf-8") as file_handle:
