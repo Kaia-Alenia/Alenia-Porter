@@ -59,7 +59,7 @@ try:
 
     def load_themes():
         themes_dict = {}
-        themes_path = porter.resource_path("themes")
+        themes_path = porter.resource_path(os.path.join("assets", "themes"))
         if os.path.exists(themes_path):
             for file in glob.glob(os.path.join(themes_path, "*.json")):
                 try:
@@ -374,7 +374,7 @@ try:
             opus_radiobutton.config(text=f"{active_translation['format_opus']} / WebM / WebP")
 
     root_window = tk.Tk()
-    try: root_window.iconbitmap(porter.resource_path("logo.ico"))
+    try: root_window.iconbitmap(porter.resource_path(os.path.join("assets", "images", "logo.ico")))
     except: pass
     initial_translation = languages_dictionary[current_language_code]
     root_window.title(initial_translation["title"])
