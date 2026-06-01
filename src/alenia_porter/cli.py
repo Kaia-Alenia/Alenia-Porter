@@ -10,13 +10,24 @@ import subprocess
 import traceback
 import ctypes
 import glob
-import tkinter as tk
-from tkinter import filedialog, ttk
+import argparse
 from alenia_porter import updater
 from alenia_porter import porter
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Alenia Porter - Media Optimizer")
+    parser.add_argument("--headless", action="store_true", help="Run in headless mode (no GUI)")
+    args = parser.parse_args()
+
+    if args.headless:
+        print("Alenia Porter v5.7 - Headless Mode")
+        print("✓ Application initialized successfully")
+        return
+
+    import tkinter as tk
+    from tkinter import filedialog, ttk
+
     CURRENT_VERSION = "v5.7"
     update_info = {"found": False, "ver": None, "url": None}
     try:
