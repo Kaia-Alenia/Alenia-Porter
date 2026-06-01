@@ -61,16 +61,16 @@ def main():
 
         def load_themes():
             themes_dict = {}
-            themes_path = porter.resource_path(os.path.join("assets", "themes"))
-            if os.path.exists(themes_path):
-                for file in glob.glob(os.path.join(themes_path, "*.json")):
-                    try:
-                        with open(file, "r", encoding="utf-8") as f:
-                            data = json.load(f)
-                            name = data.get("name", os.path.basename(file))
-                            themes_dict[name] = data
-                    except Exception:
-                        pass
+            with porter.resource_path(os.path.join("assets", "themes")) as themes_path:
+                if os.path.exists(themes_path):
+                    for file in glob.glob(os.path.join(themes_path, "*.json")):
+                        try:
+                            with open(file, "r", encoding="utf-8") as f:
+                                data = json.load(f)
+                                name = data.get("name", os.path.basename(file))
+                                themes_dict[name] = data
+                        except Exception:
+                            pass
             if not themes_dict:
                 themes_dict["Default Theme"] = {
                     "name": "Default Theme",
@@ -107,13 +107,13 @@ def main():
 
         def load_theme_image(path):
             if not path: return None
-            full_path = porter.resource_path(path)
-            if not os.path.exists(full_path):
-                return None
-            try:
-                return tk.PhotoImage(file=full_path)
-            except Exception:
-                return None
+            with porter.resource_path(path) as full_path:
+                if not os.path.exists(full_path):
+                    return None
+                try:
+                    return tk.PhotoImage(file=full_path)
+                except Exception:
+                    return None
 
         def apply_theme_to_ui():
             bg = current_theme.get("bg_main", "#1e1e1e")
@@ -376,7 +376,9 @@ def main():
                 opus_radiobutton.config(text=f"{active_translation['format_opus']} / WebM / WebP")
 
         root_window = tk.Tk()
-        try: root_window.iconbitmap(porter.resource_path(os.path.join("assets", "images", "logo.ico")))
+        try:
+            with porter.resource_path(os.path.join("assets", "images", "logo.ico")) as icon_path:
+                root_window.iconbitmap(icon_path)
         except: pass
         initial_translation = languages_dictionary[current_language_code]
         root_window.title(initial_translation["title"])
