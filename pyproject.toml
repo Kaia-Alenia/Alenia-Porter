@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Python code transformation and analysis tool"
 readme = "README.md"
 authors = [
+    { name = "Kaia-Alenia", email = "alejandrotrrsa9@gmail.com" },
     { name = "Kevin Turcios", email = "turcioskevinr@gmail.com" }
 ]
 requires-python = ">=3.13"
