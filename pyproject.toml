@@ -22,4 +22,4 @@ package-dir = {"" = "src"}
 packages = ["alenia_porter"]
 
 [tool.setuptools.package-data]
-alenia_porter = ["py.typed", "zenith/py.typed"]
+alenia_porter = ["py.typed", "zenith/py.typed", "assets/images/*", "assets/locales/*", "assets/themes/*"]
