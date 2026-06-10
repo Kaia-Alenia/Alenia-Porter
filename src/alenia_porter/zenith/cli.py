@@ -5,7 +5,7 @@ import json
 
 
 def cmd_analyze(args: argparse.Namespace) -> None:
-    from zenith.transformer.ast_rewriter import analyze_file, analyze_stdlib_only, analyze_third_party
+    from alenia_porter.zenith.transformer.ast_rewriter import analyze_file, analyze_stdlib_only, analyze_third_party
 
     all_mods = analyze_file(args.file)
     stdlib = analyze_stdlib_only(args.file)
