@@ -1,6 +1,6 @@
 {
     "en": {
-        "title": "Alenia Porter v5.7",
+        "title": "Alenia Porter v5.8",
         "header": "Alenia Studios - Media Optimizer",
         "select_format": "Export to:",
         "format_ogg": "OGG",
@@ -31,7 +31,7 @@
         "formats_audio": "🎵 AUDIO:"
     },
     "es": {
-        "title": "Alenia Porter v5.7",
+        "title": "Alenia Porter v5.8",
         "header": "Alenia Studios - Optimizador de Medios",
         "select_format": "Exportar a:",
         "format_ogg": "OGG",
@@ -62,7 +62,7 @@
         "formats_audio": "🎵 AUDIO:"
     },
     "fr": {
-        "title": "Alenia Porter v5.7",
+        "title": "Alenia Porter v5.8",
         "header": "Alenia Studios - Optimiseur de Médias",
         "select_format": "Exporter vers :",
         "format_ogg": "OGG",
@@ -93,7 +93,7 @@
         "formats_audio": "🎵 AUDIO :"
     },
     "ja": {
-        "title": "Alenia Porter v5.7",
+        "title": "Alenia Porter v5.8",
         "header": "Alenia Studios - メディアオプティマイザー",
         "select_format": "書き出し先:",
         "format_ogg": "OGG",
@@ -124,7 +124,7 @@
         "formats_audio": "🎵 オーディオ:"
     },
     "zh": {
-        "title": "Alenia Porter v5.7",
+        "title": "Alenia Porter v5.8",
         "header": "Alenia Studios - 媒体优化器",
         "select_format": "导出至:",
         "format_ogg": "OGG",
@@ -155,7 +155,7 @@
         "formats_audio": "🎵 音频:"
     },
     "ru": {
-        "title": "Alenia Porter v5.7",
+        "title": "Alenia Porter v5.8",
         "header": "Alenia Studios - Оптимизатор Медиа",
         "select_format": "Экспорт в:",
         "format_ogg": "OGG",
@@ -186,7 +186,7 @@
         "formats_audio": "🎵 АУДИО:"
     },
     "pt-br": {
-        "title": "Alenia Porter v5.7",
+        "title": "Alenia Porter v5.8",
         "header": "Alenia Studios - Otimizador de Mídia",
         "select_format": "Exportar para:",
         "format_ogg": "OGG",
@@ -217,7 +217,7 @@
         "formats_audio": "🎵 ÁUDIO:"
     },
     "de": {
-        "title": "Alenia Porter v5.7",
+        "title": "Alenia Porter v5.8",
         "header": "Alenia Studios - Medien-Optimierer",
         "select_format": "Exportieren nach:",
         "format_ogg": "OGG",
