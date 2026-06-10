@@ -21,14 +21,14 @@ def main():
     args = parser.parse_args()
 
     if args.headless:
-        print("Alenia Porter v5.7 - Headless Mode")
+        print("Alenia Porter v5.8 - Headless Mode")
         print("✓ Application initialized successfully")
         return
 
     import tkinter as tk
     from tkinter import filedialog, ttk
 
-    CURRENT_VERSION = "v5.7"
+    CURRENT_VERSION = "v5.8"
     update_info = {"found": False, "ver": None, "url": None}
     try:
         has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
@@ -39,7 +39,7 @@ def main():
     except: pass
 
     try:
-        myappid = "alenia.porter.v5.7"
+        myappid = "alenia.porter.v5.8"
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except Exception:
         pass
@@ -95,8 +95,8 @@ def main():
                     "error": "#f87171",
                     "warning": "#fbbf24",
                     "progressbar_trough": "#2d2d2d",
-                    "char_sprite": "assets/kaia_default.png",
-                    "studio_logo_image": "assets/studio_logo_white.png"
+                    "char_sprite": "assets/images/kaia_default.png",
+                    "studio_logo_image": "assets/images/studio_logo_white.png"
                 }
             return themes_dict
 
@@ -136,7 +136,7 @@ def main():
             root_window.configure(bg=bg)
             top_navigation_bar.configure(bg=bg)
         
-            char_path = current_theme.get("char_sprite", "assets/kaia_default.png")
+            char_path = current_theme.get("char_sprite", "assets/images/kaia_default.png")
             image_cache["char"] = load_theme_image(char_path)
             if image_cache["char"]:
                 character_label.configure(image=image_cache["char"], bg=bg)
@@ -147,7 +147,7 @@ def main():
             prog_icon_path = current_theme.get("progress_icon", "")
             image_cache["progress"] = load_theme_image(prog_icon_path)
 
-            studio_path = current_theme.get("studio_logo_image", "assets/studio_logo.png")
+            studio_path = current_theme.get("studio_logo_image", "assets/images/studio_logo.png")
             image_cache["studio"] = load_theme_image(studio_path)
             if image_cache["studio"]:
                 studio_logo_label.configure(image=image_cache["studio"], bg=bg)
@@ -202,7 +202,7 @@ def main():
         tk.Canvas.create_round_rect = create_round_rect
 
         def cycle_theme():
-            global current_theme_name, current_theme
+            nonlocal current_theme_name, current_theme
             idx = theme_names.index(current_theme_name)
             next_idx = (idx + 1) % len(theme_names)
             current_theme_name = theme_names[next_idx]
@@ -213,7 +213,7 @@ def main():
             apply_theme_to_ui()
 
         def change_application_language():
-            global current_language_code
+            nonlocal current_language_code
             available_languages = list(languages_dictionary.keys())
             current_index = available_languages.index(current_language_code)
             next_index = (current_index + 1) % len(available_languages)
@@ -262,7 +262,7 @@ def main():
             content_frame.pack(expand=True, fill="both", padx=20, pady=10)
         
             if not is_error and not is_accordion:
-                success_path = current_theme.get("char_success", "assets/kaia_success.png")
+                success_path = current_theme.get("char_success", "assets/images/kaia_success.png")
                 image_cache["success_kaia"] = load_theme_image(success_path)
                 if image_cache["success_kaia"]:
                     tk.Label(content_frame, image=image_cache["success_kaia"], bg=bg).pack(pady=(5, 5))
@@ -279,7 +279,7 @@ def main():
                 canvas.create_window((0, 0), window=inner_f, anchor="nw")
                 canvas.pack(side="left", fill="both", expand=True)
 
-                image_cache["info_kaia"] = load_theme_image("assets/kaia_info.png")
+                image_cache["info_kaia"] = load_theme_image("assets/images/kaia_info.png")
                 if image_cache["info_kaia"]:
                     tk.Label(cols_f, image=image_cache["info_kaia"], bg=bg).pack(side="right", anchor="ne", padx=(10, 0))
 
@@ -324,7 +324,7 @@ def main():
             btn_f.pack(anchor="w")
             for i, (name, url) in enumerate(links):
                 tk.Button(btn_f, text=name, command=lambda u=url: webbrowser.open(u), bg=bg, fg=accent, relief="flat", borderwidth=0, highlightthickness=0, cursor="hand2", font=("Arial", 10, "underline", "bold"), padx=5).grid(row=i//3, column=i%3, sticky="w", padx=2, pady=2)
-            image_cache["support_kaia"] = load_theme_image("assets/kaia_support.png")
+            image_cache["support_kaia"] = load_theme_image("assets/images/kaia_support.png")
             if image_cache["support_kaia"]:
                 tk.Label(columns_frame, image=image_cache["support_kaia"], bg=bg).pack(side="right", anchor="ne", padx=(15, 0))
             tk.Button(popup, text="OK", command=popup.destroy, bg=accent, fg="white", padx=30, pady=8, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold")).pack(pady=(0, 20))

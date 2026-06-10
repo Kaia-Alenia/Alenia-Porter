@@ -10,9 +10,9 @@
     "error": "#ef4444",
     "warning": "#f59e0b",
     "progressbar_trough": "#1e293b",
-    "char_sprite": "assets/kaia_default.png",
+    "char_sprite": "assets/images/kaia_default.png",
     "char_sprite_2": "",
-    "char_success": "assets/kaia_success.png",
-    "progress_icon": "assets/kaia_mini_white.png",
-    "studio_logo_image": "assets/studio_logo_white.png"
+    "char_success": "assets/images/kaia_success.png",
+    "progress_icon": "assets/images/kaia_mini_white.png",
+    "studio_logo_image": "assets/images/studio_logo_white.png"
 }

@@ -39,8 +39,8 @@ def load_locales():
             except Exception:
                 pass
     return {
-        "en": {"title": "Alenia Porter v5.7", "header": "Alenia Studios - Media Optimizer", "btn_lang": "ES"},
-        "es": {"title": "Alenia Porter v5.7", "header": "Alenia Studios - Optimizador de Medios", "btn_lang": "EN"}
+        "en": {"title": "Alenia Porter v5.8", "header": "Alenia Studios - Media Optimizer", "btn_lang": "ES"},
+        "es": {"title": "Alenia Porter v5.8", "header": "Alenia Studios - Optimizador de Medios", "btn_lang": "EN"}
     }
 
 def get_ffmpeg_path():
