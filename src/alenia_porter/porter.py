@@ -2,8 +2,10 @@ __license__ = """
 ALENIA STUDIOS TOOL LICENSE Version 1.0 Copyright (c) 2026 Alenia Studios This tool is designed to be free and accessible for the indie developer community. By using this software, you agree to the following terms: 1. OUTPUT OWNERSHIP & USE: The audio, video, or data files processed by this Software remain 100% your property. No attribution to Alenia Studios is required in your final project for simply using this tool to process your files. 2. ALWAYS FREE & SPREAD THE WORD: This Software is completely free for commercial and non-commercial projects. If you find it useful, we strongly encourage you to recommend it to other developers. 3. CODE ATTRIBUTION: If you modify, fork, or distribute the source code of this Software, you must provide appropriate credit to Alenia Studios and the respective community translators. 4. NO RESALE: Standalone redistribution, sublicensing, or resale of this Software or its source code for profit is strictly prohibited. It must remain free. 5. NO AI TRAINING: The source code, documentation, and logic of this Software may not be used, scraped, or included in datasets for the training of Artificial Intelligence models or machine learning algorithms. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
 """
 import concurrent.futures
+from importlib.resources import files
+from contextlib import contextmanager
 
-import zenith
+from alenia_porter import zenith
 
 import sys
 import os
@@ -11,21 +13,31 @@ import json
 import subprocess
 import traceback
 
+@contextmanager
 def resource_path(relative_path):
-    if hasattr(sys, "_MEIPASS"):
-        return os.path.join(sys._MEIPASS, relative_path)
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(base_path, relative_path)
+    """Get path to a resource file, handling both dev and installed scenarios."""
+    try:
+        parts = relative_path.split(os.sep)
+        resource = files('alenia_porter')
+        for part in parts:
+            resource = resource / part
+
+        from importlib.resources import as_file
+        with as_file(resource) as path:
+            yield str(path)
+    except Exception:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        yield os.path.join(base_path, relative_path)
 
 def load_locales():
-    locales_file_path = resource_path(os.path.join("locales", "locales.json"))
-    if os.path.exists(locales_file_path):
-        try:
-            with open(locales_file_path, "r", encoding="utf-8") as file_handle:
-                data = json.load(file_handle)
-                if data: return data
-        except Exception:
-            pass
+    with resource_path(os.path.join("assets", "locales", "locales.json")) as locales_file_path:
+        if os.path.exists(locales_file_path):
+            try:
+                with open(locales_file_path, "r", encoding="utf-8") as file_handle:
+                    data = json.load(file_handle)
+                    if data: return data
+            except Exception:
+                pass
     return {
         "en": {"title": "Alenia Porter v5.7", "header": "Alenia Studios - Media Optimizer", "btn_lang": "ES"},
         "es": {"title": "Alenia Porter v5.7", "header": "Alenia Studios - Optimizador de Medios", "btn_lang": "EN"}
@@ -33,12 +45,12 @@ def load_locales():
 
 def get_ffmpeg_path():
     if os.name == "nt":
-        exe_path = resource_path(os.path.join("bin", "ffmpeg.exe"))
-        if os.path.exists(exe_path):
-            return exe_path
-        exe_path_upper = resource_path(os.path.join("bin", "ffmpeg.EXE"))
-        if os.path.exists(exe_path_upper):
-            return exe_path_upper
+        with resource_path(os.path.join("bin", "ffmpeg.exe")) as exe_path:
+            if os.path.exists(exe_path):
+                return exe_path
+        with resource_path(os.path.join("bin", "ffmpeg.EXE")) as exe_path_upper:
+            if os.path.exists(exe_path_upper):
+                return exe_path_upper
         return "ffmpeg.exe"
     return "ffmpeg"
 

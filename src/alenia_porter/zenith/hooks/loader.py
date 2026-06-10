@@ -4,7 +4,7 @@ import importlib.abc
 import importlib.machinery
 from typing import Any
 
-from zenith.core.engine import _bypass_lazy
+from alenia_porter.zenith.core.engine import _bypass_lazy
 
 STRICT_EXCLUSIONS: set[str] = {
     "zenith", "sys", "builtins", "importlib", "_thread", "threading",
