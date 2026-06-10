@@ -96,6 +96,7 @@ def create_and_run_trampoline(update_source_dir, system):
         script_path = os.path.join(parent_dir, "update_alenia.bat")
         bat_content = f"""@echo off
 timeout /t 3 /nobreak > NUL
+taskkill /f /im AleniaPorter.exe > NUL 2>&1
 echo Updating Alenia Porter...
 xcopy /s /e /y "{update_source_dir}\\*" "{current_dir}\\"
 rmdir /s /q "{update_source_dir}"
