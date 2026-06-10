@@ -31,9 +31,10 @@ jobs:
 
       - name: Copy FFmpeg binaries to package
         run: |
+          $ErrorActionPreference = 'Stop'
           mkdir src\alenia_porter\bin
-          Copy-Item (Get-Command ffmpeg).Source src\alenia_porter\bin\ffmpeg.exe
-          Copy-Item (Get-Command ffprobe).Source src\alenia_porter\bin\ffprobe.exe
+          Copy-Item (Get-Command ffmpeg).Path src\alenia_porter\bin\ffmpeg.exe
+          Copy-Item (Get-Command ffprobe).Path src\alenia_porter\bin\ffprobe.exe
 
       - name: Build executable with Nuitka
         run: |
