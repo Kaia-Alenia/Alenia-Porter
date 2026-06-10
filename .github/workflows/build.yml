@@ -68,14 +68,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install nuitka ordered-set zstandard imageio
 
-      - name: Set up FFmpeg
-        uses: FedericoCarboni/setup-ffmpeg@v3
-
-      - name: Copy FFmpeg binaries to package
+      - name: Download and extract FFmpeg for macOS
         run: |
           mkdir -p src/alenia_porter/bin
-          cp $(which ffmpeg) src/alenia_porter/bin/
-          cp $(which ffprobe) src/alenia_porter/bin/
+          curl -L -o ffmpeg.zip https://evermeet.cx/ffmpeg/getrelease/zip
+          curl -L -o ffprobe.zip https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
+          unzip ffmpeg.zip -d src/alenia_porter/bin/
+          unzip ffprobe.zip -d src/alenia_porter/bin/
+          rm *.zip
 
       - name: Build executable with Nuitka
         run: |
