@@ -51,7 +51,10 @@ def resource_path(relative_path):
 
     yield resolved_path
 
+_locales_error_shown = False
+
 def load_locales():
+    global _locales_error_shown
     data = None
     with resource_path(os.path.join("assets", "locales", "locales.json")) as locales_file_path:
         if os.path.exists(locales_file_path):
@@ -63,25 +66,35 @@ def load_locales():
     if data:
         return data
 
-    try:
-        import tkinter as tk
-        from tkinter import messagebox
-        root = tk.Tk()
-        root.withdraw()
-        title = "Alenia Porter - Error"
-        message = (
-            "Se ha detectado un error al cargar los archivos de traducción (locales.json).\n"
-            "Esto suele ocurrir por una instalación corrupta o archivos obsoletos de la v5.7 en el directorio.\n\n"
-            "Por favor, borre los archivos locales de este directorio y descargue la versión más reciente desde GitHub o Itch.io.\n\n"
-            "--------------------------------------------------\n\n"
-            "An error was detected while loading translation files (locales.json).\n"
-            "This usually occurs due to a corrupt installation or obsolete files from v5.7 in the directory.\n\n"
-            "Please delete the local files in this directory and download the latest version from GitHub or Itch.io."
-        )
-        messagebox.showerror(title, message)
-        root.destroy()
-    except Exception:
-        sys.stderr.write("Error: Could not load locales.json. Please clean the directory and download the latest version from GitHub/Itch.io.\n")
+    if not _locales_error_shown:
+        _locales_error_shown = True
+        try:
+            import tkinter as tk
+            from tkinter import messagebox
+            root = tk.Tk()
+            root.withdraw()
+            title = "Alenia Porter - Error"
+            message = (
+                "Error de inicializacion de Alenia Porter:\n"
+                "No se encontraron los recursos necesarios (locales.json).\n\n"
+                "Esto ocurre si la instalacion esta corrupta o si quedan archivos de versiones anteriores (v5.7) en esta carpeta.\n\n"
+                "Solucion:\n"
+                "1. Cierre el programa.\n"
+                "2. Borre los archivos de esta carpeta.\n"
+                "3. Descargue e instale una copia limpia de la v5.8 desde GitHub o Itch.io.\n\n"
+                "--------------------------------------------------\n\n"
+                "Initialization Error:\n"
+                "Required resources (locales.json) were not found.\n\n"
+                "This occurs if the installation is corrupt or older v5.7 files remain in this folder.\n\n"
+                "Solution:\n"
+                "1. Close the program.\n"
+                "2. Delete all files in this folder.\n"
+                "3. Download and install a clean copy of v5.8 from GitHub or Itch.io."
+            )
+            messagebox.showerror(title, message)
+            root.destroy()
+        except Exception:
+            sys.stderr.write("Error: Could not load locales.json. Please clean the directory and download the latest version from GitHub/Itch.io.\n")
 
     fallback = {
         "en": {
