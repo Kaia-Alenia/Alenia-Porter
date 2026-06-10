@@ -41,7 +41,7 @@ jobs:
 
       - name: Build executable with Nuitka
         run: |
-          python -m nuitka --standalone --assume-yes-for-downloads --windows-console-mode=disable --enable-plugin=tk-inter --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=src/alenia_porter/bin=alenia_porter/bin --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
+          python -m nuitka --standalone --assume-yes-for-downloads --windows-console-mode=disable --enable-plugin=tk-inter --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-files=src/alenia_porter/bin/ffmpeg.exe=alenia_porter/bin/ffmpeg.exe --include-data-files=src/alenia_porter/bin/ffprobe.exe=alenia_porter/bin/ffprobe.exe --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
 
       - name: Package build
         run: |
@@ -83,7 +83,7 @@ jobs:
 
       - name: Build executable with Nuitka
         run: |
-          python -m nuitka --standalone --macos-disable-console --enable-plugin=tk-inter --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=src/alenia_porter/bin=alenia_porter/bin --macos-app-icon=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter porter_launcher.py
+          python -m nuitka --standalone --macos-disable-console --enable-plugin=tk-inter --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --macos-app-icon=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter porter_launcher.py
 
       - name: Package build
         run: |
@@ -126,7 +126,7 @@ jobs:
 
       - name: Build executable with Nuitka
         run: |
-          python -m nuitka --standalone --enable-plugin=tk-inter --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=src/alenia_porter/bin=alenia_porter/bin --output-filename=AleniaPorter porter_launcher.py
+          python -m nuitka --standalone --enable-plugin=tk-inter --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --output-filename=AleniaPorter porter_launcher.py
 
       - name: Package build
         run: |
