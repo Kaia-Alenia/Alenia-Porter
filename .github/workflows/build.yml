@@ -33,8 +33,11 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           mkdir src\alenia_porter\bin
-          Copy-Item (Get-Command ffmpeg).Path src\alenia_porter\bin\ffmpeg.exe
-          Copy-Item (Get-Command ffprobe).Path src\alenia_porter\bin\ffprobe.exe
+          $ffmpegPath = (Get-Command ffmpeg -CommandType Application).Path
+          $ffprobePath = (Get-Command ffprobe -CommandType Application).Path
+          Copy-Item $ffmpegPath src\alenia_porter\bin\ffmpeg.exe
+          Copy-Item $ffprobePath src\alenia_porter\bin\ffprobe.exe
+          Get-ChildItem src\alenia_porter\bin
 
       - name: Build executable with Nuitka
         run: |
