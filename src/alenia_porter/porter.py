@@ -15,7 +15,7 @@ import traceback
 
 @contextmanager
 def resource_path(relative_path):
-    """Get path to a resource file, handling both dev and installed scenarios."""
+    resolved_path = None
     try:
         parts = relative_path.split(os.sep)
         resource = files('alenia_porter')
@@ -24,10 +24,32 @@ def resource_path(relative_path):
 
         from importlib.resources import as_file
         with as_file(resource) as path:
-            yield str(path)
+            path_str = str(path)
+            if os.path.exists(path_str):
+                resolved_path = path_str
     except Exception:
+        pass
+
+    if not resolved_path:
+        if hasattr(sys, "frozen") or getattr(sys, "readlink", None) is None:
+            exe_dir = os.path.dirname(sys.executable)
+            candidate = os.path.join(exe_dir, "alenia_porter", relative_path)
+            if os.path.exists(candidate):
+                resolved_path = candidate
+            else:
+                candidate_direct = os.path.join(exe_dir, relative_path)
+                if os.path.exists(candidate_direct):
+                    resolved_path = candidate_direct
+
+    if not resolved_path:
         base_path = os.path.dirname(os.path.abspath(__file__))
-        yield os.path.join(base_path, relative_path)
+        candidate = os.path.join(base_path, relative_path)
+        if os.path.exists(candidate):
+            resolved_path = candidate
+        else:
+            resolved_path = candidate
+
+    yield resolved_path
 
 def load_locales():
     with resource_path(os.path.join("assets", "locales", "locales.json")) as locales_file_path:
@@ -38,10 +60,71 @@ def load_locales():
                     if data: return data
             except Exception:
                 pass
-    return {
-        "en": {"title": "Alenia Porter v5.8", "header": "Alenia Studios - Media Optimizer", "btn_lang": "ES"},
-        "es": {"title": "Alenia Porter v5.8", "header": "Alenia Studios - Optimizador de Medios", "btn_lang": "EN"}
+    fallback = {
+        "en": {
+            "title": "Alenia Porter v5.8",
+            "header": "Alenia Studios - Media Optimizer",
+            "select_format": "Export to:",
+            "format_ogg": "OGG",
+            "format_opus": "OPUS",
+            "select_engine": "Target Engine:",
+            "btn_select": "Select Folder to Convert",
+            "info_wait": "Processing files... Please wait.",
+            "info_desc": "Ready.",
+            "msg_done": "Done! {} files processed.",
+            "msg_err": "Error in conversion.",
+            "msg_success_t": "Success",
+            "msg_success_m": "Optimized {} files for {}!\n\nPath: {}\n\nInstructions opened.",
+            "btn_lang": "ES",
+            "btn_patreon": "☕ Support Alenia",
+            "instructions_filename": "ALENIA_INSTRUCTIONS.txt",
+            "instructions_title": "ALENIA PORTER - QUICK GUIDE",
+            "instructions_renpy": "1. Copy files to your /game folder.\n2. CODE EXAMPLE:\n   label start:\n       play audio track_name\n       show movie_name\n       show image_name",
+            "instructions_godot": "1. Setup: Project -> Project Settings -> Globals (Autoload).\n2. Add 'MediaRegistry.gd' as 'Media'.\n3. CODE EXAMPLE:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'track_name')\n       Media.play_video($VideoStreamPlayer, 'video_name')\n       $Sprite.texture = Media.get_image('image_name')",
+            "formats_title": "Supported Formats",
+            "formats_info": "🖼️ IMAGES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm",
+            "update_available_title": "Update Available",
+            "update_available_desc": "Version {} is available. Do you want to update now?",
+            "update_downloading": "Downloading update...",
+            "support_title": "Support Alenia Studios",
+            "support_label": "Support us on:",
+            "formats_images": "🖼️ IMAGES:",
+            "formats_videos": "🎬 VIDEO:",
+            "formats_audio": "🎵 AUDIO:"
+        },
+        "es": {
+            "title": "Alenia Porter v5.8",
+            "header": "Alenia Studios - Optimizador de Medios",
+            "select_format": "Exportar a:",
+            "format_ogg": "OGG",
+            "format_opus": "OPUS",
+            "select_engine": "Motor de Destino:",
+            "btn_select": "Seleccionar Directorio a Convertir",
+            "info_wait": "Procesando archivos... Por favor espera.",
+            "info_desc": "Listo.",
+            "msg_done": "¡Listo! {} archivos procesados.",
+            "msg_err": "Error en la conversión.",
+            "msg_success_t": "¡Éxito!",
+            "msg_success_m": "¡{} archivos optimizados para {}!\n\nRuta: {}\n\nInstrucciones abiertas.",
+            "btn_lang": "FR",
+            "btn_patreon": "☕ Apoyar a Alenia",
+            "instructions_filename": "INSTRUCCIONES_ALENIA.txt",
+            "instructions_title": "ALENIA PORTER - GUÍA RÁPIDA",
+            "instructions_renpy": "1. Copia los archivos a tu carpeta /game.\n2. EJEMPLO DE CÓDIGO:\n   label start:\n       play audio nombre_pista\n       show nombre_video\n       show nombre_imagen",
+            "instructions_godot": "1. Configuración: Proyecto -> Ajustes del Proyecto -> Globales (Autoload).\n2. Añade 'MediaRegistry.gd' con el nombre 'Media'.\n3. EJEMPLO DE CÓDIGO:\n   func _ready():\n       Media.play_track($AudioStreamPlayer, 'nombre_pista')\n       Media.play_video($VideoStreamPlayer, 'nombre_video')\n       $Sprite.texture = Media.get_image('nombre_imagen')",
+            "formats_title": "Formatos Soportados",
+            "formats_info": "🖼️ IMÁGENES:\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n🎬 VIDEO:\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n🎵 AUDIO:\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm",
+            "update_available_title": "Actualización Disponible",
+            "update_available_desc": "La versión {} está disponible. ¿Deseas actualizar ahora?",
+            "update_downloading": "Descargando actualización...",
+            "support_title": "Apoyar a Alenia Studios",
+            "support_label": "Apóyanos en:",
+            "formats_images": "🖼️ IMÁGENES:",
+            "formats_videos": "🎬 VIDEO:",
+            "formats_audio": "🎵 AUDIO:"
+        }
     }
+    return fallback
 
 def get_ffmpeg_path():
     if os.name == "nt":
