@@ -52,14 +52,37 @@ def resource_path(relative_path):
     yield resolved_path
 
 def load_locales():
+    data = None
     with resource_path(os.path.join("assets", "locales", "locales.json")) as locales_file_path:
         if os.path.exists(locales_file_path):
             try:
                 with open(locales_file_path, "r", encoding="utf-8") as file_handle:
                     data = json.load(file_handle)
-                    if data: return data
             except Exception:
                 pass
+    if data:
+        return data
+
+    try:
+        import tkinter as tk
+        from tkinter import messagebox
+        root = tk.Tk()
+        root.withdraw()
+        title = "Alenia Porter - Error"
+        message = (
+            "Se ha detectado un error al cargar los archivos de traducción (locales.json).\n"
+            "Esto suele ocurrir por una instalación corrupta o archivos obsoletos de la v5.7 en el directorio.\n\n"
+            "Por favor, borre los archivos locales de este directorio y descargue la versión más reciente desde GitHub o Itch.io.\n\n"
+            "--------------------------------------------------\n\n"
+            "An error was detected while loading translation files (locales.json).\n"
+            "This usually occurs due to a corrupt installation or obsolete files from v5.7 in the directory.\n\n"
+            "Please delete the local files in this directory and download the latest version from GitHub or Itch.io."
+        )
+        messagebox.showerror(title, message)
+        root.destroy()
+    except Exception:
+        sys.stderr.write("Error: Could not load locales.json. Please clean the directory and download the latest version from GitHub/Itch.io.\n")
+
     fallback = {
         "en": {
             "title": "Alenia Porter v5.8",
