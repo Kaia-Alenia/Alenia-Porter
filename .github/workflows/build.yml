@@ -26,22 +26,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install nuitka ordered-set zstandard
 
-      - name: Download and extract FFmpeg
-        shell: cmd
+      - name: Set up FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+
+      - name: Copy FFmpeg binaries to package
         run: |
-          mkdir bin
-          curl -L -o ffmpeg.zip "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"
-          7z e ffmpeg.zip -obin *.exe -r
-          del ffmpeg.zip
+          mkdir src\alenia_porter\bin
+          Copy-Item (Get-Command ffmpeg).Source src\alenia_porter\bin\ffmpeg.exe
+          Copy-Item (Get-Command ffprobe).Source src\alenia_porter\bin\ffprobe.exe
 
       - name: Build executable with Nuitka
         run: |
-          python -m nuitka --standalone --assume-yes-for-downloads --windows-console-mode=disable --enable-plugin=tk-inter --include-data-files=logo.ico=logo.ico --include-data-dir=locales=locales --include-data-dir=assets=assets --include-data-dir=themes=themes --include-data-files=bin/ffmpeg.exe=bin/ffmpeg.exe --include-data-files=bin/ffprobe.exe=bin/ffprobe.exe --windows-icon-from-ico=logo.ico --output-filename=AleniaPorter.exe main.py
+          python -m nuitka --standalone --assume-yes-for-downloads --windows-console-mode=disable --enable-plugin=tk-inter --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=src/alenia_porter/bin=alenia_porter/bin --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
 
       - name: Package build
         run: |
-          copy LICENSE main.dist\
-          ren main.dist AleniaPorter
+          copy LICENSE porter_launcher.dist\
+          ren porter_launcher.dist AleniaPorter
           powershell Compress-Archive -Path AleniaPorter -DestinationPath AleniaPorter-Windows.zip
 
       - name: Upload build artifact
@@ -67,23 +68,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install nuitka ordered-set zstandard imageio
 
-      - name: Download and extract FFmpeg for macOS
+      - name: Set up FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+
+      - name: Copy FFmpeg binaries to package
         run: |
-          mkdir bin
-          curl -L -o ffmpeg.zip https://evermeet.cx/ffmpeg/getrelease/zip
-          curl -L -o ffprobe.zip https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
-          unzip ffmpeg.zip -d bin/
-          unzip ffprobe.zip -d bin/
-          rm *.zip
+          mkdir -p src/alenia_porter/bin
+          cp $(which ffmpeg) src/alenia_porter/bin/
+          cp $(which ffprobe) src/alenia_porter/bin/
 
       - name: Build executable with Nuitka
         run: |
-          python -m nuitka --standalone --macos-disable-console --enable-plugin=tk-inter --include-data-files=logo.ico=logo.ico --include-data-dir=locales=locales --include-data-dir=assets=assets --include-data-dir=themes=themes --include-data-dir=bin=bin --macos-app-icon=logo.ico --output-filename=AleniaPorter main.py
+          python -m nuitka --standalone --macos-disable-console --enable-plugin=tk-inter --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=src/alenia_porter/bin=alenia_porter/bin --macos-app-icon=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter porter_launcher.py
 
       - name: Package build
         run: |
-          cp LICENSE main.dist/
-          mv main.dist AleniaPorter
+          cp LICENSE porter_launcher.dist/
+          mv porter_launcher.dist AleniaPorter
           zip -r AleniaPorter-macOS.zip AleniaPorter
 
       - name: Upload build artifact
@@ -110,23 +111,23 @@ jobs:
           pip install nuitka ordered-set zstandard
           sudo apt-get update && sudo apt-get install -y python3-tk
 
-      - name: Download and extract FFmpeg for Linux
+      - name: Set up FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+
+      - name: Copy FFmpeg binaries to package
         run: |
-          mkdir bin
-          wget https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz
-          tar -xf ffmpeg-master-latest-linux64-gpl.tar.xz
-          cp ffmpeg-master-latest-linux64-gpl/bin/ffmpeg bin/
-          cp ffmpeg-master-latest-linux64-gpl/bin/ffprobe bin/
-          rm -rf ffmpeg-master-latest-linux64-gpl*
+          mkdir -p src/alenia_porter/bin
+          cp $(which ffmpeg) src/alenia_porter/bin/
+          cp $(which ffprobe) src/alenia_porter/bin/
 
       - name: Build executable with Nuitka
         run: |
-          python -m nuitka --standalone --enable-plugin=tk-inter --include-data-files=logo.ico=logo.ico --include-data-dir=locales=locales --include-data-dir=assets=assets --include-data-dir=themes=themes --include-data-dir=bin=bin --output-filename=AleniaPorter main.py
+          python -m nuitka --standalone --enable-plugin=tk-inter --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=src/alenia_porter/bin=alenia_porter/bin --output-filename=AleniaPorter porter_launcher.py
 
       - name: Package build
         run: |
-          cp LICENSE main.dist/
-          mv main.dist AleniaPorter
+          cp LICENSE porter_launcher.dist/
+          mv porter_launcher.dist AleniaPorter
           tar -czf AleniaPorter-Linux.tar.gz AleniaPorter
 
       - name: Upload build artifact

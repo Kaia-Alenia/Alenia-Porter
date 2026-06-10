@@ -5,6 +5,7 @@ dist/
 ALENIA_ERROR.txt
 .env
 bin/
+src/alenia_porter/bin/
 compilar_alenia.bat
 demo_assets/
 .zenith_cache.json
