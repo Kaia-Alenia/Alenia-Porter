@@ -11,7 +11,7 @@ app = FastAPI(title="Alenia Porter Telemetry API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -32,7 +32,7 @@ class TelemetryPayload(BaseModel):
 def get_db_connection():
     db_url = os.environ.get("DATABASE_URL")
     if not db_url:
-        raise HTTPException(status_code=500, detail="Database URL environment variable missing.")
+        raise HTTPException(status_code=500, detail="Internal server error")
     return psycopg2.connect(db_url)
 
 @app.post("/telemetry/event")
@@ -49,7 +49,7 @@ def record_event(payload: TelemetryPayload):
         connection.close()
         return {"status": "ok", "message": "Event recorded successfully"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get("/telemetry/stats")
 def get_global_stats():
@@ -82,4 +82,4 @@ def get_global_stats():
             "os_distribution": os_distribution
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
