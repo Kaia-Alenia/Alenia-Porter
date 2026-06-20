@@ -23,3 +23,8 @@ packages = ["alenia_porter"]
 
 [tool.setuptools.package-data]
 alenia_porter = ["py.typed", "assets/images/*", "assets/locales/*", "assets/themes/*"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
