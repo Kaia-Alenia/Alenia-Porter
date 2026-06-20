@@ -339,10 +339,9 @@ def convert_media(input_directory, target_audio_format, progress_update_callback
         video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".m2v", ".3gp", ".3g2", ".ts", ".m2ts", ".vob", ".ogv", ".asf", ".divx")
         image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".tga", ".webp")
         
-        total_files_count = 0
-        file_generator = stream_files(input_directory, input_directory, audio_extensions, video_extensions, image_extensions)
-        for _ in file_generator:
-            total_files_count += 1
+        # BOLT OPTIMIZATION: Cache file generator to list to prevent second redundant disk read operation.
+        file_list = list(stream_files(input_directory, input_directory, audio_extensions, video_extensions, image_extensions))
+        total_files_count = len(file_list)
 
         if total_files_count == 0:
             completion_callback(0, input_directory, 0, 0)
@@ -367,7 +366,6 @@ def convert_media(input_directory, target_audio_format, progress_update_callback
         total_final_size = 0
         processed_files_count = 0
 
-        file_generator = stream_files(input_directory, input_directory, audio_extensions, video_extensions, image_extensions)
         max_workers = max(1, os.cpu_count() - 1)
         with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
             futures = {
@@ -380,7 +378,7 @@ def convert_media(input_directory, target_audio_format, progress_update_callback
                     image_output_directory,
                     ffmpeg_executable_path,
                     subprocess_creation_flags
-                ): file_info for file_info in file_generator
+                ): file_info for file_info in file_list
             }
 
             for future in concurrent.futures.as_completed(futures):

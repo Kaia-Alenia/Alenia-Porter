@@ -1,0 +1,3 @@
+## 2023-10-25 - Redundant Generator Traversal
+**Learning:** In standard library components or specific scripts acting on file systems, generating file lists via I/O bound logic like `os.scandir` combined with generators can cause double-iteration bottlenecks if the generator must be traversed twice (e.g., once to determine total count, again to assign workloads).
+**Action:** Immediately look for list conversion (`list(generator)`) when counting `len()` is needed prior to consuming the data inside concurrent executors or loops, particularly for I/O operations, to prevent redundant disk accesses.
