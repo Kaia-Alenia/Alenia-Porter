@@ -1,4 +1,4 @@
-from alenia_porter import zenith
+import zenith
 zenith.ignite(file=__file__, show_banner=False)
 
 import sys

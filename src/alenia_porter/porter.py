@@ -6,8 +6,6 @@ import re
 from importlib.resources import files
 from contextlib import contextmanager
 
-from alenia_porter import zenith
-
 import sys
 import os
 import json
