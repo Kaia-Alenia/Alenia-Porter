@@ -4,12 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alenia Porter - Optimizador de Medios</title>
+    <!-- Add Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --bg-color: #0b0f19;
-            --card-bg: #111827;
+            --card-bg: rgba(17, 24, 39, 0.7);
             --accent: #8b5cf6;
             --accent-hover: #a78bfa;
+            --accent-gradient: linear-gradient(135deg, #8b5cf6, #ec4899);
             --text-color: #f3f4f6;
             --text-dim: #9ca3af;
             --success: #10b981;
@@ -23,11 +29,31 @@
 
         body {
             background-color: var(--bg-color);
+            /* Radial gradient background for depth */
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.15), transparent 25%);
+            background-attachment: fixed;
             color: var(--text-color);
             font-family: 'Outfit', 'Inter', sans-serif;
             line-height: 1.6;
             overflow-x: hidden;
         }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
 
         header {
             max-width: 1200px;
@@ -45,6 +71,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
         }
 
         .logo span {
@@ -63,9 +90,10 @@
             font-weight: 900;
             margin-bottom: 1.5rem;
             line-height: 1.2;
-            background: linear-gradient(to right, #ffffff, var(--accent));
+            background: linear-gradient(to right, #ffffff, var(--accent), #ec4899);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
         }
 
         .tagline {
@@ -73,10 +101,11 @@
             color: var(--text-dim);
             max-width: 700px;
             margin: 0 auto 2.5rem auto;
+            font-family: 'Inter', sans-serif;
         }
 
         .cta-btn {
-            background-color: var(--accent);
+            background: var(--accent-gradient);
             color: white;
             padding: 1rem 2.5rem;
             border-radius: 50px;
@@ -86,12 +115,12 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
             display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .cta-btn:hover {
-            background-color: var(--accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(139, 92, 246, 0.6);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6);
         }
 
         .dashboard-section {
@@ -115,13 +144,15 @@
 
         .stat-card {
             background-color: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 16px;
             padding: 2rem;
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .stat-card::before {
@@ -131,15 +162,22 @@
             left: 0;
             width: 100%;
             height: 4px;
-            background: var(--accent);
+            background: var(--accent-gradient);
+            transition: height 0.3s ease;
         }
 
         .stat-card.active-users-card::before {
-            background: var(--success);
+            background: linear-gradient(to right, var(--success), #34d399);
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.2);
+        }
+
+        .stat-card:hover::before {
+            height: 6px;
         }
 
         .stat-value {
@@ -147,25 +185,41 @@
             font-weight: 800;
             color: #ffffff;
             margin: 1rem 0;
+            font-family: 'Outfit', sans-serif;
         }
 
         .stat-label {
             color: var(--text-dim);
             text-transform: uppercase;
             font-size: 0.85rem;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            font-weight: 600;
         }
 
         .os-list {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            text-align: left;
-            padding-left: 1rem;
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
         }
 
         .os-item {
-            margin-bottom: 0.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-color);
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .os-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .features {
@@ -179,18 +233,39 @@
 
         .feature-card {
             background-color: var(--card-bg);
+            backdrop-filter: blur(10px);
             padding: 2.5rem;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .feature-card h3 {
             font-size: 1.5rem;
             margin-bottom: 1rem;
+            font-weight: 800;
         }
 
         .feature-card p {
             color: var(--text-dim);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
         }
 
         footer {
@@ -199,28 +274,36 @@
             color: var(--text-dim);
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             font-size: 0.9rem;
+            margin-top: 2rem;
+            background: rgba(0,0,0,0.2);
         }
 
         footer a {
             color: var(--accent);
             text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        footer a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <header>
+    <header class="animate-fade-in">
         <div class="logo">
             Alenia<span>Porter</span>
         </div>
     </header>
 
-    <section class="hero">
+    <section class="hero animate-fade-in delay-1">
         <h1>Optimización Multimedia Universal</h1>
         <p class="tagline">Comprime y adapta música, vídeos e imágenes con la potencia de procesamiento paralelo multihilo optimizada para creadores indie.</p>
         <a href="https://github.com/Kaia-Alenia/Alenia-Porter" class="cta-btn">Ver en GitHub</a>
     </section>
 
-    <section class="dashboard-section">
+    <section class="dashboard-section animate-fade-in delay-2">
         <h2 class="dashboard-title">Estadísticas de la Comunidad en Tiempo Real</h2>
         <div class="stats-grid">
             <div class="stat-card">
@@ -243,22 +326,25 @@
         </div>
     </section>
 
-    <section class="features">
+    <section class="features animate-fade-in delay-3">
         <div class="feature-card">
+            <div class="feature-icon">⚡</div>
             <h3>Multihilo Real</h3>
             <p>Migración a ProcessPoolExecutor sorteando el GIL de Python para una velocidad de procesamiento sin precedentes en equipos multi-núcleo.</p>
         </div>
         <div class="feature-card">
+            <div class="feature-icon">📦</div>
             <h3>Cero Dependencias</h3>
             <p>FFmpeg se integra de forma transparente en el paquete final para que funcione nada más descargar, sin configuraciones complejas.</p>
         </div>
         <div class="feature-card">
+            <div class="feature-icon">🎯</div>
             <h3>Optimización Avanzada</h3>
             <p>Optimización inteligente basada en perfiles y presets para garantizar la máxima calidad con el menor tamaño de archivo posible.</p>
         </div>
     </section>
 
-    <footer>
+    <footer class="animate-fade-in delay-3">
         <p>© 2026 Alenia Studios. Licenciado bajo GNU GPL v3.</p>
         <p>Contacto oficial: <a href="mailto:contact.aleniastudios@gmail.com">contact.aleniastudios@gmail.com</a></p>
     </footer>
