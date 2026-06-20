@@ -1,7 +1,7 @@
 import os
 import pytest
 from unittest.mock import patch, MagicMock, mock_open
-from alenia_porter.porter import get_ffmpeg_path, log_error_to_file
+from alenia_porter.porter import get_ffmpeg_path, log_error_to_file, load_dotenv
 
 def test_get_ffmpeg_path_posix(mocker):
     mocker.patch("alenia_porter.porter.os.name", "posix")
@@ -60,3 +60,44 @@ def test_log_error_to_file_exception():
         mocked_file.side_effect = IOError("Mocked IO Error")
         log_error_to_file("This error cannot be written")
         mocked_file.assert_called_once_with("ALENIA_ERROR.txt", "a", encoding="utf-8")
+
+def test_load_dotenv_no_file():
+    with patch("os.path.exists", return_value=False):
+        with patch.dict(os.environ, {}, clear=True):
+            load_dotenv()
+            assert len(os.environ) == 0
+
+def test_load_dotenv_with_file():
+    mock_env_content = """
+KEY1=value1
+KEY2 = value2
+   KEY3= value3
+"""
+    with patch("os.path.exists", side_effect=lambda p: p.endswith(".env")):
+        with patch("builtins.open", mock_open(read_data=mock_env_content)):
+            with patch.dict(os.environ, {}, clear=True):
+                load_dotenv()
+                assert os.environ.get("KEY1") == "value1"
+                assert os.environ.get("KEY2") == "value2"
+                assert os.environ.get("KEY3") == "value3"
+                assert len(os.environ) == 3
+
+def test_load_dotenv_with_postgresql():
+    mock_env_content = """
+postgresql://user:pass@localhost:5432/dbname
+KEY1=val1
+"""
+    with patch("os.path.exists", side_effect=lambda p: p.endswith(".env")):
+        with patch("builtins.open", mock_open(read_data=mock_env_content)):
+            with patch.dict(os.environ, {}, clear=True):
+                load_dotenv()
+                assert os.environ.get("DATABASE_URL") == "postgresql://user:pass@localhost:5432/dbname"
+                assert os.environ.get("KEY1") == "val1"
+                assert len(os.environ) == 2
+
+def test_load_dotenv_open_exception():
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", side_effect=Exception("Read error")):
+            with patch.dict(os.environ, {}, clear=True):
+                load_dotenv()
+                assert len(os.environ) == 0
