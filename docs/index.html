@@ -318,6 +318,11 @@
                 <div class="stat-label">Imágenes Optimizadas</div>
                 <div class="stat-value" id="image-count">-</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-label">Tiempo Medio (por archivo)</div>
+                <div class="stat-value" id="avg-time">-</div>
+                <div id="avg-time-details" style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center;"></div>
+            </div>
             <div class="stat-card active-users-card">
                 <div class="stat-label">Usuarios Activos</div>
                 <div class="stat-value" id="active-users">-</div>
@@ -359,6 +364,25 @@
                     document.getElementById("video-count").innerText = data.stats.video.toLocaleString();
                     document.getElementById("image-count").innerText = data.stats.image.toLocaleString();
                     document.getElementById("active-users").innerText = data.active_users.toLocaleString();
+                    
+                    if (data.avg_time_per_file !== undefined) {
+                        document.getElementById("avg-time").innerText = `${data.avg_time_per_file}s`;
+                    }
+                    
+                    const avgDetails = document.getElementById("avg-time-details");
+                    avgDetails.innerHTML = "";
+                    if (data.avg_time_by_type) {
+                        const types = { audio: "🎵", video: "🎥", image: "🖼️" };
+                        for (const [type, avg] of Object.entries(data.avg_time_by_type)) {
+                            const icon = types[type] || "📄";
+                            const item = document.createElement("span");
+                            item.style.background = "rgba(255, 255, 255, 0.05)";
+                            item.style.padding = "0.2rem 0.5rem";
+                            item.style.borderRadius = "12px";
+                            item.innerText = `${icon} ${avg}s`;
+                            avgDetails.appendChild(item);
+                        }
+                    }
                     
                     const osContainer = document.getElementById("os-distribution-container");
                     osContainer.innerHTML = "";

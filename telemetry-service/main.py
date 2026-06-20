@@ -68,6 +68,18 @@ def get_global_stats():
         os_rows = cursor.fetchall()
         os_distribution = {row[0]: int(row[1]) for row in os_rows}
         
+        cursor.execute("SELECT file_type, SUM(duration_seconds), SUM(file_count) FROM telemetry_events GROUP BY file_type;")
+        avg_rows = cursor.fetchall()
+        avg_time_by_type = {}
+        for row in avg_rows:
+            f_type, total_time, total_count = row
+            if total_count and total_count > 0:
+                avg_time_by_type[f_type] = round(float(total_time) / float(total_count), 3)
+                
+        cursor.execute("SELECT SUM(duration_seconds), SUM(file_count) FROM telemetry_events;")
+        total_time_sum, total_count_sum = cursor.fetchone()
+        avg_time_per_file = round(float(total_time_sum) / float(total_count_sum), 3) if total_count_sum else 0.0
+        
         cursor.close()
         connection.close()
         
@@ -79,7 +91,9 @@ def get_global_stats():
                 "image": stats.get("image", 0)
             },
             "active_users": int(active_users),
-            "os_distribution": os_distribution
+            "os_distribution": os_distribution,
+            "avg_time_per_file": avg_time_per_file,
+            "avg_time_by_type": avg_time_by_type
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal server error")
