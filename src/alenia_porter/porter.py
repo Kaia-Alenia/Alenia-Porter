@@ -357,9 +357,9 @@ def convert_media(input_directory, target_audio_format, progress_update_callback
         if os.name == "nt":
             subprocess_creation_flags = 0x08000000
 
-        godot_audio_defines = []
-        godot_video_defines = []
-        godot_image_defines = []
+        audio_count = 0
+        video_count = 0
+        image_count = 0
 
         total_original_size = 0
         total_final_size = 0
@@ -387,11 +387,11 @@ def convert_media(input_directory, target_audio_format, progress_update_callback
                     total_original_size += orig_size
                     total_final_size += final_size
                     if media_type == "video":
-                        godot_video_defines.append(f"    \"{cleaned_base_name}\": preload(\"res://video/{output_file_name}\"),")
+                        video_count += 1
                     elif media_type == "image":
-                        godot_image_defines.append(f"    \"{cleaned_base_name}\": preload(\"res://images/{output_file_name}\"),")
+                        image_count += 1
                     else:
-                        godot_audio_defines.append(f"    \"{cleaned_base_name}\": preload(\"res://audio/{output_file_name}\"),")
+                        audio_count += 1
                 else:
                     if error_msg:
                         log_error_to_file(error_msg)
@@ -399,45 +399,12 @@ def convert_media(input_directory, target_audio_format, progress_update_callback
                 processed_files_count += 1
                 progress_update_callback(processed_files_count, total_files_count)
 
-        godot_registry_lines = []
-        godot_registry_lines.append("extends Node\n")
-        godot_registry_lines.append("const TRACKS: Dictionary = {")
-        godot_registry_lines.extend(godot_audio_defines)
-        godot_registry_lines.append("}\n")
-        godot_registry_lines.append("const VIDEOS: Dictionary = {")
-        godot_registry_lines.extend(godot_video_defines)
-        godot_registry_lines.append("}\n")
-        godot_registry_lines.append("const IMAGES: Dictionary = {")
-        godot_registry_lines.extend(godot_image_defines)
-        godot_registry_lines.append("}\n")
-        godot_registry_lines.append("func play_track(player: AudioStreamPlayer, track_name: String) -> void:")
-        godot_registry_lines.append("    if TRACKS.has(track_name):")
-        godot_registry_lines.append("        player.stream = TRACKS[track_name]")
-        godot_registry_lines.append("        player.play()")
-        godot_registry_lines.append("    else:")
-        godot_registry_lines.append("        push_error('Alenia Error: Track ' + track_name + ' not found')\n")
-        godot_registry_lines.append("func play_video(player: VideoStreamPlayer, video_name: String) -> void:")
-        godot_registry_lines.append("    if VIDEOS.has(video_name):")
-        godot_registry_lines.append("        player.stream = VIDEOS[video_name]")
-        godot_registry_lines.append("        player.play()")
-        godot_registry_lines.append("    else:")
-        godot_registry_lines.append("        push_error('Alenia Error: Video ' + video_name + ' not found')\n")
-        godot_registry_lines.append("func get_image(image_name: String) -> Texture2D:")
-        godot_registry_lines.append("    if IMAGES.has(image_name):")
-        godot_registry_lines.append("        return IMAGES[image_name]")
-        godot_registry_lines.append("    else:")
-        godot_registry_lines.append("        push_error('Alenia Error: Image ' + image_name + ' not found')")
-        godot_registry_lines.append("        return null")
-        
-        with open(os.path.join(output_directory_path, "MediaRegistry.gd"), "w", encoding="utf-8") as file_handle:
-            file_handle.write("\n".join(godot_registry_lines))
-
-        if len(godot_audio_defines) > 0:
-            update_telemetry_stats("audio", len(godot_audio_defines), headless)
-        if len(godot_video_defines) > 0:
-            update_telemetry_stats("video", len(godot_video_defines), headless)
-        if len(godot_image_defines) > 0:
-            update_telemetry_stats("image", len(godot_image_defines), headless)
+        if audio_count > 0:
+            update_telemetry_stats("audio", audio_count, headless)
+        if video_count > 0:
+            update_telemetry_stats("video", video_count, headless)
+        if image_count > 0:
+            update_telemetry_stats("image", image_count, headless)
 
         completion_callback(processed_files_count, output_directory_path, total_original_size, total_final_size)
 
