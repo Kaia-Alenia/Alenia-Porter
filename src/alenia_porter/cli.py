@@ -15,6 +15,52 @@ from alenia_porter import updater
 from alenia_porter import porter
 
 
+class ToolTip(object):
+    def __init__(self, widget, text_func):
+        self.widget = widget
+        self.text_func = text_func
+        self.tipwindow = None
+        self.id = None
+        self.x = self.y = 0
+        self.widget.bind("<Enter>", self.enter)
+        self.widget.bind("<Leave>", self.leave)
+
+    def enter(self, event=None):
+        self.schedule()
+
+    def leave(self, event=None):
+        self.unschedule()
+        self.hidetip()
+
+    def schedule(self):
+        self.unschedule()
+        self.id = self.widget.after(500, self.showtip)
+
+    def unschedule(self):
+        id = self.id
+        self.id = None
+        if id:
+            self.widget.after_cancel(id)
+
+    def showtip(self, event=None):
+        import tkinter as tk
+        x = self.widget.winfo_rootx() + 25
+        y = self.widget.winfo_rooty() + 20
+        self.tipwindow = tw = tk.Toplevel(self.widget)
+        tw.wm_overrideredirect(1)
+        tw.wm_geometry("+%d+%d" % (x, y))
+        label = tk.Label(tw, text=self.text_func() if callable(self.text_func) else self.text_func, justify=tk.LEFT,
+                         background="#2d2d2d", foreground="#ffffff", relief=tk.SOLID, borderwidth=1,
+                         font=("Arial", "9", "normal"))
+        label.pack(ipadx=4, ipady=2)
+
+    def hidetip(self):
+        tw = self.tipwindow
+        self.tipwindow = None
+        if tw:
+            tw.destroy()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Alenia Porter - Media Optimizer")
     parser.add_argument("--headless", action="store_true", help="Run in headless mode (no GUI)")
@@ -397,8 +443,10 @@ def main():
         patreon_link_button.pack(side="left")
         hamburger_button = tk.Button(top_navigation_bar, text="≡", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=lambda: show_custom_popup(initial_translation["formats_title"], initial_translation["formats_info"], is_accordion=True), font=("Arial", 14, "bold"))
         hamburger_button.pack(side="right")
+        ToolTip(hamburger_button, lambda: languages_dictionary[current_language_code]["formats_title"])
         theme_toggle_button = tk.Button(top_navigation_bar, text="🎨", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=cycle_theme, font=("Segoe UI Emoji", 12))
         theme_toggle_button.pack(side="right", padx=(0, 10))
+        ToolTip(theme_toggle_button, "Theme")
         language_toggle_button = tk.Button(top_navigation_bar, text=initial_translation["btn_lang"], bg=bg_main, fg=fg_dim, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=change_application_language, font=("Arial", 9, "bold"))
         language_toggle_button.pack(side="right", padx=(0, 10))
         header_label = tk.Label(root_window, text=initial_translation["header"], font=("Arial", 14, "bold"), bg=bg_main, fg=fg_main)
