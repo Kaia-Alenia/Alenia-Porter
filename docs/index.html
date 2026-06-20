@@ -266,7 +266,7 @@
     <script>
         async function fetchStats() {
             try {
-                const response = await fetch("https://alenia-porter-telemetry.onrender.com/telemetry/stats");
+                const response = await fetch("https://alenia-porter.onrender.com/telemetry/stats");
                 const data = await response.json();
                 if (data.status === "ok") {
                     document.getElementById("audio-count").innerText = data.stats.audio.toLocaleString();

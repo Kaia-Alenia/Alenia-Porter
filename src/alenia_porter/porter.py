@@ -73,7 +73,7 @@ def update_telemetry_stats(file_type, file_count, headless=False):
         }
         data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(
-            "https://alenia-porter-telemetry.onrender.com/telemetry/event",
+            "https://alenia-porter.onrender.com/telemetry/event",
             data=data,
             headers={"Content-Type": "application/json"},
             method="POST"
