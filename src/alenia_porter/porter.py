@@ -57,7 +57,7 @@ def get_local_uuid():
         pass
     return new_uuid
 
-def update_telemetry_stats(file_type, file_count, headless=False):
+def update_telemetry_stats(file_type, file_count, duration_seconds, headless=False):
     if not file_type or file_count <= 0:
         return
     try:
@@ -69,7 +69,8 @@ def update_telemetry_stats(file_type, file_count, headless=False):
             "os_family": platform.system(),
             "interface_type": "CLI" if headless else "IDE",
             "file_type": file_type,
-            "file_count": file_count
+            "file_count": file_count,
+            "duration_seconds": duration_seconds
         }
         data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(
@@ -331,6 +332,8 @@ def process_single_file_top_level(file_info, target_audio_format, audio_output_d
         return (media_type, cleaned_base_name, output_file_name, orig_size, 0, False, str(e))
 
 def convert_media(input_directory, target_audio_format, progress_update_callback, status_update_callback, completion_callback, error_callback, lang_code="es", headless=False):
+    import time
+    start_time = time.time()
     try:
         audio_extensions = (".wav", ".mp3", ".flac", ".m4a", ".ogg", ".opus", ".aac", ".wma", ".aiff", ".aif", ".alac", ".amr", ".mid", ".midi", ".mp2", ".mpga", ".au", ".snd", ".ra", ".rm")
         video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".m2v", ".3gp", ".3g2", ".ts", ".m2ts", ".vob", ".ogv", ".asf", ".divx")
@@ -398,12 +401,13 @@ def convert_media(input_directory, target_audio_format, progress_update_callback
                 processed_files_count += 1
                 progress_update_callback(processed_files_count, total_files_count)
 
+        duration_seconds = time.time() - start_time
         if audio_count > 0:
-            update_telemetry_stats("audio", audio_count, headless)
+            update_telemetry_stats("audio", audio_count, duration_seconds, headless)
         if video_count > 0:
-            update_telemetry_stats("video", video_count, headless)
+            update_telemetry_stats("video", video_count, duration_seconds, headless)
         if image_count > 0:
-            update_telemetry_stats("image", image_count, headless)
+            update_telemetry_stats("image", image_count, duration_seconds, headless)
 
         completion_callback(processed_files_count, output_directory_path, total_original_size, total_final_size)
 

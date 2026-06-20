@@ -27,6 +27,7 @@ class TelemetryPayload(BaseModel):
     interface_type: str
     file_type: str
     file_count: int
+    duration_seconds: float
 
 def get_db_connection():
     db_url = os.environ.get("DATABASE_URL")
@@ -40,8 +41,8 @@ def record_event(payload: TelemetryPayload):
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO telemetry_events (uuid, os_family, interface_type, file_type, file_count) VALUES (%s, %s, %s, %s, %s);",
-            (payload.uuid, payload.os_family, payload.interface_type, payload.file_type, payload.file_count)
+            "INSERT INTO telemetry_events (uuid, os_family, interface_type, file_type, file_count, duration_seconds) VALUES (%s, %s, %s, %s, %s, %s);",
+            (payload.uuid, payload.os_family, payload.interface_type, payload.file_type, payload.file_count, payload.duration_seconds)
         )
         connection.commit()
         cursor.close()
