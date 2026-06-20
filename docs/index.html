@@ -109,7 +109,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 2rem;
         }
 
@@ -134,6 +134,10 @@
             background: var(--accent);
         }
 
+        .stat-card.active-users-card::before {
+            background: var(--success);
+        }
+
         .stat-card:hover {
             transform: translateY(-5px);
         }
@@ -150,6 +154,18 @@
             text-transform: uppercase;
             font-size: 0.85rem;
             letter-spacing: 1px;
+        }
+
+        .os-list {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            text-align: left;
+            padding-left: 1rem;
+        }
+
+        .os-item {
+            margin-bottom: 0.25rem;
         }
 
         .features {
@@ -219,6 +235,11 @@
                 <div class="stat-label">Imágenes Optimizadas</div>
                 <div class="stat-value" id="image-count">-</div>
             </div>
+            <div class="stat-card active-users-card">
+                <div class="stat-label">Usuarios Activos</div>
+                <div class="stat-value" id="active-users">-</div>
+                <div id="os-distribution-container"></div>
+            </div>
         </div>
     </section>
 
@@ -232,8 +253,8 @@
             <p>FFmpeg se integra de forma transparente en el paquete final para que funcione nada más descargar, sin configuraciones complejas.</p>
         </div>
         <div class="feature-card">
-            <h3>Soporte Godot</h3>
-            <p>Genera MediaRegistry.gd automáticamente listando todos tus recursos optimizados listos para cargar en tu proyecto.</p>
+            <h3>Optimización Avanzada</h3>
+            <p>Optimización inteligente basada en perfiles y presets para garantizar la máxima calidad con el menor tamaño de archivo posible.</p>
         </div>
     </section>
 
@@ -251,6 +272,21 @@
                     document.getElementById("audio-count").innerText = data.stats.audio.toLocaleString();
                     document.getElementById("video-count").innerText = data.stats.video.toLocaleString();
                     document.getElementById("image-count").innerText = data.stats.image.toLocaleString();
+                    document.getElementById("active-users").innerText = data.active_users.toLocaleString();
+                    
+                    const osContainer = document.getElementById("os-distribution-container");
+                    osContainer.innerHTML = "";
+                    if (data.os_distribution) {
+                        const osList = document.createElement("div");
+                        osList.className = "os-list";
+                        for (const [os, count] of Object.entries(data.os_distribution)) {
+                            const osItem = document.createElement("div");
+                            osItem.className = "os-item";
+                            osItem.innerText = `💻 ${os}: ${count}`;
+                            osList.appendChild(osItem);
+                        }
+                        osContainer.appendChild(osList);
+                    }
                 }
             } catch (e) {
                 console.error("Error cargando estadísticas", e);
@@ -260,4 +296,3 @@
     </script>
 </body>
 </html>
-mod

@@ -55,19 +55,30 @@ def get_global_stats():
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
+        
         cursor.execute("SELECT file_type, SUM(file_count) FROM telemetry_events GROUP BY file_type;")
         rows = cursor.fetchall()
+        stats = {row[0]: int(row[1]) for row in rows}
+        
+        cursor.execute("SELECT COUNT(DISTINCT uuid) FROM telemetry_events;")
+        active_users = cursor.fetchone()[0]
+        
+        cursor.execute("SELECT os_family, COUNT(*) FROM (SELECT DISTINCT ON (uuid) uuid, os_family FROM telemetry_events ORDER BY uuid, timestamp DESC) AS unique_os GROUP BY os_family;")
+        os_rows = cursor.fetchall()
+        os_distribution = {row[0]: int(row[1]) for row in os_rows}
+        
         cursor.close()
         connection.close()
         
-        stats = {row[0]: int(row[1]) for row in rows}
         return {
             "status": "ok",
             "stats": {
                 "audio": stats.get("audio", 0),
                 "video": stats.get("video", 0),
                 "image": stats.get("image", 0)
-            }
+            },
+            "active_users": int(active_users),
+            "os_distribution": os_distribution
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
