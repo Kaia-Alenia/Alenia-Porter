@@ -16,6 +16,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+@app.head("/")
+def read_root():
+    return {"status": "ok"}
+
 class TelemetryPayload(BaseModel):
     uuid: str
     os_family: str
