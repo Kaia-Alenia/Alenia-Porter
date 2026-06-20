@@ -1,4 +1,0 @@
-## 2023-10-25 - Information Leakage and CORS Misconfiguration in Telemetry Service
-**Vulnerability:** The FastAPI application in `telemetry-service/main.py` returned generic Exception string details (`str(e)`) for HTTP 500 errors to the client, leading to potential leakages of database URL config errors or raw SQL database exceptions. Additionally, `CORSMiddleware` was misconfigured to allow all origins (`allow_origins=["*"]`) alongside `allow_credentials=True`.
-**Learning:** Returning `str(e)` on generic global exception catches is a widespread anti-pattern that exposes internal infrastructure details to end users and attackers. Allowing credentials on wildcard CORS origins is insecure and blocked by standard web clients.
-**Prevention:** Always return abstract error descriptions (e.g. "Internal server error") in HTTP responses, and restrict CORS origin to specific domains or at least disable `allow_credentials` when using wildcards.
