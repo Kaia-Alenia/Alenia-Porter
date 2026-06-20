@@ -326,7 +326,18 @@
             <div class="stat-card active-users-card">
                 <div class="stat-label">Usuarios Activos</div>
                 <div class="stat-value" id="active-users">-</div>
-                <div id="os-distribution-container"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Usuarios Windows</div>
+                <div class="stat-value" id="users-windows">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Usuarios Linux</div>
+                <div class="stat-value" id="users-linux">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Usuarios macOS</div>
+                <div class="stat-value" id="users-macos">-</div>
             </div>
         </div>
     </section>
@@ -384,19 +395,24 @@
                         }
                     }
                     
-                    const osContainer = document.getElementById("os-distribution-container");
-                    osContainer.innerHTML = "";
+                    let winCount = 0;
+                    let linCount = 0;
+                    let macCount = 0;
                     if (data.os_distribution) {
-                        const osList = document.createElement("div");
-                        osList.className = "os-list";
                         for (const [os, count] of Object.entries(data.os_distribution)) {
-                            const osItem = document.createElement("div");
-                            osItem.className = "os-item";
-                            osItem.innerText = `💻 ${os}: ${count}`;
-                            osList.appendChild(osItem);
+                            const osLower = os.toLowerCase();
+                            if (osLower.includes("win")) {
+                                winCount = count;
+                            } else if (osLower.includes("lin")) {
+                                linCount = count;
+                            } else if (osLower.includes("mac") || osLower.includes("dar")) {
+                                macCount = count;
+                            }
                         }
-                        osContainer.appendChild(osList);
                     }
+                    document.getElementById("users-windows").innerText = winCount.toLocaleString();
+                    document.getElementById("users-linux").innerText = linCount.toLocaleString();
+                    document.getElementById("users-macos").innerText = macCount.toLocaleString();
                 }
             } catch (e) {
                 console.error("Error cargando estadísticas", e);
