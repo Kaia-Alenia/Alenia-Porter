@@ -11,6 +11,7 @@ import os
 import json
 import traceback
 import subprocess
+import encodings.idna
 
 def load_dotenv():
     base_dir = os.path.dirname(os.path.abspath(__file__))
