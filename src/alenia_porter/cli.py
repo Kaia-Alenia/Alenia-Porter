@@ -282,7 +282,7 @@ def main():
             f_info += active_translation.get("formats_audio", "AUDIO:") + "\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
         
             hamburger_button.config(command=lambda: show_custom_popup(active_translation["formats_title"], f_info, is_accordion=True))
-            adjust_opus_button_state()
+            refresh_format_labels()
 
         def show_custom_popup(title, message, is_error=False, is_accordion=False):
             bg = current_theme.get("bg_main", "#1e1e1e")
@@ -416,10 +416,8 @@ def main():
             draw_progress(0)
             threading.Thread(target=porter.convert_media, args=(selected_directory, format_variable.get(), on_progressbar_increment, None, on_conversion_success, on_conversion_failure, current_language_code, False), daemon=True).start()
 
-        def adjust_opus_button_state(*args):
+        def refresh_format_labels(*args):
             active_translation = languages_dictionary[current_language_code]
-            format_variable.set("ogg")
-            opus_radiobutton.config(state=tk.DISABLED)
             ogg_radiobutton.config(text=f"{active_translation['format_ogg']} / OGV / WebP")
             opus_radiobutton.config(text=f"{active_translation['format_opus']} / OGV / WebP")
 
