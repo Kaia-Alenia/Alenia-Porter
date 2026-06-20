@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alenia Porter - Optimizador de Medios</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --accent: #8b5cf6;
+            --accent-hover: #a78bfa;
+            --text-color: #f3f4f6;
+            --text-dim: #9ca3af;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Outfit', 'Inter', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .hero {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            background: linear-gradient(to right, #ffffff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 2.5rem auto;
+        }
+
+        .cta-btn {
+            background-color: var(--accent);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+            display: inline-block;
+        }
+
+        .cta-btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(139, 92, 246, 0.6);
+        }
+
+        .dashboard-section {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 2rem;
+        }
+
+        .dashboard-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 2.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin: 1rem 0;
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .features {
+            max-width: 1200px;
+            margin: 6rem auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--text-dim);
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-dim);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            Alenia<span>Porter</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Optimización Multimedia Universal</h1>
+        <p class="tagline">Comprime y adapta música, vídeos e imágenes con la potencia de procesamiento paralelo multihilo optimizada para creadores indie.</p>
+        <a href="https://github.com/Kaia-Alenia/Alenia-Porter" class="cta-btn">Ver en GitHub</a>
+    </section>
+
+    <section class="dashboard-section">
+        <h2 class="dashboard-title">Estadísticas de la Comunidad en Tiempo Real</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Archivos de Audio</div>
+                <div class="stat-value" id="audio-count">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Archivos de Video</div>
+                <div class="stat-value" id="video-count">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Imágenes Optimizadas</div>
+                <div class="stat-value" id="image-count">-</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <h3>Multihilo Real</h3>
+            <p>Migración a ProcessPoolExecutor sorteando el GIL de Python para una velocidad de procesamiento sin precedentes en equipos multi-núcleo.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Cero Dependencias</h3>
+            <p>FFmpeg se integra de forma transparente en el paquete final para que funcione nada más descargar, sin configuraciones complejas.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Soporte Godot</h3>
+            <p>Genera MediaRegistry.gd automáticamente listando todos tus recursos optimizados listos para cargar en tu proyecto.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Alenia Studios. Licenciado bajo GNU GPL v3.</p>
+        <p>Contacto oficial: <a href="mailto:contact.aleniastudios@gmail.com">contact.aleniastudios@gmail.com</a></p>
+    </footer>
+
+    <script>
+        async function fetchStats() {
+            try {
+                const response = await fetch("https://alenia-porter-telemetry.onrender.com/telemetry/stats");
+                const data = await response.json();
+                if (data.status === "ok") {
+                    document.getElementById("audio-count").innerText = data.stats.audio.toLocaleString();
+                    document.getElementById("video-count").innerText = data.stats.video.toLocaleString();
+                    document.getElementById("image-count").innerText = data.stats.image.toLocaleString();
+                }
+            } catch (e) {
+                console.error("Error cargando estadísticas", e);
+            }
+        }
+        fetchStats();
+    </script>
+</body>
+</html>

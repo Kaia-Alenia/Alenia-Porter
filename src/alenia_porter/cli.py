@@ -167,11 +167,7 @@ def main():
             ogg_radiobutton.configure(bg=bg, fg=fg, selectcolor=accent, activebackground=bg)
             opus_radiobutton.configure(bg=bg, fg=fg, selectcolor=accent, activebackground=bg)
         
-            engine_selection_frame.configure(bg=bg)
-            engine_label.configure(bg=bg, fg=fg_dim)
-        
-            renpy_radiobutton.configure(bg=bg, fg=fg, selectcolor=accent, activebackground=bg)
-            godot_radiobutton.configure(bg=bg, fg=fg, selectcolor=accent, activebackground=bg)
+
         
             select_folder_button.configure(bg=accent, fg="white")
             info_status_label.configure(bg=bg, fg=fg_dim)
@@ -228,7 +224,7 @@ def main():
             root_window.title(active_translation["title"])
             header_label.config(text=active_translation["header"])
             format_label.config(text=active_translation["select_format"])
-            engine_label.config(text=active_translation["select_engine"])
+
             select_folder_button.config(text=active_translation["btn_select"])
             info_status_label.config(text=active_translation["info_desc"])
             language_toggle_button.config(text=active_translation["btn_lang"])
@@ -355,7 +351,7 @@ def main():
                 try: subprocess.Popen(["xdg-open" if sys.platform.startswith("linux") else "open", output_path])
                 except: pass
             
-            msg = active_translation["msg_success_m"].format(processed_count, engine_variable.get().upper(), output_path) + saving_report
+            msg = active_translation["msg_success_m"].format(processed_count, output_path) + saving_report
             root_window.after(0, lambda: show_custom_popup(active_translation["msg_success_t"], msg))
 
         def on_conversion_failure(error_details):
@@ -372,19 +368,14 @@ def main():
             select_folder_button.config(state=tk.DISABLED)
             info_status_label.config(text=active_translation["info_wait"], fg=warning_color)
             draw_progress(0)
-            threading.Thread(target=porter.convert_media, args=(selected_directory, engine_variable.get(), format_variable.get(), on_progressbar_increment, None, on_conversion_success, on_conversion_failure, current_language_code), daemon=True).start()
+            threading.Thread(target=porter.convert_media, args=(selected_directory, format_variable.get(), on_progressbar_increment, None, on_conversion_success, on_conversion_failure, current_language_code, False), daemon=True).start()
 
         def adjust_opus_button_state(*args):
             active_translation = languages_dictionary[current_language_code]
-            if engine_variable.get() == "godot":
-                format_variable.set("ogg")
-                opus_radiobutton.config(state=tk.DISABLED)
-                ogg_radiobutton.config(text=f"{active_translation['format_ogg']} / OGV / WebP")
-                opus_radiobutton.config(text=f"{active_translation['format_opus']} / OGV / WebP")
-            else:
-                opus_radiobutton.config(state=tk.NORMAL)
-                ogg_radiobutton.config(text=f"{active_translation['format_ogg']} / WebM / WebP")
-                opus_radiobutton.config(text=f"{active_translation['format_opus']} / WebM / WebP")
+            format_variable.set("ogg")
+            opus_radiobutton.config(state=tk.DISABLED)
+            ogg_radiobutton.config(text=f"{active_translation['format_ogg']} / OGV / WebP")
+            opus_radiobutton.config(text=f"{active_translation['format_opus']} / OGV / WebP")
 
         root_window = tk.Tk()
         try:
@@ -421,16 +412,6 @@ def main():
         ogg_radiobutton.pack(side=tk.LEFT, padx=10)
         opus_radiobutton = tk.Radiobutton(format_selection_frame, text=initial_translation["format_opus"], variable=format_variable, value="opus", bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0, highlightthickness=0)
         opus_radiobutton.pack(side=tk.LEFT, padx=10)
-        engine_selection_frame = tk.Frame(root_window, bg=bg_main)
-        engine_selection_frame.pack(pady=5)
-        engine_label = tk.Label(engine_selection_frame, text=initial_translation["select_engine"], bg=bg_main, fg=fg_dim, font=("Arial", 9))
-        engine_label.pack()
-        engine_variable = tk.StringVar(value="renpy")
-        engine_variable.trace_add("write", adjust_opus_button_state)
-        renpy_radiobutton = tk.Radiobutton(engine_selection_frame, text="Ren'Py (.rpy)", variable=engine_variable, value="renpy", bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0, highlightthickness=0)
-        renpy_radiobutton.pack(side=tk.LEFT, padx=10)
-        godot_radiobutton = tk.Radiobutton(engine_selection_frame, text="Godot (.gd)", variable=engine_variable, value="godot", bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0, highlightthickness=0)
-        godot_radiobutton.pack(side=tk.LEFT, padx=10)
         select_folder_button = tk.Button(root_window, text=initial_translation["btn_select"], command=trigger_media_conversion, bg=accent_color, fg="white", padx=20, pady=10, borderwidth=0, highlightthickness=0, cursor="hand2")
         select_folder_button.pack(pady=15)
         select_folder_button.bind("<Enter>", lambda e: select_folder_button.config(bg=current_theme.get("accent_hover", "#a78bfa")))
