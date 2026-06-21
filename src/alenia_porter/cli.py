@@ -103,6 +103,9 @@ def main():
 
     if args.headless:
         print("Alenia Porter v5.9 - Headless Mode")
+        locales = porter.load_locales()
+        if not locales:
+            sys.exit(1)
         print("✓ Application initialized successfully")
         return
 

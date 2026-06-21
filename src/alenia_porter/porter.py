@@ -209,6 +209,7 @@ def send_crash_report(error_code, message, stack_trace):
 
 @contextmanager
 def resource_path(relative_path):
+    relative_path = os.path.normpath(relative_path)
     resolved_path = None
     try:
         parts = relative_path.split(os.sep)
@@ -220,7 +221,8 @@ def resource_path(relative_path):
         with as_file(resource) as path:
             path_str = str(path)
             if os.path.exists(path_str):
-                resolved_path = path_str
+                yield path_str
+                return
     except Exception:
         pass
 
