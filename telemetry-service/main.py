@@ -71,26 +71,28 @@ def get_global_stats():
         
         cursor.execute("SELECT file_type, SUM(file_count) FROM telemetry_events GROUP BY file_type;")
         rows = cursor.fetchall()
-        stats = {row[0]: int(row[1]) for row in rows}
+        stats = {row[0]: int(row[1]) if row[1] is not None else 0 for row in rows}
         
         cursor.execute("SELECT COUNT(DISTINCT uuid) FROM telemetry_events;")
         active_users = cursor.fetchone()[0]
         
         cursor.execute("SELECT os_family, COUNT(*) FROM (SELECT DISTINCT ON (uuid) uuid, os_family FROM telemetry_events ORDER BY uuid, timestamp DESC) AS unique_os GROUP BY os_family;")
         os_rows = cursor.fetchall()
-        os_distribution = {row[0]: int(row[1]) for row in os_rows}
+        os_distribution = {row[0]: int(row[1]) if row[1] is not None else 0 for row in os_rows}
         
         cursor.execute("SELECT file_type, SUM(duration_seconds), SUM(file_count) FROM telemetry_events GROUP BY file_type;")
         avg_rows = cursor.fetchall()
         avg_time_by_type = {}
         for row in avg_rows:
             f_type, total_time, total_count = row
-            if total_count and total_count > 0:
+            if total_count and total_count > 0 and total_time is not None:
                 avg_time_by_type[f_type] = round(float(total_time) / float(total_count), 3)
+            else:
+                avg_time_by_type[f_type] = 0.0
                 
         cursor.execute("SELECT SUM(duration_seconds), SUM(file_count) FROM telemetry_events;")
         total_time_sum, total_count_sum = cursor.fetchone()
-        avg_time_per_file = round(float(total_time_sum) / float(total_count_sum), 3) if total_count_sum else 0.0
+        avg_time_per_file = round(float(total_time_sum) / float(total_count_sum), 3) if total_count_sum and total_time_sum is not None else 0.0
         
         cursor.close()
         connection.close()
@@ -102,7 +104,7 @@ def get_global_stats():
                 "video": stats.get("video", 0),
                 "image": stats.get("image", 0)
             },
-            "active_users": int(active_users),
+            "active_users": int(active_users) if active_users is not None else 0,
             "os_distribution": os_distribution,
             "avg_time_per_file": avg_time_per_file,
             "avg_time_by_type": avg_time_by_type
