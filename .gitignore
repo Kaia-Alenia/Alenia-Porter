@@ -20,4 +20,6 @@ clean_assets.py
 inspect_telemetry.py
 porter_launcher.bin
 porter_launcher.sh
-
+requirements.txt
+*.build/
+*.dist/
