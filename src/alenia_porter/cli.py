@@ -448,6 +448,8 @@ def main():
             root_window.update_idletasks()
 
         def on_conversion_success(processed_count, output_path, original_size, final_size):
+            configuration_data["total_optimized"] = configuration_data.get("total_optimized", 0) + processed_count
+            save_user_configuration(configuration_data)
             active_translation = languages_dictionary[current_language_code]
             success_color = current_theme.get("success", "#4ade80")
         
@@ -536,7 +538,7 @@ def main():
         language_toggle_button.pack(side="right", padx=(0, 10))
 
         def on_nickname_button_click():
-            prompt_nickname(is_startup=False)
+            show_profile_info()
 
         nickname_toggle_button = tk.Button(top_navigation_bar, text=f"👤 {porter.get_local_nickname()}", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=on_nickname_button_click, font=("Arial", 9, "bold"))
         nickname_toggle_button.pack(side="right", padx=(0, 10))
@@ -563,54 +565,28 @@ def main():
         studio_logo_label = tk.Label(root_window, bg=bg_main)
         studio_logo_label.pack(pady=(0, 5)) 
 
-        def prompt_nickname(is_startup=False):
+        def show_profile_info():
             bg = current_theme.get("bg_main", "#1e1e1e")
             fg = current_theme.get("fg_main", "#ffffff")
             accent = current_theme.get("accent", "#8b5cf6")
-
             popup = tk.Toplevel(root_window)
-            popup.title("Nickname")
-            popup.geometry("350x180")
+            popup.title("Profile")
+            popup.geometry("380x200")
             popup.configure(bg=bg)
             popup.transient(root_window)
             popup.wait_visibility()
             popup.grab_set()
-
             content_frame = tk.Frame(popup, bg=bg)
             content_frame.pack(expand=True, fill="both", padx=20, pady=15)
-
-            tk.Label(content_frame, text="Please enter your nickname:", bg=bg, fg=fg, font=("Arial", 11, "bold")).pack(anchor="w", pady=(0, 10))
-
-            nickname_var = tk.StringVar(value=porter.get_local_nickname())
-            entry = tk.Entry(content_frame, textvariable=nickname_var, bg="#2d2d2d", fg=fg, insertbackground=fg, font=("Arial", 11))
-            entry.pack(fill="x", pady=(0, 15))
-
-            def save_nickname():
-                new_nickname = nickname_var.get().strip()
-                if new_nickname:
-                    home_dir = os.path.expanduser("~")
-                    nickname_file_path = os.path.join(home_dir, ".alenia_nickname")
-                    try:
-                        with open(nickname_file_path, "w", encoding="utf-8") as f:
-                            f.write(new_nickname)
-                    except:
-                        pass
-                    nickname_toggle_button.config(text=f"👤 {new_nickname}")
-                    configuration_data["nickname_prompted"] = True
-                    save_user_configuration(configuration_data)
-
-                popup.destroy()
-                if is_startup and update_info["found"]:
-                    prompt_update(update_info["ver"], update_info["url"])
-
+            tk.Label(content_frame, text="User Profile", bg=bg, fg=fg, font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 10))
+            tk.Label(content_frame, text=f"Nickname: {porter.get_local_nickname()}", bg=bg, fg=fg, font=("Arial", 10)).pack(anchor="w", pady=2)
+            tk.Label(content_frame, text=f"UUID: {porter.get_local_uuid()}", bg=bg, fg=fg, font=("Arial", 9)).pack(anchor="w", pady=2)
+            total_opt = configuration_data.get("total_optimized", 0)
+            tk.Label(content_frame, text=f"Total Optimized Files: {total_opt}", bg=bg, fg=fg, font=("Arial", 10, "bold")).pack(anchor="w", pady=(8, 10))
             btn_frame = tk.Frame(content_frame, bg=bg)
             btn_frame.pack()
-            save_btn = tk.Button(btn_frame, text="Save", command=save_nickname, bg=accent, fg="white", padx=20, pady=5, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold"))
-            save_btn.pack(side="left", padx=5)
-
-            if not is_startup:
-                cancel_btn = tk.Button(btn_frame, text="Cancel", command=popup.destroy, bg="#555555", fg="white", padx=20, pady=5, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold"))
-                cancel_btn.pack(side="left", padx=5)
+            close_btn = tk.Button(btn_frame, text="Close", command=popup.destroy, bg=accent, fg="white", padx=20, pady=5, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold"))
+            close_btn.pack()
 
         def prompt_update(new_ver, dl_url):
             trans = languages_dictionary[current_language_code]
@@ -636,9 +612,7 @@ def main():
             tk.Button(btn_f, text="No", bg="#555555", fg="white", command=upd_win.destroy, width=8).pack(side=tk.LEFT, padx=10)
 
         def check_startup_prompts():
-            if not configuration_data.get("nickname_prompted", False):
-                prompt_nickname(is_startup=True)
-            elif update_info["found"]:
+            if update_info["found"]:
                 prompt_update(update_info["ver"], update_info["url"])
 
         apply_theme_to_ui()
