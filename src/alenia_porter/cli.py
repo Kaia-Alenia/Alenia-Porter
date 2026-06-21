@@ -419,8 +419,69 @@ def main():
             accent = current_theme.get("accent", "#8b5cf6")
             accent_hover = current_theme.get("accent_hover", "#a78bfa")
             
+            trans_dict = {
+                "es": {
+                    "title": "Comentarios",
+                    "question": "¿Qué tal tu experiencia con Alenia Porter?",
+                    "rating": "Calificación (1-5):",
+                    "comments": "Comentarios o sugerencias:",
+                    "send": "Enviar"
+                },
+                "en": {
+                    "title": "Feedback",
+                    "question": "How is your experience with Alenia Porter?",
+                    "rating": "Rating (1-5):",
+                    "comments": "Comments or suggestions:",
+                    "send": "Send"
+                },
+                "fr": {
+                    "title": "Commentaires",
+                    "question": "Comment est votre expérience avec Alenia Porter ?",
+                    "rating": "Évaluation (1-5) :",
+                    "comments": "Commentaires ou suggestions :",
+                    "send": "Envoyer"
+                },
+                "ja": {
+                    "title": "フィードバック",
+                    "question": "Alenia Porterの使い心地はいかがですか？",
+                    "rating": "評価 (1-5):",
+                    "comments": "コメントまたは提案:",
+                    "send": "送信"
+                },
+                "zh": {
+                    "title": "反馈",
+                    "question": "您对 Alenia Porter 的体验如何？",
+                    "rating": "评分 (1-5):",
+                    "comments": "意见或建议:",
+                    "send": "发送"
+                },
+                "ru": {
+                    "title": "Отзыв",
+                    "question": "Как вам опыт использования Alenia Porter?",
+                    "rating": "Оценка (1-5):",
+                    "comments": "Комментарии или предложения:",
+                    "send": "Отправить"
+                },
+                "de": {
+                    "title": "Feedback",
+                    "question": "Wie ist Ihre Erfahrung mit Alenia Porter?",
+                    "rating": "Bewertung (1-5):",
+                    "comments": "Kommentare oder Vorschläge:",
+                    "send": "Senden"
+                },
+                "pt": {
+                    "title": "Feedback",
+                    "question": "Como está sendo sua experiência com o Alenia Porter?",
+                    "rating": "Avaliação (1-5):",
+                    "comments": "Comentários ou sugestões:",
+                    "send": "Enviar"
+                }
+            }
+            lang = current_language_code if current_language_code in trans_dict else "en"
+            t = trans_dict[lang]
+
             popup = tk.Toplevel(root_window)
-            popup.title("Feedback")
+            popup.title(t["title"])
             popup.geometry("450x300")
             popup.configure(bg=bg)
             popup.transient(root_window)
@@ -430,16 +491,16 @@ def main():
             content_frame = tk.Frame(popup, bg=bg)
             content_frame.pack(expand=True, fill="both", padx=20, pady=15)
             
-            tk.Label(content_frame, text="¿Qué tal tu experiencia con Alenia Porter?", bg=bg, fg=fg, font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 10))
+            tk.Label(content_frame, text=t["question"], bg=bg, fg=fg, font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 10))
             
             rating_frame = tk.Frame(content_frame, bg=bg)
             rating_frame.pack(anchor="w", pady=(0, 15))
-            tk.Label(rating_frame, text="Calificación (1-5):", bg=bg, fg=fg).pack(side="left", padx=(0, 10))
+            tk.Label(rating_frame, text=t["rating"], bg=bg, fg=fg).pack(side="left", padx=(0, 10))
             rating_var = tk.IntVar(value=5)
             for i in range(1, 6):
                 tk.Radiobutton(rating_frame, text=str(i), variable=rating_var, value=i, bg=bg, fg=fg, selectcolor=accent, activebackground=bg).pack(side="left", padx=5)
                 
-            tk.Label(content_frame, text="Comentarios o sugerencias:", bg=bg, fg=fg).pack(anchor="w", pady=(0, 5))
+            tk.Label(content_frame, text=t["comments"], bg=bg, fg=fg).pack(anchor="w", pady=(0, 5))
             comments_text = tk.Text(content_frame, height=5, width=45, bg="#2d2d2d", fg=fg, insertbackground=fg, borderwidth=1)
             comments_text.pack(fill="x", pady=(0, 15))
             
@@ -451,10 +512,11 @@ def main():
                 save_user_configuration(configuration_data)
                 popup.destroy()
                 
-            submit_btn = tk.Button(content_frame, text="Enviar", command=submit_feedback, bg=accent, fg="white", padx=30, pady=8, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold"))
+            submit_btn = tk.Button(content_frame, text=t["send"], command=submit_feedback, bg=accent, fg="white", padx=30, pady=8, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold"))
             submit_btn.pack(anchor="center")
             submit_btn.bind("<Enter>", lambda e: submit_btn.config(bg=accent_hover))
             submit_btn.bind("<Leave>", lambda e: submit_btn.config(bg=accent))
+
 
         def on_progressbar_increment(current_value, total_value):
             percent = int((current_value / total_value) * 100) if total_value > 0 else 0
