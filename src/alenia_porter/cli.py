@@ -1,25 +1,17 @@
-import zenith
-zenith.ignite(file=__file__, show_banner=False)
-
 import sys
 import os
-import threading
-import webbrowser
-import json
-import subprocess
 import traceback
-import ctypes
-import glob
-import argparse
-from alenia_porter import updater
-from alenia_porter import porter
 
 def global_exception_handler(exctype, value, tb):
     tb_text = "".join(traceback.format_exception(exctype, value, tb))
-    porter.log_error_to_file(tb_text)
     try:
-        porter.send_crash_report("UNHANDLED_EXCEPTION", f"{exctype.__name__}: {str(value)}", tb_text)
-    except:
+        from alenia_porter import porter
+        porter.log_error_to_file(tb_text)
+        try:
+            porter.send_crash_report("UNHANDLED_EXCEPTION", f"{exctype.__name__}: {str(value)}", tb_text)
+        except:
+            pass
+    except Exception:
         pass
     with open("ALENIA_ERROR.txt", "a", encoding="utf-8") as f:
         f.write(f"\n--- FATAL ---\n{tb_text}\n")
@@ -27,17 +19,36 @@ def global_exception_handler(exctype, value, tb):
 
 sys.excepthook = global_exception_handler
 
-def thread_exception_handler(args):
-    tb_text = "".join(traceback.format_exception(args.exc_type, args.exc_value, args.exc_traceback))
-    porter.log_error_to_file(tb_text)
-    try:
-        porter.send_crash_report("THREAD_EXCEPTION", f"{args.exc_type.__name__}: {str(args.exc_value)}", tb_text)
-    except:
-        pass
-    with open("ALENIA_ERROR.txt", "a", encoding="utf-8") as f:
-        f.write(f"\n--- THREAD FATAL ---\n{tb_text}\n")
+try:
+    import zenith
+    zenith.ignite(file=__file__, show_banner=False)
 
-threading.excepthook = thread_exception_handler
+    import threading
+    import webbrowser
+    import json
+    import subprocess
+    import ctypes
+    import glob
+    import argparse
+    from alenia_porter import updater
+    from alenia_porter import porter
+
+    def thread_exception_handler(args):
+        tb_text = "".join(traceback.format_exception(args.exc_type, args.exc_value, args.exc_traceback))
+        porter.log_error_to_file(tb_text)
+        try:
+            porter.send_crash_report("THREAD_EXCEPTION", f"{args.exc_type.__name__}: {str(args.exc_value)}", tb_text)
+        except:
+            pass
+        with open("ALENIA_ERROR.txt", "a", encoding="utf-8") as f:
+            f.write(f"\n--- THREAD FATAL ---\n{tb_text}\n")
+
+    threading.excepthook = thread_exception_handler
+except Exception as e:
+    tb_text = "".join(traceback.format_exception(type(e), e, e.__traceback__))
+    with open("ALENIA_ERROR.txt", "a", encoding="utf-8") as f:
+        f.write(f"\n--- IMPORT FATAL ---\n{tb_text}\n")
+    sys.exit(1)
 
 class ToolTip(object):
     def __init__(self, widget, text_func):
