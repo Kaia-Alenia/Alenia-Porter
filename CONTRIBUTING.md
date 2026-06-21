@@ -1,17 +1,17 @@
-# Contributing to Alenia Porter 🐧✨
+# Contributing to Alenia Porter 🐧
 
 We appreciate your interest in helping Alenia Studios! Here is how you can contribute to the project:
 
-## 🎨 Theme Development
+## Theme Development
 Create your own visual style by adding a new JSON file to the `themes/` directory. You can customize colors and link specific character sprites from the `assets/` folder.
 
-## 💻 Code Contributions
+## Code Contributions
 Help us optimize the conversion engine or enhance the user interface:
 - **UI Logic:** Managed in `main.py` (Strictly no comments allowed).
 - **Core Engine:** Managed in `porter_logic.py` (Strictly no comments allowed).
-- **Architecture:** Powered by the internal **Zenith Core**.
+- **Architecture:** Powered by the internal Zenith Core.
 
-## 📏 Asset Specifications
+## Asset Specifications
 To maintain UI integrity, please follow these exact dimensions:
 
 | Asset Type | Path/Example | Dimensions (px) | Notes |
@@ -23,11 +23,11 @@ To maintain UI integrity, please follow these exact dimensions:
 | **App Icon** | `logo.ico` | **256 × 256** | Standard Windows icon format. |
 
 ---
-## 🌍 Localization
+## Localization
 Help us reach more developers by adding new languages to the `locales/` system.
 
 **Current Languages:**
-🇺🇸 English | 🇪🇸 Español | 🇫🇷 Français | 🇯🇵 日本語 | 🇨🇳 简体中文 | 🇷🇺 Русский | 🇧🇷 Português | 🇩🇪 Deutsch
+US English | ES Español | FR Français | JP 日本語 | CN 简体中文 | RU Русский | BR Português | DE Deutsch
 
 > [!IMPORTANT]
 > **Translated by KXLT Alenia Studios**
@@ -39,4 +39,4 @@ Help us reach more developers by adding new languages to the `locales/` system.
 - **No Comments in Scripts:** Keep the source code clean and self-documenting.
 - **Licensing:** All contributions must comply with the ALENIA STUDIOS TOOL LICENSE.
 
-Thank you for being part of Alenia Studios! 🚀🌸🌑
+Thank you for being part of Alenia Studios!
