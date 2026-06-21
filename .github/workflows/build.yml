@@ -48,6 +48,7 @@ jobs:
       - name: Smoke test executable
         run: |
           porter_launcher.dist\AleniaPorter.exe --headless
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Package build
         run: |
