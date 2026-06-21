@@ -585,7 +585,7 @@ def main():
             accent = current_theme.get("accent", "#8b5cf6")
             popup = tk.Toplevel(root_window)
             popup.title("Profile")
-            popup.geometry("380x200")
+            popup.geometry("380x280")
             popup.configure(bg=bg)
             popup.transient(root_window)
             popup.wait_visibility()
@@ -593,7 +593,29 @@ def main():
             content_frame = tk.Frame(popup, bg=bg)
             content_frame.pack(expand=True, fill="both", padx=20, pady=15)
             tk.Label(content_frame, text="User Profile", bg=bg, fg=fg, font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 10))
-            tk.Label(content_frame, text=f"Nickname: {porter.get_local_nickname()}", bg=bg, fg=fg, font=("Arial", 10)).pack(anchor="w", pady=2)
+            
+            nick_frame = tk.Frame(content_frame, bg=bg)
+            nick_frame.pack(fill="x", pady=2)
+            tk.Label(nick_frame, text="Nickname:", bg=bg, fg=fg, font=("Arial", 10)).pack(side="left")
+            nick_entry = tk.Entry(nick_frame, bg="#2d2d2d", fg=fg, insertbackground=fg, borderwidth=1)
+            nick_entry.insert(0, porter.get_local_nickname())
+            nick_entry.pack(side="left", padx=10, fill="x", expand=True)
+
+            def save_nickname():
+                new_nick = nick_entry.get().strip()
+                if new_nick:
+                    porter.set_local_nickname(new_nick)
+                    nickname_toggle_button.configure(text=f"👤 {new_nick}")
+                    status_lbl.configure(text="Guardado", fg=current_theme.get("success", "#4ade80"))
+                else:
+                    status_lbl.configure(text="Invalido", fg=current_theme.get("error", "#f87171"))
+
+            save_btn = tk.Button(nick_frame, text="✓", command=save_nickname, bg=accent, fg="white", borderwidth=0, cursor="hand2", padx=5)
+            save_btn.pack(side="left")
+
+            status_lbl = tk.Label(content_frame, text="", bg=bg, font=("Arial", 8))
+            status_lbl.pack(anchor="w", pady=(0, 5))
+
             tk.Label(content_frame, text=f"UUID: {porter.get_local_uuid()}", bg=bg, fg=fg, font=("Arial", 9)).pack(anchor="w", pady=2)
             total_opt = configuration_data.get("total_optimized", 0)
             tk.Label(content_frame, text=f"Total Optimized Files: {total_opt}", bg=bg, fg=fg, font=("Arial", 10, "bold")).pack(anchor="w", pady=(8, 10))
@@ -626,7 +648,9 @@ def main():
             tk.Button(btn_f, text="No", bg="#555555", fg="white", command=upd_win.destroy, width=8).pack(side=tk.LEFT, padx=10)
 
         def check_startup_prompts():
-            if update_info["found"]:
+            if not os.path.exists(config_file_path):
+                show_profile_info()
+            elif update_info["found"]:
                 prompt_update(update_info["ver"], update_info["url"])
 
         apply_theme_to_ui()

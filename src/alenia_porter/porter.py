@@ -80,6 +80,17 @@ def get_local_nickname():
         pass
     return new_nickname
 
+def set_local_nickname(nickname):
+    home_dir = os.path.expanduser("~")
+    nickname_file_path = os.path.join(home_dir, ".alenia_nickname")
+    try:
+        with open(nickname_file_path, "w", encoding="utf-8") as f:
+            f.write(nickname)
+        return True
+    except:
+        return False
+
+
 def update_telemetry_stats(file_type, file_count, duration_seconds, headless=False):
     if not file_type or file_count <= 0:
         return
