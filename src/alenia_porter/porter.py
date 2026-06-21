@@ -108,7 +108,7 @@ def update_telemetry_stats(file_type, file_count, duration_seconds, headless=Fal
     except Exception as e:
         log_error_to_file(f"Telemetry error: {str(e)}")
 
-def send_feedback_stats(rating, uses_godot, comments):
+def send_feedback_stats(rating, comments):
     try:
         import urllib.request
         import json
@@ -116,7 +116,6 @@ def send_feedback_stats(rating, uses_godot, comments):
             "uuid": get_local_uuid(),
             "nickname": get_local_nickname(),
             "rating": rating,
-            "uses_godot": uses_godot,
             "comments": comments
         }
         data = json.dumps(payload).encode("utf-8")

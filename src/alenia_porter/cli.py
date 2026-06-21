@@ -407,7 +407,7 @@ def main():
             
             popup = tk.Toplevel(root_window)
             popup.title("Feedback")
-            popup.geometry("450x380")
+            popup.geometry("450x300")
             popup.configure(bg=bg)
             popup.transient(root_window)
             popup.wait_visibility()
@@ -425,18 +425,14 @@ def main():
             for i in range(1, 6):
                 tk.Radiobutton(rating_frame, text=str(i), variable=rating_var, value=i, bg=bg, fg=fg, selectcolor=accent, activebackground=bg).pack(side="left", padx=5)
                 
-            godot_var = tk.BooleanVar(value=False)
-            tk.Checkbutton(content_frame, text="¿Utilizas funciones específicas de Godot?", variable=godot_var, bg=bg, fg=fg, selectcolor=bg, activebackground=bg).pack(anchor="w", pady=(0, 15))
-            
             tk.Label(content_frame, text="Comentarios o sugerencias:", bg=bg, fg=fg).pack(anchor="w", pady=(0, 5))
             comments_text = tk.Text(content_frame, height=5, width=45, bg="#2d2d2d", fg=fg, insertbackground=fg, borderwidth=1)
             comments_text.pack(fill="x", pady=(0, 15))
             
             def submit_feedback():
                 rating = rating_var.get()
-                uses_godot = godot_var.get()
                 comments = comments_text.get("1.0", "end").strip()
-                threading.Thread(target=porter.send_feedback_stats, args=(rating, uses_godot, comments), daemon=True).start()
+                threading.Thread(target=porter.send_feedback_stats, args=(rating, comments), daemon=True).start()
                 configuration_data["feedback_shown"] = True
                 save_user_configuration(configuration_data)
                 popup.destroy()

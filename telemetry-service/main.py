@@ -24,7 +24,7 @@ def startup_db_migration():
         cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_events (id SERIAL PRIMARY KEY, uuid VARCHAR, nickname VARCHAR, os_family VARCHAR, interface_type VARCHAR, file_type VARCHAR, file_count INTEGER, duration_seconds FLOAT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
         cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS duration_seconds FLOAT;")
         cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS nickname VARCHAR;")
-        cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_feedback (uuid VARCHAR, nickname VARCHAR, rating INTEGER, uses_godot BOOLEAN, comments TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
+        cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_feedback (uuid VARCHAR, nickname VARCHAR, rating INTEGER, comments TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
         cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_crashes (id SERIAL PRIMARY KEY, app_version VARCHAR, error_code VARCHAR, message TEXT, stack_trace TEXT, os_family VARCHAR, cpu_cores INTEGER, ram_gb INTEGER, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
         cursor.execute("ALTER TABLE telemetry_crashes ADD COLUMN IF NOT EXISTS uuid VARCHAR;")
         cursor.execute("ALTER TABLE telemetry_crashes ADD COLUMN IF NOT EXISTS nickname VARCHAR;")
@@ -52,7 +52,6 @@ class FeedbackPayload(BaseModel):
     uuid: str
     nickname: Optional[str] = None
     rating: int
-    uses_godot: bool
     comments: str
 
 class SystemMetadata(BaseModel):
@@ -75,8 +74,8 @@ def record_feedback(payload: FeedbackPayload):
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO telemetry_feedback (uuid, nickname, rating, uses_godot, comments) VALUES (%s, %s, %s, %s, %s);",
-            (payload.uuid, payload.nickname, payload.rating, payload.uses_godot, payload.comments)
+            "INSERT INTO telemetry_feedback (uuid, nickname, rating, comments) VALUES (%s, %s, %s, %s);",
+            (payload.uuid, payload.nickname, payload.rating, payload.comments)
         )
         connection.commit()
         cursor.close()
