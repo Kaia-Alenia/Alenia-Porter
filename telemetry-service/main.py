@@ -16,6 +16,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+def startup_db_migration():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS duration_seconds FLOAT;")
+        connection.commit()
+        cursor.close()
+        connection.close()
+    except Exception as e:
+        pass
+
 @app.get("/")
 @app.head("/")
 def read_root():
