@@ -57,6 +57,29 @@ def get_local_uuid():
         pass
     return new_uuid
 
+def generate_nickname():
+    import random
+    adjectives = ["dashing", "happy", "brave", "clever", "silent", "gentle", "swift", "calm", "jolly", "bold", "wild", "bright", "proud", "kind", "lively", "fierce", "eager", "fancy", "cozy", "funky"]
+    nouns = ["robot", "tiger", "panda", "fox", "koala", "eagle", "otter", "badger", "falcon", "wolf", "deer", "rabbit", "bear", "lion", "panther", "hawk", "owl", "dolphin", "whale", "squirrel"]
+    return f"{random.choice(adjectives)}-{random.choice(nouns)}"
+
+def get_local_nickname():
+    home_dir = os.path.expanduser("~")
+    nickname_file_path = os.path.join(home_dir, ".alenia_nickname")
+    if os.path.exists(nickname_file_path):
+        try:
+            with open(nickname_file_path, "r", encoding="utf-8") as f:
+                return f.read().strip()
+        except:
+            pass
+    new_nickname = generate_nickname()
+    try:
+        with open(nickname_file_path, "w", encoding="utf-8") as f:
+            f.write(new_nickname)
+    except:
+        pass
+    return new_nickname
+
 def update_telemetry_stats(file_type, file_count, duration_seconds, headless=False):
     if not file_type or file_count <= 0:
         return
@@ -66,6 +89,7 @@ def update_telemetry_stats(file_type, file_count, duration_seconds, headless=Fal
         import platform
         payload = {
             "uuid": get_local_uuid(),
+            "nickname": get_local_nickname(),
             "os_family": platform.system(),
             "interface_type": "CLI" if headless else "IDE",
             "file_type": file_type,
@@ -83,6 +107,31 @@ def update_telemetry_stats(file_type, file_count, duration_seconds, headless=Fal
             response.read()
     except Exception as e:
         log_error_to_file(f"Telemetry error: {str(e)}")
+
+def send_feedback_stats(rating, uses_godot, comments):
+    try:
+        import urllib.request
+        import json
+        payload = {
+            "uuid": get_local_uuid(),
+            "nickname": get_local_nickname(),
+            "rating": rating,
+            "uses_godot": uses_godot,
+            "comments": comments
+        }
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(
+            "https://alenia-porter.onrender.com/telemetry/feedback",
+            data=data,
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as response:
+            response.read()
+        return True
+    except Exception as e:
+        log_error_to_file(f"Feedback error: {str(e)}")
+        return False
 
 @contextmanager
 def resource_path(relative_path):

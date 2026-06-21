@@ -22,6 +22,8 @@ def startup_db_migration():
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS duration_seconds FLOAT;")
+        cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS nickname VARCHAR;")
+        cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_feedback (uuid VARCHAR, nickname VARCHAR, rating INTEGER, uses_godot BOOLEAN, comments TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
         connection.commit()
         cursor.close()
         connection.close()
@@ -35,11 +37,35 @@ def read_root():
 
 class TelemetryPayload(BaseModel):
     uuid: str
+    nickname: Optional[str] = None
     os_family: str
     interface_type: str
     file_type: str
     file_count: int
     duration_seconds: float
+
+class FeedbackPayload(BaseModel):
+    uuid: str
+    nickname: Optional[str] = None
+    rating: int
+    uses_godot: bool
+    comments: str
+
+@app.post("/telemetry/feedback")
+def record_feedback(payload: FeedbackPayload):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO telemetry_feedback (uuid, nickname, rating, uses_godot, comments) VALUES (%s, %s, %s, %s, %s);",
+            (payload.uuid, payload.nickname, payload.rating, payload.uses_godot, payload.comments)
+        )
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return {"status": "ok", "message": "Feedback recorded successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 def get_db_connection():
     db_url = os.environ.get("DATABASE_URL")
@@ -53,8 +79,8 @@ def record_event(payload: TelemetryPayload):
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO telemetry_events (uuid, os_family, interface_type, file_type, file_count, duration_seconds) VALUES (%s, %s, %s, %s, %s, %s);",
-            (payload.uuid, payload.os_family, payload.interface_type, payload.file_type, payload.file_count, payload.duration_seconds)
+            "INSERT INTO telemetry_events (uuid, nickname, os_family, interface_type, file_type, file_count, duration_seconds) VALUES (%s, %s, %s, %s, %s, %s, %s);",
+            (payload.uuid, payload.nickname, payload.os_family, payload.interface_type, payload.file_type, payload.file_count, payload.duration_seconds)
         )
         connection.commit()
         cursor.close()
@@ -94,6 +120,10 @@ def get_global_stats():
         total_time_sum, total_count_sum = cursor.fetchone()
         avg_time_per_file = round(float(total_time_sum) / float(total_count_sum), 3) if total_count_sum and total_time_sum is not None else 0.0
         
+        cursor.execute("SELECT nickname, SUM(file_count) as total FROM telemetry_events WHERE nickname IS NOT NULL GROUP BY nickname ORDER BY total DESC LIMIT 10;")
+        top_rows = cursor.fetchall()
+        top_users = [{"nickname": row[0], "total": int(row[1])} for row in top_rows]
+        
         cursor.close()
         connection.close()
         
@@ -107,7 +137,8 @@ def get_global_stats():
             "active_users": int(active_users) if active_users is not None else 0,
             "os_distribution": os_distribution,
             "avg_time_per_file": avg_time_per_file,
-            "avg_time_by_type": avg_time_by_type
+            "avg_time_by_type": avg_time_by_type,
+            "top_users": top_users
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal server error")

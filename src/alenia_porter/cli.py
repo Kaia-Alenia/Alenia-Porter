@@ -371,6 +371,53 @@ def main():
                 tk.Label(columns_frame, image=image_cache["support_kaia"], bg=bg).pack(side="right", anchor="ne", padx=(15, 0))
             tk.Button(popup, text="OK", command=popup.destroy, bg=accent, fg="white", padx=30, pady=8, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold")).pack(pady=(0, 20))
 
+        def show_feedback_popup():
+            bg = current_theme.get("bg_main", "#1e1e1e")
+            fg = current_theme.get("fg_main", "#ffffff")
+            accent = current_theme.get("accent", "#8b5cf6")
+            accent_hover = current_theme.get("accent_hover", "#a78bfa")
+            
+            popup = tk.Toplevel(root_window)
+            popup.title("Feedback")
+            popup.geometry("450x380")
+            popup.configure(bg=bg)
+            popup.transient(root_window)
+            popup.wait_visibility()
+            popup.grab_set()
+            
+            content_frame = tk.Frame(popup, bg=bg)
+            content_frame.pack(expand=True, fill="both", padx=20, pady=15)
+            
+            tk.Label(content_frame, text="¿Qué tal tu experiencia con Alenia Porter?", bg=bg, fg=fg, font=("Arial", 12, "bold")).pack(anchor="w", pady=(0, 10))
+            
+            rating_frame = tk.Frame(content_frame, bg=bg)
+            rating_frame.pack(anchor="w", pady=(0, 15))
+            tk.Label(rating_frame, text="Calificación (1-5):", bg=bg, fg=fg).pack(side="left", padx=(0, 10))
+            rating_var = tk.IntVar(value=5)
+            for i in range(1, 6):
+                tk.Radiobutton(rating_frame, text=str(i), variable=rating_var, value=i, bg=bg, fg=fg, selectcolor=accent, activebackground=bg).pack(side="left", padx=5)
+                
+            godot_var = tk.BooleanVar(value=False)
+            tk.Checkbutton(content_frame, text="¿Utilizas funciones específicas de Godot?", variable=godot_var, bg=bg, fg=fg, selectcolor=bg, activebackground=bg).pack(anchor="w", pady=(0, 15))
+            
+            tk.Label(content_frame, text="Comentarios o sugerencias:", bg=bg, fg=fg).pack(anchor="w", pady=(0, 5))
+            comments_text = tk.Text(content_frame, height=5, width=45, bg="#2d2d2d", fg=fg, insertbackground=fg, borderwidth=1)
+            comments_text.pack(fill="x", pady=(0, 15))
+            
+            def submit_feedback():
+                rating = rating_var.get()
+                uses_godot = godot_var.get()
+                comments = comments_text.get("1.0", "end").strip()
+                threading.Thread(target=porter.send_feedback_stats, args=(rating, uses_godot, comments), daemon=True).start()
+                configuration_data["feedback_shown"] = True
+                save_user_configuration(configuration_data)
+                popup.destroy()
+                
+            submit_btn = tk.Button(content_frame, text="Enviar", command=submit_feedback, bg=accent, fg="white", padx=30, pady=8, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold"))
+            submit_btn.pack(anchor="center")
+            submit_btn.bind("<Enter>", lambda e: submit_btn.config(bg=accent_hover))
+            submit_btn.bind("<Leave>", lambda e: submit_btn.config(bg=accent))
+
         def on_progressbar_increment(current_value, total_value):
             percent = int((current_value / total_value) * 100) if total_value > 0 else 0
             draw_progress(percent)
@@ -399,6 +446,8 @@ def main():
             
             msg = active_translation["msg_success_m"].format(processed_count, output_path) + saving_report
             root_window.after(0, lambda: show_custom_popup(active_translation["msg_success_t"], msg))
+            if not configuration_data.get("feedback_shown", False):
+                root_window.after(2000, show_feedback_popup)
 
         def on_conversion_failure(error_details):
             active_translation = languages_dictionary[current_language_code]
