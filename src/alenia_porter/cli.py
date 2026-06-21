@@ -102,14 +102,14 @@ def main():
     args = parser.parse_args()
 
     if args.headless:
-        print("Alenia Porter v5.8 - Headless Mode")
+        print("Alenia Porter v5.9 - Headless Mode")
         print("✓ Application initialized successfully")
         return
 
     import tkinter as tk
     from tkinter import filedialog, ttk
 
-    CURRENT_VERSION = "v5.8"
+    CURRENT_VERSION = "v5.9"
     update_info = {"found": False, "ver": None, "url": None}
     try:
         has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
@@ -120,7 +120,7 @@ def main():
     except: pass
 
     try:
-        myappid = "alenia.porter.v5.8"
+        myappid = "alenia.porter.v5.9"
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except Exception:
         pass

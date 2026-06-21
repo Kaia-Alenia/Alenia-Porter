@@ -1,6 +1,6 @@
 [project]
 name = "alenia-porter"
-version = "5.8.0"
+version = "5.9.0"
 description = "Python code transformation and analysis tool"
 readme = "README.md"
 authors = [

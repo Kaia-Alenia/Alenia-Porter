@@ -184,7 +184,7 @@ def send_crash_report(error_code, message, stack_trace):
         payload = {
             "uuid": get_local_uuid(),
             "nickname": get_local_nickname(),
-            "app_version": "v5.8",
+            "app_version": "v5.9",
             "error_code": error_code,
             "message": message,
             "stack_trace": stack_trace,
@@ -275,7 +275,7 @@ def load_locales():
                 "Solucion:\n"
                 "1. Cierre el programa.\n"
                 "2. Borre los archivos de esta carpeta.\n"
-                "3. Descargue e instale una copia limpia de la v5.8 desde GitHub o Itch.io.\n\n"
+                "3. Descargue e instale una copia limpia de la v5.9 desde GitHub o Itch.io.\n\n"
                 "--------------------------------------------------\n\n"
                 "Initialization Error:\n"
                 "Required resources (locales.json) were not found.\n\n"
@@ -283,7 +283,7 @@ def load_locales():
                 "Solution:\n"
                 "1. Close the program.\n"
                 "2. Delete all files in this folder.\n"
-                "3. Download and install a clean copy of v5.8 from GitHub or Itch.io."
+                "3. Download and install a clean copy of v5.9 from GitHub or Itch.io."
             )
             messagebox.showerror(title, message)
             root.destroy()
@@ -292,7 +292,7 @@ def load_locales():
 
     fallback = {
         "en": {
-            "title": "Alenia Porter v5.8",
+            "title": "Alenia Porter v5.9",
             "header": "Alenia Studios - Media Optimizer",
             "select_format": "Export to:",
             "format_ogg": "OGG",
@@ -318,7 +318,7 @@ def load_locales():
             "formats_audio": "🎵 AUDIO:"
         },
         "es": {
-            "title": "Alenia Porter v5.8",
+            "title": "Alenia Porter v5.9",
             "header": "Alenia Studios - Optimizador de Medios",
             "select_format": "Exportar a:",
             "format_ogg": "OGG",
