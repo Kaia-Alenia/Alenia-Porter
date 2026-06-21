@@ -61,7 +61,7 @@ def record_event(payload: TelemetryPayload):
         connection.close()
         return {"status": "ok", "message": "Event recorded successfully"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get("/telemetry/stats")
 def get_global_stats():
