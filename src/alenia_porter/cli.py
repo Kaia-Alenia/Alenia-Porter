@@ -545,7 +545,7 @@ def main():
         hamburger_button = tk.Button(top_navigation_bar, text="≡", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=lambda: show_custom_popup(initial_translation["formats_title"], initial_translation["formats_info"], is_accordion=True), font=("Arial", 14, "bold"))
         hamburger_button.pack(side="right")
         ToolTip(hamburger_button, lambda: languages_dictionary[current_language_code]["formats_title"])
-        theme_toggle_button = tk.Button(top_navigation_bar, text="🎨", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=cycle_theme, font=("Arial", 12))
+        theme_toggle_button = tk.Button(top_navigation_bar, text="Theme", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=cycle_theme, font=("Arial", 9, "bold"))
         theme_toggle_button.pack(side="right", padx=(0, 10))
         ToolTip(theme_toggle_button, "Theme")
         language_toggle_button = tk.Button(top_navigation_bar, text=initial_translation["btn_lang"], bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=change_application_language, font=("Arial", 9, "bold"))
@@ -554,8 +554,9 @@ def main():
         def on_nickname_button_click():
             show_profile_info()
 
-        nickname_toggle_button = tk.Button(top_navigation_bar, text=f"👤 {porter.get_local_nickname()}", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=on_nickname_button_click, font=("Arial", 9, "bold"))
+        nickname_toggle_button = tk.Button(top_navigation_bar, text=f"({porter.get_local_nickname()})", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=on_nickname_button_click, font=("Arial", 9, "bold"))
         nickname_toggle_button.pack(side="right", padx=(0, 10))
+
         header_label = tk.Label(root_window, text=initial_translation["header"], font=("Arial", 14, "bold"), bg=bg_main, fg=fg_main)
         header_label.pack(pady=(5, 15))
         format_selection_frame = tk.Frame(root_window, bg=bg_main)
@@ -605,12 +606,12 @@ def main():
                 new_nick = nick_entry.get().strip()
                 if new_nick:
                     porter.set_local_nickname(new_nick)
-                    nickname_toggle_button.configure(text=f"👤 {new_nick}")
+                    nickname_toggle_button.configure(text=f"({new_nick})")
                     status_lbl.configure(text="Guardado", fg=current_theme.get("success", "#4ade80"))
                 else:
                     status_lbl.configure(text="Invalido", fg=current_theme.get("error", "#f87171"))
 
-            save_btn = tk.Button(nick_frame, text="✓", command=save_nickname, bg=accent, fg="white", borderwidth=0, cursor="hand2", padx=5)
+            save_btn = tk.Button(nick_frame, text="OK", command=save_nickname, bg=accent, fg="white", borderwidth=0, cursor="hand2", padx=5)
             save_btn.pack(side="left")
 
             status_lbl = tk.Label(content_frame, text="", bg=bg, font=("Arial", 8))

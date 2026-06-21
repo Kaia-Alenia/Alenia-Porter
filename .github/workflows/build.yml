@@ -64,7 +64,8 @@ jobs:
         run: |
           copy LICENSE porter_launcher.dist\
           ren porter_launcher.dist AleniaPorter
-          powershell Compress-Archive -Path AleniaPorter -DestinationPath AleniaPorter-Windows.zip
+          7z a AleniaPorter-Windows.zip AleniaPorter\
+
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
