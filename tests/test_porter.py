@@ -122,3 +122,5 @@ def test_send_crash_report_success(mocker):
     payload = json.loads(kwargs["data"].decode("utf-8"))
     assert payload["error_code"] == "TEST_CODE"
     assert "<USER_HOME>" in payload["message"]
+    assert "uuid" in payload
+    assert "nickname" in payload

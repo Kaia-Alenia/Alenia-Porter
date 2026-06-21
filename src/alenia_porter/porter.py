@@ -183,6 +183,8 @@ def send_crash_report(error_code, message, stack_trace):
         ram_gb = get_system_ram_gb()
         cpu_cores = os.cpu_count() or 1
         payload = {
+            "uuid": get_local_uuid(),
+            "nickname": get_local_nickname(),
             "app_version": "v5.8",
             "error_code": error_code,
             "message": message,
