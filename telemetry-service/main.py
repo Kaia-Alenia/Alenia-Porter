@@ -21,6 +21,7 @@ def startup_db_migration():
     try:
         connection = get_db_connection()
         cursor = connection.cursor()
+        cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_events (id SERIAL PRIMARY KEY, uuid VARCHAR, nickname VARCHAR, os_family VARCHAR, interface_type VARCHAR, file_type VARCHAR, file_count INTEGER, duration_seconds FLOAT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
         cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS duration_seconds FLOAT;")
         cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS nickname VARCHAR;")
         cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_feedback (uuid VARCHAR, nickname VARCHAR, rating INTEGER, uses_godot BOOLEAN, comments TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
