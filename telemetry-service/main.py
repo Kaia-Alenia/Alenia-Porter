@@ -24,6 +24,7 @@ def startup_db_migration():
         cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS duration_seconds FLOAT;")
         cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS nickname VARCHAR;")
         cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_feedback (uuid VARCHAR, nickname VARCHAR, rating INTEGER, uses_godot BOOLEAN, comments TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
+        cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_crashes (id SERIAL PRIMARY KEY, app_version VARCHAR, error_code VARCHAR, message TEXT, stack_trace TEXT, os_family VARCHAR, cpu_cores INTEGER, ram_gb INTEGER, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
         connection.commit()
         cursor.close()
         connection.close()
@@ -51,6 +52,18 @@ class FeedbackPayload(BaseModel):
     uses_godot: bool
     comments: str
 
+class SystemMetadata(BaseModel):
+    os_family: str
+    cpu_cores: int
+    ram_gb: int
+
+class CrashPayload(BaseModel):
+    app_version: str
+    error_code: str
+    message: str
+    stack_trace: str
+    system_metadata: SystemMetadata
+
 @app.post("/telemetry/feedback")
 def record_feedback(payload: FeedbackPayload):
     try:
@@ -64,6 +77,22 @@ def record_feedback(payload: FeedbackPayload):
         cursor.close()
         connection.close()
         return {"status": "ok", "message": "Feedback recorded successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+@app.post("/telemetry/crash")
+def record_crash(payload: CrashPayload):
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute(
+            "INSERT INTO telemetry_crashes (app_version, error_code, message, stack_trace, os_family, cpu_cores, ram_gb) VALUES (%s, %s, %s, %s, %s, %s, %s);",
+            (payload.app_version, payload.error_code, payload.message, payload.stack_trace, payload.system_metadata.os_family, payload.system_metadata.cpu_cores, payload.system_metadata.ram_gb)
+        )
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return {"status": "ok", "message": "Crash report recorded successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal server error")
 

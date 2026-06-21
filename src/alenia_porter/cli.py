@@ -14,6 +14,30 @@ import argparse
 from alenia_porter import updater
 from alenia_porter import porter
 
+def global_exception_handler(exctype, value, tb):
+    tb_text = "".join(traceback.format_exception(exctype, value, tb))
+    porter.log_error_to_file(tb_text)
+    try:
+        porter.send_crash_report("UNHANDLED_EXCEPTION", f"{exctype.__name__}: {str(value)}", tb_text)
+    except:
+        pass
+    with open("ALENIA_ERROR.txt", "a", encoding="utf-8") as f:
+        f.write(f"\n--- FATAL ---\n{tb_text}\n")
+    sys.exit(1)
+
+sys.excepthook = global_exception_handler
+
+def thread_exception_handler(args):
+    tb_text = "".join(traceback.format_exception(args.exc_type, args.exc_value, args.exc_traceback))
+    porter.log_error_to_file(tb_text)
+    try:
+        porter.send_crash_report("THREAD_EXCEPTION", f"{args.exc_type.__name__}: {str(args.exc_value)}", tb_text)
+    except:
+        pass
+    with open("ALENIA_ERROR.txt", "a", encoding="utf-8") as f:
+        f.write(f"\n--- THREAD FATAL ---\n{tb_text}\n")
+
+threading.excepthook = thread_exception_handler
 
 class ToolTip(object):
     def __init__(self, widget, text_func):
@@ -471,6 +495,20 @@ def main():
             opus_radiobutton.config(text=f"{active_translation['format_opus']} / OGV / WebP")
 
         root_window = tk.Tk()
+        def report_callback_exception(exc, val, tb):
+            tb_text = "".join(traceback.format_exception(exc, val, tb))
+            porter.log_error_to_file(tb_text)
+            try:
+                porter.send_crash_report("GUI_CALLBACK_EXCEPTION", f"{exc.__name__}: {str(val)}", tb_text)
+            except:
+                pass
+            with open("ALENIA_ERROR.txt", "a", encoding="utf-8") as f:
+                f.write(f"\n--- GUI FATAL ---\n{tb_text}\n")
+            try:
+                show_custom_popup("Error", f"Error: {str(val)}", is_error=True)
+            except:
+                pass
+        root_window.report_callback_exception = report_callback_exception
         try:
             with porter.resource_path(os.path.join("assets", "images", "logo.ico")) as icon_path:
                 root_window.iconbitmap(icon_path)
@@ -546,8 +584,13 @@ def main():
         root_window.after(1500, lambda: prompt_update(update_info["ver"], update_info["url"]) if update_info["found"] else None)
         root_window.mainloop()
 
-    except Exception:
-        with open("ALENIA_ERROR.txt", "a", encoding="utf-8") as f: f.write(f"\n--- FATAL ---\n{traceback.format_exc()}\n")
+    except Exception as e:
+        tb_text = traceback.format_exc()
+        try:
+            porter.send_crash_report("FATAL_MAIN_LOOP", str(e), tb_text)
+        except:
+            pass
+        with open("ALENIA_ERROR.txt", "a", encoding="utf-8") as f: f.write(f"\n--- FATAL ---\n{tb_text}\n")
         sys.exit(1)
 
 

@@ -133,6 +133,79 @@ def send_feedback_stats(rating, uses_godot, comments):
         log_error_to_file(f"Feedback error: {str(e)}")
         return False
 
+def get_system_ram_gb():
+    try:
+        if sys.platform.startswith("linux"):
+            pages = os.sysconf('SC_PHYS_PAGES')
+            page_size = os.sysconf('SC_PAGE_SIZE')
+            return int((pages * page_size) / (1024 ** 3))
+        elif sys.platform.startswith("darwin"):
+            import subprocess
+            mem = int(subprocess.check_output(['sysctl', '-n', 'hw.memsize']).strip())
+            return int(mem / (1024 ** 3))
+        elif os.name == "nt":
+            import ctypes
+            class MEMORYSTATUSEX(ctypes.Structure):
+                _fields_ = [
+                    ("dwLength", ctypes.c_ulong),
+                    ("dwMemoryLoad", ctypes.c_ulong),
+                    ("ullTotalPhys", ctypes.c_ulonglong),
+                    ("ullAvailPhys", ctypes.c_ulonglong),
+                    ("ullTotalPageFile", ctypes.c_ulonglong),
+                    ("ullAvailPageFile", ctypes.c_ulonglong),
+                    ("ullTotalVirtual", ctypes.c_ulonglong),
+                    ("ullAvailVirtual", ctypes.c_ulonglong),
+                    ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+                ]
+            stat = MEMORYSTATUSEX()
+            stat.dwLength = ctypes.sizeof(MEMORYSTATUSEX)
+            if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(stat)):
+                return int(stat.ullTotalPhys / (1024 ** 3))
+    except Exception:
+        pass
+    return 8
+
+def send_crash_report(error_code, message, stack_trace):
+    try:
+        import urllib.request
+        import json
+        import platform
+        user_home = os.path.expanduser("~")
+        if user_home and len(user_home) > 1:
+            message = message.replace(user_home, "<USER_HOME>")
+            stack_trace = stack_trace.replace(user_home, "<USER_HOME>")
+            user_home_alt = user_home.replace("\\", "/")
+            message = message.replace(user_home_alt, "<USER_HOME>")
+            stack_trace = stack_trace.replace(user_home_alt, "<USER_HOME>")
+            user_home_escaped = user_home.replace("\\", "\\\\")
+            message = message.replace(user_home_escaped, "<USER_HOME>")
+            stack_trace = stack_trace.replace(user_home_escaped, "<USER_HOME>")
+        ram_gb = get_system_ram_gb()
+        cpu_cores = os.cpu_count() or 1
+        payload = {
+            "app_version": "v5.8",
+            "error_code": error_code,
+            "message": message,
+            "stack_trace": stack_trace,
+            "system_metadata": {
+                "os_family": platform.system(),
+                "cpu_cores": cpu_cores,
+                "ram_gb": ram_gb
+            }
+        }
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(
+            "https://alenia-porter.onrender.com/telemetry/crash",
+            data=data,
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as response:
+            response.read()
+    except Exception as e:
+        log_error_to_file(f"Crash report telemetry error: {str(e)}")
+
+
 @contextmanager
 def resource_path(relative_path):
     resolved_path = None
@@ -461,4 +534,8 @@ def convert_media(input_directory, target_audio_format, progress_update_callback
     except Exception as conversion_exception:
         exception_traceback = traceback.format_exc()
         log_error_to_file(exception_traceback)
+        try:
+            send_crash_report("CONVERSION_ERROR", str(conversion_exception), exception_traceback)
+        except:
+            pass
         error_callback(str(conversion_exception))

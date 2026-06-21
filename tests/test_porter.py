@@ -101,3 +101,24 @@ def test_load_dotenv_open_exception():
             with patch.dict(os.environ, {}, clear=True):
                 load_dotenv()
                 assert len(os.environ) == 0
+
+def test_get_system_ram_gb(mocker):
+    from alenia_porter.porter import get_system_ram_gb
+    mocker.patch("alenia_porter.porter.sys.platform", "linux")
+    mocker.patch("alenia_porter.porter.os.sysconf", side_effect=lambda name: 1024 if name == "SC_PAGE_SIZE" else 8388608)
+    assert get_system_ram_gb() == 8
+
+def test_send_crash_report_success(mocker):
+    from alenia_porter.porter import send_crash_report
+    import os
+    user_home = os.path.expanduser("~")
+    mock_urlopen = mocker.patch("urllib.request.urlopen")
+    mock_request = mocker.patch("urllib.request.Request")
+    send_crash_report("TEST_CODE", f"Test message under {user_home}", f"Traceback in {user_home}/file.py")
+    assert mock_request.called
+    args, kwargs = mock_request.call_args
+    assert args[0] == "https://alenia-porter.onrender.com/telemetry/crash"
+    import json
+    payload = json.loads(kwargs["data"].decode("utf-8"))
+    assert payload["error_code"] == "TEST_CODE"
+    assert "<USER_HOME>" in payload["message"]
