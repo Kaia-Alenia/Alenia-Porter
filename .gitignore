@@ -18,4 +18,6 @@ clean_assets.py
 .coverage
 .jules/
 inspect_telemetry.py
+porter_launcher.bin
+porter_launcher.sh
 
