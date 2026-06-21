@@ -117,10 +117,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install nuitka ordered-set zstandard git+https://github.com/Kaia-Alenia/alenia-zenith.git
-          sudo apt-get update && sudo apt-get install -y python3-tk
-
-      - name: Set up FFmpeg
-        uses: FedericoCarboni/setup-ffmpeg@v3
+          sudo apt-get update && sudo apt-get install -y python3-tk ffmpeg
 
       - name: Copy FFmpeg binaries to package
         run: |
