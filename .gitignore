@@ -17,4 +17,5 @@ clean_assets.py
 /target
 .coverage
 .jules/
+inspect_crashes.py
 
