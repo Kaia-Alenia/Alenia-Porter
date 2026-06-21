@@ -1,5 +1,10 @@
 # Alenia Porter v5.9 🐧
 
+[![Build Status](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/build.yml/badge.svg)](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/build.yml)
+[![Pages Deploy](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/pages.yml/badge.svg)](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/pages.yml)
+[![GitHub release](https://img.shields.io/github/v/release/Kaia-Alenia/Alenia-Porter?include_prereleases&color=accent)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 **Optimizador multimedia universal de alto rendimiento.**
 
 Alenia Porter es una herramienta profesional, multiplataforma y autónoma diseñada para automatizar la optimización, compresión y preparación de recursos multimedia (imágenes, video y audio).
@@ -23,6 +28,14 @@ Alenia Porter actúa como un orquestador inteligente sobre herramientas de proce
    - **Video:** Codifica secuencias de video a contenedores WebM/OGV optimizados para web y reproductores livianos.
    - **Audio:** Transcodifica pistas de audio a OGG u OPUS reduciendo drástrxamente el peso de almacenamiento final mientras preserva el espectro acústico.
 4. **Resiliencia de Procesamiento:** Implementa un sistema de control de fallos y telemetría de rendimiento que genera reportes automáticos en caso de interrupciones inesperadas.
+
+## Telemetría y Privacidad
+
+Para medir el rendimiento de la herramienta y conocer los formatos de archivo más optimizados por la comunidad, Alenia Porter incorpora un sistema básico de telemetría asíncrona.
+
+- **Absoluta Privacidad:** **No recopilamos información personal o sensible** (como nombres reales, contraseñas, correos, archivos procesados o datos del disco duro).
+- **Datos Recopilados:** Únicamente se envía el identificador de instalación único y anónimo (UUID), el apodo legible elegido por el usuario (nickname), el tipo de sistema operativo, el modo de ejecución (GUI/CLI), la extensión del formato optimizado (ej. "mp3", "webp"), el conteo total de archivos procesados y el tiempo empleado en segundos.
+- **Transparencia:** Toda la información estadística agregada es enviada de forma segura para consolidar benchmarks públicos sobre el rendimiento de la herramienta en distintas plataformas.
 
 ## Características Clave
 
@@ -58,4 +71,5 @@ Alenia Porter actúa como un orquestador inteligente sobre herramientas de proce
 
 **Desarrollado y traducido por Kaia-Alenia Studios**
 US ES FR JP CN RU BR DE
+
 
