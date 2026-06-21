@@ -226,9 +226,13 @@ def main():
                 studio_logo_label.pack_forget()
 
             patreon_link_button.configure(bg=bg, activebackground=bg, fg=link)
-            language_toggle_button.configure(bg=bg, activebackground=bg, fg=fg_dim)
+            language_toggle_button.configure(bg=bg, activebackground=bg, fg=fg)
             hamburger_button.configure(bg=bg, activebackground=bg, fg=fg)
             theme_toggle_button.configure(bg=bg, activebackground=bg, fg=fg)
+            try:
+                nickname_toggle_button.configure(bg=bg, activebackground=bg, fg=fg)
+            except NameError:
+                pass
         
             header_label.configure(bg=bg, fg=fg)
             format_selection_frame.configure(bg=bg)
@@ -515,7 +519,7 @@ def main():
         except: pass
         initial_translation = languages_dictionary[current_language_code]
         root_window.title(initial_translation["title"])
-        root_window.geometry("450x550")
+        root_window.geometry("480x550")
         bg_main = current_theme.get("bg_main", "#1e1e1e")
         fg_main = current_theme.get("fg_main", "#ffffff")
         fg_dim = current_theme.get("fg_dim", "#a3a3a3")
@@ -529,11 +533,17 @@ def main():
         hamburger_button = tk.Button(top_navigation_bar, text="≡", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=lambda: show_custom_popup(initial_translation["formats_title"], initial_translation["formats_info"], is_accordion=True), font=("Arial", 14, "bold"))
         hamburger_button.pack(side="right")
         ToolTip(hamburger_button, lambda: languages_dictionary[current_language_code]["formats_title"])
-        theme_toggle_button = tk.Button(top_navigation_bar, text="🎨", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=cycle_theme, font=("Segoe UI Emoji", 12))
+        theme_toggle_button = tk.Button(top_navigation_bar, text="🎨", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=cycle_theme, font=("Arial", 12))
         theme_toggle_button.pack(side="right", padx=(0, 10))
         ToolTip(theme_toggle_button, "Theme")
-        language_toggle_button = tk.Button(top_navigation_bar, text=initial_translation["btn_lang"], bg=bg_main, fg=fg_dim, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=change_application_language, font=("Arial", 9, "bold"))
+        language_toggle_button = tk.Button(top_navigation_bar, text=initial_translation["btn_lang"], bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=change_application_language, font=("Arial", 9, "bold"))
         language_toggle_button.pack(side="right", padx=(0, 10))
+
+        def on_nickname_button_click():
+            prompt_nickname(is_startup=False)
+
+        nickname_toggle_button = tk.Button(top_navigation_bar, text=f"👤 {porter.get_local_nickname()}", bg=bg_main, fg=fg_main, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=on_nickname_button_click, font=("Arial", 9, "bold"))
+        nickname_toggle_button.pack(side="right", padx=(0, 10))
         header_label = tk.Label(root_window, text=initial_translation["header"], font=("Arial", 14, "bold"), bg=bg_main, fg=fg_main)
         header_label.pack(pady=(5, 15))
         format_selection_frame = tk.Frame(root_window, bg=bg_main)
@@ -556,6 +566,55 @@ def main():
         info_status_label.pack(pady=(0, 15)) 
         studio_logo_label = tk.Label(root_window, bg=bg_main)
         studio_logo_label.pack(pady=(0, 5)) 
+
+        def prompt_nickname(is_startup=False):
+            bg = current_theme.get("bg_main", "#1e1e1e")
+            fg = current_theme.get("fg_main", "#ffffff")
+            accent = current_theme.get("accent", "#8b5cf6")
+
+            popup = tk.Toplevel(root_window)
+            popup.title("Nickname")
+            popup.geometry("350x180")
+            popup.configure(bg=bg)
+            popup.transient(root_window)
+            popup.wait_visibility()
+            popup.grab_set()
+
+            content_frame = tk.Frame(popup, bg=bg)
+            content_frame.pack(expand=True, fill="both", padx=20, pady=15)
+
+            tk.Label(content_frame, text="Please enter your nickname:", bg=bg, fg=fg, font=("Arial", 11, "bold")).pack(anchor="w", pady=(0, 10))
+
+            nickname_var = tk.StringVar(value=porter.get_local_nickname())
+            entry = tk.Entry(content_frame, textvariable=nickname_var, bg="#2d2d2d", fg=fg, insertbackground=fg, font=("Arial", 11))
+            entry.pack(fill="x", pady=(0, 15))
+
+            def save_nickname():
+                new_nickname = nickname_var.get().strip()
+                if new_nickname:
+                    home_dir = os.path.expanduser("~")
+                    nickname_file_path = os.path.join(home_dir, ".alenia_nickname")
+                    try:
+                        with open(nickname_file_path, "w", encoding="utf-8") as f:
+                            f.write(new_nickname)
+                    except:
+                        pass
+                    nickname_toggle_button.config(text=f"👤 {new_nickname}")
+                    configuration_data["nickname_prompted"] = True
+                    save_user_configuration(configuration_data)
+
+                popup.destroy()
+                if is_startup and update_info["found"]:
+                    prompt_update(update_info["ver"], update_info["url"])
+
+            btn_frame = tk.Frame(content_frame, bg=bg)
+            btn_frame.pack()
+            save_btn = tk.Button(btn_frame, text="Save", command=save_nickname, bg=accent, fg="white", padx=20, pady=5, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold"))
+            save_btn.pack(side="left", padx=5)
+
+            if not is_startup:
+                cancel_btn = tk.Button(btn_frame, text="Cancel", command=popup.destroy, bg="#555555", fg="white", padx=20, pady=5, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold"))
+                cancel_btn.pack(side="left", padx=5)
 
         def prompt_update(new_ver, dl_url):
             trans = languages_dictionary[current_language_code]
@@ -580,8 +639,14 @@ def main():
             tk.Button(btn_f, text="Yes", bg=accent, fg="white", command=do_upd, width=8).pack(side=tk.LEFT, padx=10)
             tk.Button(btn_f, text="No", bg="#555555", fg="white", command=upd_win.destroy, width=8).pack(side=tk.LEFT, padx=10)
 
+        def check_startup_prompts():
+            if not configuration_data.get("nickname_prompted", False):
+                prompt_nickname(is_startup=True)
+            elif update_info["found"]:
+                prompt_update(update_info["ver"], update_info["url"])
+
         apply_theme_to_ui()
-        root_window.after(1500, lambda: prompt_update(update_info["ver"], update_info["url"]) if update_info["found"] else None)
+        root_window.after(1500, check_startup_prompts)
         root_window.mainloop()
 
     except Exception as e:
