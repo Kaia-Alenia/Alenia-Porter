@@ -398,59 +398,82 @@ def stream_files(directory, base_directory, audio_exts, video_exts, image_exts, 
         pass
 
 
-def process_single_file_top_level(file_info, target_audio_format, target_video_format, target_image_format, audio_output_directory, video_output_directory, image_output_directory, ffmpeg_executable_path, subprocess_creation_flags):
+def process_single_file_top_level(file_info, target_audio_format, target_video_format, target_image_format, audio_output_directory, video_output_directory, image_output_directory, ffmpeg_executable_path, subprocess_creation_flags, preserve_structure=False, audio_bitrate="192k", video_crf="23", video_preset="veryfast", image_quality="80"):
     absolute_path, relative_path, media_type = file_info
-    cleaned_base_name = os.path.splitext(relative_path)[0].replace(os.sep, "_")
-    cleaned_base_name = re.sub(r'[^a-zA-Z0-9_]', '_', cleaned_base_name).lower()
-    
+    base_name = os.path.splitext(os.path.basename(relative_path))[0]
+    cleaned_base_name = re.sub(r'[^a-zA-Z0-9_]', '_', base_name).lower()
+
     orig_size = os.path.getsize(absolute_path)
     ffmpeg_command = []
     output_file_path = ""
     output_file_name = ""
 
+    def _ensure_dir(path):
+        try:
+            os.makedirs(path, exist_ok=True)
+        except Exception:
+            pass
+
     if media_type == "video":
-        if not os.path.exists(video_output_directory):
-            os.makedirs(video_output_directory, exist_ok=True)
+        # determine destination directory
+        if preserve_structure:
+            rel_dir = os.path.dirname(relative_path)
+            dest_dir = os.path.join(video_output_directory, rel_dir)
+        else:
+            dest_dir = video_output_directory
+        _ensure_dir(dest_dir)
+
         # choose output based on user-selected target_video_format
         if target_video_format == "mp4":
             output_file_name = f"{cleaned_base_name}.mp4"
-            output_file_path = os.path.join(video_output_directory, output_file_name)
+            output_file_path = os.path.join(dest_dir, output_file_name)
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
                 "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:v", "libx264", "-crf", "23", "-preset", "veryfast",
-                "-c:a", "aac", "-b:a", "128k",
+                "-c:v", "libx264", "-crf", str(video_crf), "-preset", video_preset,
+                "-c:a", "aac", "-b:a", str(audio_bitrate),
                 "-threads", "1",
                 output_file_path
             ]
         else:
             # default to webm
             output_file_name = f"{cleaned_base_name}.webm"
-            output_file_path = os.path.join(video_output_directory, output_file_name)
+            output_file_path = os.path.join(dest_dir, output_file_name)
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
                 "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:v", "libvpx-vp9", "-crf", "30", "-b:v", "0",
+                "-c:v", "libvpx-vp9", "-crf", str(video_crf), "-b:v", "0",
                 "-cpu-used", "4", "-row-mt", "1",
-                "-c:a", "libopus", "-b:a", "128k",
+                "-c:a", "libopus", "-b:a", str(audio_bitrate),
                 "-threads", "1",
                 output_file_path
             ]
     elif media_type == "image":
-        if not os.path.exists(image_output_directory):
-            os.makedirs(image_output_directory, exist_ok=True)
+        if preserve_structure:
+            rel_dir = os.path.dirname(relative_path)
+            dest_dir = os.path.join(image_output_directory, rel_dir)
+        else:
+            dest_dir = image_output_directory
+        _ensure_dir(dest_dir)
+
         if target_image_format in ("jpg", "jpeg"):
             output_file_name = f"{cleaned_base_name}.jpg"
-            output_file_path = os.path.join(image_output_directory, output_file_name)
+            output_file_path = os.path.join(dest_dir, output_file_name)
+            # map percent quality to ffmpeg q:v (2 best - 31 worst)
+            try:
+                q = int(image_quality)
+                qv = max(2, min(31, int(31 - (q / 100.0) * 29)))
+            except Exception:
+                qv = 4
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
                 "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-q:v", "4",
+                "-q:v", str(qv),
                 output_file_path
             ]
         elif target_image_format == "png":
             output_file_name = f"{cleaned_base_name}.png"
-            output_file_path = os.path.join(image_output_directory, output_file_name)
+            output_file_path = os.path.join(dest_dir, output_file_name)
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
                 "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
@@ -459,63 +482,50 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
         else:
             # default to webp
             output_file_name = f"{cleaned_base_name}.webp"
-            output_file_path = os.path.join(image_output_directory, output_file_name)
+            output_file_path = os.path.join(dest_dir, output_file_name)
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
                 "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:v", "libwebp", "-quality", "80",
+                "-c:v", "libwebp", "-quality", str(image_quality),
                 output_file_path
             ]
     else:
-        if not os.path.exists(audio_output_directory):
-            os.makedirs(audio_output_directory, exist_ok=True)
+        if preserve_structure:
+            rel_dir = os.path.dirname(relative_path)
+            dest_dir = os.path.join(audio_output_directory, rel_dir)
+        else:
+            dest_dir = audio_output_directory
+        _ensure_dir(dest_dir)
+
         output_file_name = f"{cleaned_base_name}.{target_audio_format}"
-        output_file_path = os.path.join(audio_output_directory, output_file_name)
+        output_file_path = os.path.join(dest_dir, output_file_name)
+
         if target_audio_format == "ogg":
-            ffmpeg_command = [
-                ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:a", "libvorbis", "-b:a", "192k",
-                "-threads", "1",
-                output_file_path
-            ]
+            codec = "libvorbis"
         elif target_audio_format == "mp3":
-            ffmpeg_command = [
-                ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:a", "libmp3lame", "-b:a", "192k",
-                "-threads", "1",
-                output_file_path
-            ]
+            codec = "libmp3lame"
         elif target_audio_format == "flac":
-            ffmpeg_command = [
-                ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:a", "flac",
-                "-threads", "1",
-                output_file_path
-            ]
+            codec = "flac"
         elif target_audio_format == "wav":
-            ffmpeg_command = [
-                ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:a", "pcm_s16le",
-                output_file_path
-            ]
+            codec = "pcm_s16le"
         elif target_audio_format == "aac":
+            codec = "aac"
+        else:
+            codec = "libopus"
+
+        if codec in ("flac", "pcm_s16le"):
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
                 "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:a", "aac", "-b:a", "128k",
+                "-c:a", codec,
                 "-threads", "1",
                 output_file_path
             ]
         else:
-            # default to opus
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
                 "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:a", "libopus", "-b:a", "128k",
+                "-c:a", codec, "-b:a", str(audio_bitrate),
                 "-threads", "1",
                 output_file_path
             ]
@@ -533,7 +543,7 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
     except Exception as e:
         return (media_type, cleaned_base_name, output_file_name, orig_size, 0, False, str(e))
 
-def convert_media(input_directory, target_audio_format, target_video_format, target_image_format, recursive, progress_update_callback, status_update_callback, completion_callback, error_callback, lang_code="es", headless=False):
+def convert_media(input_directory, target_audio_format, target_video_format, target_image_format, recursive, preserve_structure, audio_bitrate, video_crf, video_preset, image_quality, progress_update_callback, status_update_callback, completion_callback, error_callback, lang_code="es", headless=False):
     import time
     start_time = time.time()
     try:
@@ -581,7 +591,12 @@ def convert_media(input_directory, target_audio_format, target_video_format, tar
                     video_output_directory,
                     image_output_directory,
                     ffmpeg_executable_path,
-                    subprocess_creation_flags
+                    subprocess_creation_flags,
+                    preserve_structure,
+                    audio_bitrate,
+                    video_crf,
+                    video_preset,
+                    image_quality
                 ): file_info for file_info in file_list
             }
 

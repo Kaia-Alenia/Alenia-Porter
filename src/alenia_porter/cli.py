@@ -576,9 +576,13 @@ def main():
             info_status_label.config(text=active_translation["info_wait"], fg=warning_color)
             draw_progress(0)
             # collect targets and start conversion with per-type options
-            a_code, v_code, i_code, rec_flag, a_enabled, v_enabled, i_enabled = collect_targets()
+            (a_code, v_code, i_code, rec_flag, preserve_flag, audio_bitrate, video_crf, video_preset, image_quality, a_enabled, v_enabled, i_enabled) = collect_targets()
             # If a type is disabled, pass placeholder values and porter will simply not find files for that type
-            threading.Thread(target=porter.convert_media, args=(selected_directory, a_code, v_code, i_code, rec_flag, on_progressbar_increment, None, on_conversion_success, on_conversion_failure, current_language_code, False), daemon=True).start()
+            threading.Thread(
+                target=porter.convert_media,
+                args=(selected_directory, a_code, v_code, i_code, rec_flag, preserve_flag, audio_bitrate, video_crf, video_preset, image_quality, on_progressbar_increment, None, on_conversion_success, on_conversion_failure, current_language_code, False),
+                daemon=True
+            ).start()
 
         def refresh_format_labels(*args):
             active_translation = languages_dictionary[current_language_code]
@@ -700,6 +704,36 @@ def main():
         tk.Checkbutton(image_col, text="Images", variable=image_enabled_var, bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0).pack()
         image_combobox.pack(in_=image_col)
 
+        # Quality and bitrate controls
+        quality_frame = tk.Frame(format_selection_frame, bg=bg_main)
+        quality_frame.pack(pady=(8,0), fill="x")
+
+        # Preserve structure
+        preserve_structure_var = tk.BooleanVar(value=False)
+        tk.Checkbutton(quality_frame, text="Preserve folder structure", variable=preserve_structure_var, bg=bg_main, fg=fg_dim, borderwidth=0, activebackground=bg_main).pack(anchor="w")
+
+        # Audio bitrate
+        audio_bitrate_var = tk.StringVar(value="192k")
+        tk.Label(quality_frame, text="Audio bitrate:", bg=bg_main, fg=fg_dim, font=("Arial",8)).pack(anchor="w")
+        audio_bitrate_combobox = ttk.Combobox(quality_frame, textvariable=audio_bitrate_var, values=["128k","192k","256k","320k"], state="readonly", width=8)
+        audio_bitrate_combobox.pack(anchor="w", pady=(0,6))
+
+        # Video quality (CRF) and preset
+        video_crf_var = tk.StringVar(value="23")
+        video_preset_var = tk.StringVar(value="veryfast")
+        tk.Label(quality_frame, text="Video CRF:", bg=bg_main, fg=fg_dim, font=("Arial",8)).pack(anchor="w")
+        video_crf_combobox = ttk.Combobox(quality_frame, textvariable=video_crf_var, values=["18","20","23","28"], state="readonly", width=6)
+        video_crf_combobox.pack(anchor="w")
+        tk.Label(quality_frame, text="Video preset:", bg=bg_main, fg=fg_dim, font=("Arial",8)).pack(anchor="w")
+        video_preset_combobox = ttk.Combobox(quality_frame, textvariable=video_preset_var, values=["ultrafast","superfast","veryfast","faster","fast","medium"], state="readonly", width=12)
+        video_preset_combobox.pack(anchor="w", pady=(0,6))
+
+        # Image quality
+        image_quality_var = tk.StringVar(value="80")
+        tk.Label(quality_frame, text="Image quality:", bg=bg_main, fg=fg_dim, font=("Arial",8)).pack(anchor="w")
+        image_quality_combobox = ttk.Combobox(quality_frame, textvariable=image_quality_var, values=["60","70","80","90","100"], state="readonly", width=6)
+        image_quality_combobox.pack(anchor="w", pady=(0,6))
+
         # Recursive option
         tk.Checkbutton(format_selection_frame, text="Recursive (include subfolders)", variable=recursive_var, bg=bg_main, fg=fg_dim, borderwidth=0, activebackground=bg_main).pack(pady=(6,0))
 
@@ -726,7 +760,7 @@ def main():
             return "webp"
 
         def collect_targets():
-            return (_map_audio_display_to_code(audio_display_var.get()), _map_video_display_to_code(video_display_var.get()), _map_image_display_to_code(image_display_var.get()), recursive_var.get(), audio_enabled_var.get(), video_enabled_var.get(), image_enabled_var.get())
+            return (_map_audio_display_to_code(audio_display_var.get()), _map_video_display_to_code(video_display_var.get()), _map_image_display_to_code(image_display_var.get()), recursive_var.get(), preserve_structure_var.get(), audio_bitrate_var.get(), video_crf_var.get(), video_preset_var.get(), image_quality_var.get(), audio_enabled_var.get(), video_enabled_var.get(), image_enabled_var.get())
 
         select_folder_button = tk.Button(root_window, text=initial_translation["btn_select"], command=trigger_media_conversion, bg=accent_color, fg="white", padx=20, pady=10, borderwidth=0, highlightthickness=0, cursor="hand2")
         select_folder_button.pack(pady=15)
