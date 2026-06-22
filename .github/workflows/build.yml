@@ -11,6 +11,8 @@ permissions:
 jobs:
   build-windows:
     runs-on: windows-latest
+    outputs:
+      verified: ${{ steps.set-verified.outputs.verified }}
 
     steps:
       - name: Checkout repository
@@ -73,8 +75,20 @@ jobs:
           name: AleniaPorter-Windows
           path: AleniaPorter-Windows.zip
 
+      - name: Mark verified
+        id: set-verified
+        run: |
+          if (Test-Path AleniaPorter-Windows.zip) {
+            echo "verified=true" >> $env:GITHUB_OUTPUT
+          } else {
+            echo "verified=false" >> $env:GITHUB_OUTPUT
+            exit 1
+          }
+
   build-macos:
     runs-on: macos-latest
+    outputs:
+      verified: ${{ steps.set-verified.outputs.verified }}
 
     steps:
       - name: Checkout repository
@@ -133,8 +147,20 @@ jobs:
           name: AleniaPorter-macOS
           path: AleniaPorter-macOS.zip
 
+      - name: Mark verified
+        id: set-verified
+        run: |
+          if [ -f AleniaPorter-macOS.zip ]; then
+            echo "verified=true" >> $GITHUB_OUTPUT
+          else
+            echo "verified=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
   build-linux:
     runs-on: ubuntu-latest
+    outputs:
+      verified: ${{ steps.set-verified.outputs.verified }}
 
     steps:
       - name: Checkout repository
@@ -190,8 +216,20 @@ jobs:
           name: AleniaPorter-Linux
           path: AleniaPorter-Linux.tar.gz
 
+      - name: Mark verified
+        id: set-verified
+        run: |
+          if [ -f AleniaPorter-Linux.tar.gz ]; then
+            echo "verified=true" >> $GITHUB_OUTPUT
+          else
+            echo "verified=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
   release:
     needs: [build-windows, build-macos, build-linux]
+    # Only run release job if all builds were verified
+    if: ${{ needs.build-windows.outputs.verified == 'true' && needs.build-macos.outputs.verified == 'true' && needs.build-linux.outputs.verified == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
