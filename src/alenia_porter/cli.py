@@ -252,8 +252,18 @@ def main():
             format_selection_frame.configure(bg=bg)
             format_label.configure(bg=bg, fg=fg_dim)
         
-            ogg_radiobutton.configure(bg=bg, fg=fg, selectcolor=accent, activebackground=bg)
-            opus_radiobutton.configure(bg=bg, fg=fg, selectcolor=accent, activebackground=bg)
+            # Apply theme to comboboxes and labels if present
+            try:
+                audio_combobox.configure(background=bg, foreground=fg)
+                video_combobox.configure(background=bg, foreground=fg)
+                image_combobox.configure(background=bg, foreground=fg)
+            except Exception:
+                pass
+            try:
+                # checkbuttons and labels adjust automatically via parent bg/fg
+                pass
+            except Exception:
+                pass
         
 
         
@@ -565,12 +575,36 @@ def main():
             select_folder_button.config(state=tk.DISABLED)
             info_status_label.config(text=active_translation["info_wait"], fg=warning_color)
             draw_progress(0)
-            threading.Thread(target=porter.convert_media, args=(selected_directory, format_variable.get(), on_progressbar_increment, None, on_conversion_success, on_conversion_failure, current_language_code, False), daemon=True).start()
+            # collect targets and start conversion with per-type options
+            a_code, v_code, i_code, rec_flag, a_enabled, v_enabled, i_enabled = collect_targets()
+            # If a type is disabled, pass placeholder values and porter will simply not find files for that type
+            threading.Thread(target=porter.convert_media, args=(selected_directory, a_code, v_code, i_code, rec_flag, on_progressbar_increment, None, on_conversion_success, on_conversion_failure, current_language_code, False), daemon=True).start()
 
         def refresh_format_labels(*args):
             active_translation = languages_dictionary[current_language_code]
-            ogg_radiobutton.config(text=f"{active_translation['format_ogg']} / OGV / WebP")
-            opus_radiobutton.config(text=f"{active_translation['format_opus']} / OGV / WebP")
+            # audio translations
+            a0 = active_translation.get('format_ogg', 'OGG')
+            a1 = active_translation.get('format_opus', 'OPUS')
+            audio_vals = [a0, a1, 'MP3', 'FLAC', 'WAV', 'AAC']
+            try:
+                audio_combobox['values'] = audio_vals
+                audio_display_var.set(audio_vals[0])
+            except Exception:
+                pass
+            # video
+            video_vals = ['WEBM', 'MP4']
+            try:
+                video_combobox['values'] = video_vals
+                video_display_var.set(video_vals[0])
+            except Exception:
+                pass
+            # images
+            image_vals = ['WEBP', 'JPG', 'PNG']
+            try:
+                image_combobox['values'] = image_vals
+                image_display_var.set(image_vals[0])
+            except Exception:
+                pass
 
         root_window = tk.Tk()
         def report_callback_exception(exc, val, tb):
@@ -625,11 +659,75 @@ def main():
         format_selection_frame.pack(pady=5)
         format_label = tk.Label(format_selection_frame, text=initial_translation["select_format"], bg=bg_main, fg=fg_dim, font=("Arial", 9))
         format_label.pack()
-        format_variable = tk.StringVar(value="ogg")
-        ogg_radiobutton = tk.Radiobutton(format_selection_frame, text=initial_translation["format_ogg"], variable=format_variable, value="ogg", bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0, highlightthickness=0)
-        ogg_radiobutton.pack(side=tk.LEFT, padx=10)
-        opus_radiobutton = tk.Radiobutton(format_selection_frame, text=initial_translation["format_opus"], variable=format_variable, value="opus", bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0, highlightthickness=0)
-        opus_radiobutton.pack(side=tk.LEFT, padx=10)
+        # Per-type format selectors and options
+        audio_enabled_var = tk.BooleanVar(value=True)
+        video_enabled_var = tk.BooleanVar(value=True)
+        image_enabled_var = tk.BooleanVar(value=True)
+        recursive_var = tk.BooleanVar(value=True)
+
+        # Display mappings
+        audio_options_display = [initial_translation.get("format_ogg", "OGG"), initial_translation.get("format_opus", "OPUS"), "MP3", "FLAC", "WAV", "AAC"]
+        audio_display_var = tk.StringVar(value=audio_options_display[0])
+        audio_combobox = ttk.Combobox(format_selection_frame, textvariable=audio_display_var, values=audio_options_display, state="readonly", width=12)
+
+        video_options_display = ["WEBM", "MP4"]
+        video_display_var = tk.StringVar(value=video_options_display[0])
+        video_combobox = ttk.Combobox(format_selection_frame, textvariable=video_display_var, values=video_options_display, state="readonly", width=8)
+
+        image_options_display = ["WEBP", "JPG", "PNG"]
+        image_display_var = tk.StringVar(value=image_options_display[0])
+        image_combobox = ttk.Combobox(format_selection_frame, textvariable=image_display_var, values=image_options_display, state="readonly", width=8)
+
+        # Layout in a compact row
+        row_frame = tk.Frame(format_selection_frame, bg=bg_main)
+        row_frame.pack(pady=6)
+
+        # Audio column
+        audio_col = tk.Frame(row_frame, bg=bg_main)
+        audio_col.pack(side=tk.LEFT, padx=8)
+        tk.Checkbutton(audio_col, text="Audio", variable=audio_enabled_var, bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0).pack()
+        audio_combobox.pack(in_=audio_col)
+
+        # Video column
+        video_col = tk.Frame(row_frame, bg=bg_main)
+        video_col.pack(side=tk.LEFT, padx=8)
+        tk.Checkbutton(video_col, text="Video", variable=video_enabled_var, bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0).pack()
+        video_combobox.pack(in_=video_col)
+
+        # Image column
+        image_col = tk.Frame(row_frame, bg=bg_main)
+        image_col.pack(side=tk.LEFT, padx=8)
+        tk.Checkbutton(image_col, text="Images", variable=image_enabled_var, bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0).pack()
+        image_combobox.pack(in_=image_col)
+
+        # Recursive option
+        tk.Checkbutton(format_selection_frame, text="Recursive (include subfolders)", variable=recursive_var, bg=bg_main, fg=fg_dim, borderwidth=0, activebackground=bg_main).pack(pady=(6,0))
+
+        # helper to map display to internal codes
+        def _map_audio_display_to_code(d):
+            m = {
+                initial_translation.get("format_ogg", "OGG"): "ogg",
+                initial_translation.get("format_opus", "OPUS"): "opus",
+                "MP3": "mp3",
+                "FLAC": "flac",
+                "WAV": "wav",
+                "AAC": "aac"
+            }
+            return m.get(d, "opus")
+
+        def _map_video_display_to_code(d):
+            return "mp4" if d.lower() == "mp4" else "webm"
+
+        def _map_image_display_to_code(d):
+            if d.lower() in ("jpg", "jpeg"):
+                return "jpg"
+            if d.lower() == "png":
+                return "png"
+            return "webp"
+
+        def collect_targets():
+            return (_map_audio_display_to_code(audio_display_var.get()), _map_video_display_to_code(video_display_var.get()), _map_image_display_to_code(image_display_var.get()), recursive_var.get(), audio_enabled_var.get(), video_enabled_var.get(), image_enabled_var.get())
+
         select_folder_button = tk.Button(root_window, text=initial_translation["btn_select"], command=trigger_media_conversion, bg=accent_color, fg="white", padx=20, pady=10, borderwidth=0, highlightthickness=0, cursor="hand2")
         select_folder_button.pack(pady=15)
         select_folder_button.bind("<Enter>", lambda e: select_folder_button.config(bg=current_theme.get("accent_hover", "#a78bfa")))

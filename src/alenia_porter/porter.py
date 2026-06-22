@@ -377,12 +377,12 @@ def log_error_to_file(error_message):
     except Exception:
         pass
 
-def stream_files(directory, base_directory, audio_exts, video_exts, image_exts):
+def stream_files(directory, base_directory, audio_exts, video_exts, image_exts, recursive=True):
     try:
         for entry in os.scandir(directory):
             if entry.is_dir():
-                if entry.name != "Alenia_Optimized":
-                    yield from stream_files(entry.path, base_directory, audio_exts, video_exts, image_exts)
+                if entry.name != "Alenia_Optimized" and recursive:
+                    yield from stream_files(entry.path, base_directory, audio_exts, video_exts, image_exts, recursive=recursive)
             elif entry.is_file():
                 name_lower = entry.name.lower()
                 if name_lower.endswith(audio_exts):
@@ -397,7 +397,8 @@ def stream_files(directory, base_directory, audio_exts, video_exts, image_exts):
     except Exception:
         pass
 
-def process_single_file_top_level(file_info, target_audio_format, audio_output_directory, video_output_directory, image_output_directory, ffmpeg_executable_path, subprocess_creation_flags):
+
+def process_single_file_top_level(file_info, target_audio_format, target_video_format, target_image_format, audio_output_directory, video_output_directory, image_output_directory, ffmpeg_executable_path, subprocess_creation_flags):
     absolute_path, relative_path, media_type = file_info
     cleaned_base_name = os.path.splitext(relative_path)[0].replace(os.sep, "_")
     cleaned_base_name = re.sub(r'[^a-zA-Z0-9_]', '_', cleaned_base_name).lower()
@@ -410,28 +411,61 @@ def process_single_file_top_level(file_info, target_audio_format, audio_output_d
     if media_type == "video":
         if not os.path.exists(video_output_directory):
             os.makedirs(video_output_directory, exist_ok=True)
-        output_file_name = f"{cleaned_base_name}.webm"
-        output_file_path = os.path.join(video_output_directory, output_file_name)
-        ffmpeg_command = [
-            ffmpeg_executable_path, "-y", "-i", absolute_path,
-            "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-            "-c:v", "libvpx-vp9", "-crf", "30", "-b:v", "0",
-            "-cpu-used", "4", "-row-mt", "1",
-            "-c:a", "libopus", "-b:a", "128k",
-            "-threads", "1",
-            output_file_path
-        ]
+        # choose output based on user-selected target_video_format
+        if target_video_format == "mp4":
+            output_file_name = f"{cleaned_base_name}.mp4"
+            output_file_path = os.path.join(video_output_directory, output_file_name)
+            ffmpeg_command = [
+                ffmpeg_executable_path, "-y", "-i", absolute_path,
+                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
+                "-c:v", "libx264", "-crf", "23", "-preset", "veryfast",
+                "-c:a", "aac", "-b:a", "128k",
+                "-threads", "1",
+                output_file_path
+            ]
+        else:
+            # default to webm
+            output_file_name = f"{cleaned_base_name}.webm"
+            output_file_path = os.path.join(video_output_directory, output_file_name)
+            ffmpeg_command = [
+                ffmpeg_executable_path, "-y", "-i", absolute_path,
+                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
+                "-c:v", "libvpx-vp9", "-crf", "30", "-b:v", "0",
+                "-cpu-used", "4", "-row-mt", "1",
+                "-c:a", "libopus", "-b:a", "128k",
+                "-threads", "1",
+                output_file_path
+            ]
     elif media_type == "image":
         if not os.path.exists(image_output_directory):
             os.makedirs(image_output_directory, exist_ok=True)
-        output_file_name = f"{cleaned_base_name}.webp"
-        output_file_path = os.path.join(image_output_directory, output_file_name)
-        ffmpeg_command = [
-            ffmpeg_executable_path, "-y", "-i", absolute_path,
-            "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-            "-c:v", "libwebp", "-quality", "80",
-            output_file_path
-        ]
+        if target_image_format in ("jpg", "jpeg"):
+            output_file_name = f"{cleaned_base_name}.jpg"
+            output_file_path = os.path.join(image_output_directory, output_file_name)
+            ffmpeg_command = [
+                ffmpeg_executable_path, "-y", "-i", absolute_path,
+                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
+                "-q:v", "4",
+                output_file_path
+            ]
+        elif target_image_format == "png":
+            output_file_name = f"{cleaned_base_name}.png"
+            output_file_path = os.path.join(image_output_directory, output_file_name)
+            ffmpeg_command = [
+                ffmpeg_executable_path, "-y", "-i", absolute_path,
+                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
+                output_file_path
+            ]
+        else:
+            # default to webp
+            output_file_name = f"{cleaned_base_name}.webp"
+            output_file_path = os.path.join(image_output_directory, output_file_name)
+            ffmpeg_command = [
+                ffmpeg_executable_path, "-y", "-i", absolute_path,
+                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
+                "-c:v", "libwebp", "-quality", "80",
+                output_file_path
+            ]
     else:
         if not os.path.exists(audio_output_directory):
             os.makedirs(audio_output_directory, exist_ok=True)
@@ -445,7 +479,39 @@ def process_single_file_top_level(file_info, target_audio_format, audio_output_d
                 "-threads", "1",
                 output_file_path
             ]
+        elif target_audio_format == "mp3":
+            ffmpeg_command = [
+                ffmpeg_executable_path, "-y", "-i", absolute_path,
+                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
+                "-c:a", "libmp3lame", "-b:a", "192k",
+                "-threads", "1",
+                output_file_path
+            ]
+        elif target_audio_format == "flac":
+            ffmpeg_command = [
+                ffmpeg_executable_path, "-y", "-i", absolute_path,
+                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
+                "-c:a", "flac",
+                "-threads", "1",
+                output_file_path
+            ]
+        elif target_audio_format == "wav":
+            ffmpeg_command = [
+                ffmpeg_executable_path, "-y", "-i", absolute_path,
+                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
+                "-c:a", "pcm_s16le",
+                output_file_path
+            ]
+        elif target_audio_format == "aac":
+            ffmpeg_command = [
+                ffmpeg_executable_path, "-y", "-i", absolute_path,
+                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
+                "-c:a", "aac", "-b:a", "128k",
+                "-threads", "1",
+                output_file_path
+            ]
         else:
+            # default to opus
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
                 "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
@@ -467,7 +533,7 @@ def process_single_file_top_level(file_info, target_audio_format, audio_output_d
     except Exception as e:
         return (media_type, cleaned_base_name, output_file_name, orig_size, 0, False, str(e))
 
-def convert_media(input_directory, target_audio_format, progress_update_callback, status_update_callback, completion_callback, error_callback, lang_code="es", headless=False):
+def convert_media(input_directory, target_audio_format, target_video_format, target_image_format, recursive, progress_update_callback, status_update_callback, completion_callback, error_callback, lang_code="es", headless=False):
     import time
     start_time = time.time()
     try:
@@ -476,7 +542,7 @@ def convert_media(input_directory, target_audio_format, progress_update_callback
         image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".tga", ".webp")
         
         # BOLT OPTIMIZATION: Cache file generator to list to prevent second redundant disk read operation.
-        file_list = list(stream_files(input_directory, input_directory, audio_extensions, video_extensions, image_extensions))
+        file_list = list(stream_files(input_directory, input_directory, audio_extensions, video_extensions, image_extensions, recursive=recursive))
         total_files_count = len(file_list)
 
         if total_files_count == 0:
@@ -509,6 +575,8 @@ def convert_media(input_directory, target_audio_format, progress_update_callback
                     process_single_file_top_level,
                     file_info,
                     target_audio_format,
+                    target_video_format,
+                    target_image_format,
                     audio_output_directory,
                     video_output_directory,
                     image_output_directory,
