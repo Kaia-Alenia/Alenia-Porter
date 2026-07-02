@@ -552,7 +552,7 @@ def main():
 
     window.events.loaded += on_loaded
 
-    webview.start(debug=True, http_server=True)
+    webview.start(debug=False, http_server=True)
 
 if __name__ == '__main__':
     main()
