@@ -1,4 +1,4 @@
-name: Build Alenia Porter v6.0
+name: Build Alenia Porter v5.9
 
 on:
   push:
@@ -44,7 +44,7 @@ jobs:
           Get-ChildItem src\alenia_porter\bin
 
       - name: Build frontend
-        working-directory: frontend
+        working-directory: frontend_v2
         run: |
           npm install
           npm run build
@@ -53,7 +53,7 @@ jobs:
         env:
           PYTHONPATH: src
         run: |
-          python -m nuitka --disable-ccache --standalone --assume-yes-for-downloads --windows-console-mode=disable --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg.exe=alenia_porter/bin/ffmpeg.exe --include-data-files=src/alenia_porter/bin/ffprobe.exe=alenia_porter/bin/ffprobe.exe --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
+          python -m nuitka --standalone --assume-yes-for-downloads --disable-ccache --windows-console-mode=disable --enable-plugin=pywebview --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend_v2/dist=frontend_v2/dist --include-data-files=src/alenia_porter/bin/ffmpeg.exe=alenia_porter/bin/ffmpeg.exe --include-data-files=src/alenia_porter/bin/ffprobe.exe=alenia_porter/bin/ffprobe.exe --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -138,16 +138,24 @@ jobs:
           rm *.zip
 
       - name: Build frontend
-        working-directory: frontend
+        working-directory: frontend_v2
         run: |
           npm install
           npm run build
+
+      - name: Convert icon for macOS
+        run: |
+          python -c "
+          from PIL import Image
+          img = Image.open('src/alenia_porter/assets/images/logo.ico')
+          img.save('src/alenia_porter/assets/images/logo.png')
+          "
 
       - name: Build executable with Nuitka
         env:
           PYTHONPATH: src
         run: |
-          python -m nuitka --standalone --macos-disable-console --macos-create-app-bundle --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --macos-app-icon=src/alenia_porter/assets/images/logo.png --output-filename=AleniaPorter porter_launcher.py
+          python -m nuitka --standalone --macos-disable-console --macos-create-app-bundle --enable-plugin=pywebview --macos-app-name=AleniaPorter --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend_v2/dist=frontend_v2/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --macos-app-icon=src/alenia_porter/assets/images/logo.png --output-filename=AleniaPorter porter_launcher.py
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -158,10 +166,20 @@ jobs:
         run: |
           go build -o porter_launcher.dist/ap ./cmd/ap
 
+      - name: Debug - list dist contents
+        run: find porter_launcher.dist -maxdepth 3
+
       - name: Smoke test executable
         run: |
           rm -f ALENIA_ERROR.txt
-          ./porter_launcher.dist/AleniaPorter.app/Contents/MacOS/AleniaPorter --headless
+          APP_BINARY=$(find porter_launcher.dist -maxdepth 4 -type f -perm -u+x -path "*.app/Contents/MacOS/*" | head -n 1)
+          if [ -z "$APP_BINARY" ]; then
+            echo "No se encontro el binario dentro del .app bundle"
+            find porter_launcher.dist -maxdepth 4
+            exit 1
+          fi
+          echo "Usando binario: $APP_BINARY"
+          "$APP_BINARY" --headless
           STATUS=$?
           if [ $STATUS -ne 0 ]; then
             echo "El ejecutable fallo con codigo de salida $STATUS"
@@ -215,8 +233,8 @@ jobs:
           pip install nuitka ordered-set zstandard pywebview pillow requests imageio
           sudo apt-get update && sudo apt-get install -y xvfb python3-gi python3-gi-cairo gir1.2-webkit2-4.1 libgirepository1.0-dev
 
-      - name: Set up FFmpeg
-        uses: FedericoCarboni/setup-ffmpeg@v3
+      - name: Install FFmpeg
+        run: sudo apt-get install -y ffmpeg
 
       - name: Copy FFmpeg binaries to package
         run: |
@@ -225,7 +243,7 @@ jobs:
           cp $(which ffprobe) src/alenia_porter/bin/
 
       - name: Build frontend
-        working-directory: frontend
+        working-directory: frontend_v2
         run: |
           npm install
           npm run build
@@ -234,7 +252,7 @@ jobs:
         env:
           PYTHONPATH: src
         run: |
-          python -m nuitka --standalone --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --output-filename=AleniaPorter porter_launcher.py
+          python -m nuitka --standalone --enable-plugin=pywebview --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend_v2/dist=frontend_v2/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --output-filename=AleniaPorter porter_launcher.py
 
       - name: Set up Go
         uses: actions/setup-go@v5
