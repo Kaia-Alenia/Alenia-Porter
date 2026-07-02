@@ -53,7 +53,7 @@ jobs:
         env:
           PYTHONPATH: src
         run: |
-          python -m nuitka --standalone --assume-yes-for-downloads --disable-ccache --windows-console-mode=disable --enable-plugin=pywebview --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg.exe=alenia_porter/bin/ffmpeg.exe --include-data-files=src/alenia_porter/bin/ffprobe.exe=alenia_porter/bin/ffprobe.exe --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
+          python -m nuitka --standalone --assume-yes-for-downloads --disable-ccache --windows-console-mode=disable --enable-plugin=pywebview --include-package=alenia_porter --include-module=alenia_porter.gui_web --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg.exe=alenia_porter/bin/ffmpeg.exe --include-data-files=src/alenia_porter/bin/ffprobe.exe=alenia_porter/bin/ffprobe.exe --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -155,7 +155,7 @@ jobs:
         env:
           PYTHONPATH: src
         run: |
-          python -m nuitka --standalone --macos-disable-console --macos-create-app-bundle --enable-plugin=pywebview --macos-app-name=AleniaPorter --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --macos-app-icon=src/alenia_porter/assets/images/logo.png --output-filename=AleniaPorter porter_launcher.py
+          python -m nuitka --standalone --macos-disable-console --macos-create-app-bundle --enable-plugin=pywebview --macos-app-name=AleniaPorter --include-package=alenia_porter --include-module=alenia_porter.gui_web --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --macos-app-icon=src/alenia_porter/assets/images/logo.png --output-filename=AleniaPorter porter_launcher.py
           mkdir -p porter_launcher.dist
           mv *.app porter_launcher.dist/
 
@@ -254,7 +254,7 @@ jobs:
         env:
           PYTHONPATH: src
         run: |
-          python -m nuitka --standalone --enable-plugin=pywebview --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --output-filename=AleniaPorter porter_launcher.py
+          python -m nuitka --standalone --enable-plugin=pywebview --include-package=alenia_porter --include-module=alenia_porter.gui_web --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --output-filename=AleniaPorter porter_launcher.py
 
       - name: Set up Go
         uses: actions/setup-go@v5

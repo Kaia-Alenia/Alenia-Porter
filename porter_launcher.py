@@ -5,5 +5,9 @@ import encodings.idna
 
 if __name__ == "__main__":
     sys.path.insert(0, os.path.abspath("src"))
-    from alenia_porter.cli import main
-    main()
+    if "--headless" in sys.argv:
+        from alenia_porter.cli import main
+        main()
+    else:
+        from alenia_porter.gui_web import main
+        main()
