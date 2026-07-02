@@ -2,6 +2,8 @@ name: Build Alenia Porter v5.9
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
 
@@ -52,6 +54,15 @@ jobs:
           PYTHONPATH: src
         run: |
           python -m nuitka --standalone --assume-yes-for-downloads --windows-console-mode=disable --enable-plugin=pywebview --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend_v2/dist=frontend_v2/dist --include-data-files=src/alenia_porter/bin/ffmpeg.exe=alenia_porter/bin/ffmpeg.exe --include-data-files=src/alenia_porter/bin/ffprobe.exe=alenia_porter/bin/ffprobe.exe --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.11'
+
+      - name: Build Go CLI
+        run: |
+          go build -o porter_launcher.dist\ap.exe .\cmd\ap
 
       - name: Smoke test executable
         run: |
@@ -138,6 +149,14 @@ jobs:
         run: |
           python -m nuitka --standalone --macos-disable-console --macos-create-app-bundle --enable-plugin=pywebview --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend_v2/dist=frontend_v2/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --macos-app-icon=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter porter_launcher.py
 
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.11'
+
+      - name: Build Go CLI
+        run: |
+          go build -o porter_launcher.dist/ap ./cmd/ap
 
       - name: Smoke test executable
         run: |
@@ -216,6 +235,15 @@ jobs:
           PYTHONPATH: src
         run: |
           python -m nuitka --standalone --enable-plugin=pywebview --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend_v2/dist=frontend_v2/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --output-filename=AleniaPorter porter_launcher.py
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.11'
+
+      - name: Build Go CLI
+        run: |
+          go build -o porter_launcher.dist/ap ./cmd/ap
 
       - name: Smoke test executable
         run: |
