@@ -17,13 +17,71 @@ from alenia_porter import updater
 from alenia_porter.media_engine import convert_media, stream_files
 
 
+def load_themes():
+    themes_dict = {}
+    with porter.resource_path(os.path.join("assets", "themes")) as themes_path:
+        if os.path.exists(themes_path):
+            for file in glob.glob(os.path.join(themes_path, "*.json")):
+                try:
+                    with open(file, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                        name = data.get("name", os.path.basename(file))
+                        themes_dict[name] = data
+                except Exception:
+                    pass
+    if not themes_dict:
+        themes_dict["Default Theme"] = {
+            "name": "Default Theme",
+            "bg_main": "#1e1e1e",
+            "fg_main": "#ffffff",
+            "fg_dim": "#a3a3a3",
+            "accent": "#8b5cf6",
+            "accent_hover": "#a78bfa",
+            "link": "#F96854",
+            "success": "#4ade80",
+            "error": "#f87171",
+            "warning": "#fbbf24",
+            "char_sprite": "assets/images/kaia_default.png"
+        }
+    return themes_dict
+
+def image_to_base64(path):
+    if not path: return None
+    with porter.resource_path(path) as full_path:
+        if not os.path.exists(full_path): return None
+        try:
+            with open(full_path, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+                ext = path.split('.')[-1].lower()
+                mime = "image/png"
+                if ext in ["jpg", "jpeg"]: mime = "image/jpeg"
+                elif ext == "gif": mime = "image/gif"
+                return f"data:{mime};base64,{encoded_string}"
+        except Exception:
+            return None
 
 class Api:
-    CURRENT_VERSION = "v6.0"
+    CURRENT_VERSION = "v6.2"
 
     def __init__(self, window):
         self.window = window
         self.configuration_data = self.load_user_configuration()
+        self.available_themes = load_themes()
+        self.theme_names = list(self.available_themes.keys())
+        
+        self.appearance_mode = self.configuration_data.get("appearance_mode", "system")
+        self.custom_light_theme = self.configuration_data.get("custom_light_theme", {
+            "preset": "Default Theme",
+            "bg_main": None,
+            "fg_main": None,
+            "accent": None
+        })
+        self.custom_dark_theme = self.configuration_data.get("custom_dark_theme", {
+            "preset": "Default Theme",
+            "bg_main": None,
+            "fg_main": None,
+            "accent": None
+        })
             
         self.languages_dictionary = porter.load_locales()
         self.current_language_code = self.configuration_data.get("lang", "es")
@@ -48,13 +106,47 @@ class Api:
         except: pass
 
     def get_initial_data(self):
+        # Determine current theme preset name for legacy image fetching
+        preset_name = self.custom_dark_theme["preset"] if self.appearance_mode == "dark" else self.custom_light_theme["preset"]
+        if preset_name not in self.available_themes:
+            preset_name = self.theme_names[0]
+            
+        theme_data = self.available_themes[preset_name]
+        
+        images = {
+            "default": image_to_base64(theme_data.get("char_sprite", "assets/images/kaia_default.png")),
+            "success": image_to_base64(theme_data.get("char_success", "assets/images/kaia_success.png")),
+            "info": image_to_base64("assets/images/kaia_info.png"),
+            "support": image_to_base64("assets/images/kaia_support.png")
+        }
+        
         return {
             "nickname": porter.get_local_nickname(),
             "uuid": porter.get_local_uuid(),
+            "translations": self.languages_dictionary.get(self.current_language_code, {}),
+            "theme": theme_data, # Legacy theme format for backward compatibility (temporarily)
+            "appearance": {
+                "mode": self.appearance_mode,
+                "light": self.custom_light_theme,
+                "dark": self.custom_dark_theme
+            },
+            "available_themes": self.available_themes,
+            "images": images,
             "langCode": self.current_language_code,
             "languages": list(self.languages_dictionary.keys())
         }
 
+    def save_appearance_settings(self, settings):
+        self.appearance_mode = settings.get("mode", self.appearance_mode)
+        self.custom_light_theme = settings.get("light", self.custom_light_theme)
+        self.custom_dark_theme = settings.get("dark", self.custom_dark_theme)
+        
+        self.configuration_data["appearance_mode"] = self.appearance_mode
+        self.configuration_data["custom_light_theme"] = self.custom_light_theme
+        self.configuration_data["custom_dark_theme"] = self.custom_dark_theme
+        
+        self.save_user_configuration()
+        return self.get_initial_data()
 
     def set_language(self, lang_code):
         if lang_code in self.languages_dictionary:
@@ -242,31 +334,31 @@ class Api:
 
     def explain_command(self, command):
         """Genera una explicación local y determinista de un comando FFmpeg."""
-        explanation = "Comando de FFmpeg para procesar medios:\n\n"
+        explanation = "Comando de FFmpeg para procesar medios:\\n\\n"
         if "-i " in command:
-            explanation += "- Define el archivo de entrada.\n"
+            explanation += "- Define el archivo de entrada.\\n"
         if "-vcodec copy" in command or "-c:v copy" in command:
-            explanation += "- Copia el video original sin recodificar (rápido).\n"
+            explanation += "- Copia el video original sin recodificar (rápido).\\n"
         elif "-vcodec libx264" in command or "-c:v libx264" in command:
-            explanation += "- Codifica el video en formato H.264 (alta compatibilidad).\n"
+            explanation += "- Codifica el video en formato H.264 (alta compatibilidad).\\n"
         elif "-vcodec libx265" in command or "-c:v libx265" in command:
-            explanation += "- Codifica el video en formato H.265/HEVC (mejor compresión).\n"
+            explanation += "- Codifica el video en formato H.265/HEVC (mejor compresión).\\n"
         
         if "-acodec copy" in command or "-c:a copy" in command:
-            explanation += "- Copia el audio original sin recodificar.\n"
+            explanation += "- Copia el audio original sin recodificar.\\n"
         elif "-acodec aac" in command or "-c:a aac" in command:
-            explanation += "- Codifica el audio en formato AAC.\n"
+            explanation += "- Codifica el audio en formato AAC.\\n"
         
         if "-crf" in command:
-            explanation += "- Aplica un factor de tasa constante (CRF) para controlar la calidad de compresión.\n"
+            explanation += "- Aplica un factor de tasa constante (CRF) para controlar la calidad de compresión.\\n"
         
         if "-vf scale=" in command:
-            explanation += "- Escala la resolución del video.\n"
+            explanation += "- Escala la resolución del video.\\n"
             
         if "-hwaccel" in command or "h264_nvenc" in command or "hevc_nvenc" in command:
-            explanation += "- Utiliza aceleración por hardware de la tarjeta de video (muy rápido).\n"
+            explanation += "- Utiliza aceleración por hardware de la tarjeta de video (muy rápido).\\n"
             
-        explanation += "\nEste comando optimiza y convierte tus archivos según las preferencias seleccionadas."
+        explanation += "\\nEste comando optimiza y convierte tus archivos según las preferencias seleccionadas."
         return explanation
 
 
@@ -385,24 +477,14 @@ def main():
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     if "__compiled__" in globals():
-        # Build empaquetado con Nuitka: frontend_v2/dist queda junto al
+        # Build empaquetado con Nuitka: frontend/dist queda junto al
         # ejecutable (raíz del paquete), no dentro de src/alenia_porter.
         base_dir = os.path.dirname(sys.executable)
-        candidates = [
-            os.path.join(base_dir, "frontend_v2", "dist"),
-            os.path.join(base_dir, "frontend", "dist"),
-        ]
+        dist_dir = os.path.join(base_dir, "frontend", "dist")
     else:
         # Entorno de desarrollo: gui_web.py vive en src/alenia_porter/
-        candidates = [
-            os.path.join(current_dir, "..", "..", "frontend_v2", "dist"),
-            os.path.join(current_dir, "..", "..", "frontend", "dist"),
-        ]
+        dist_dir = os.path.join(current_dir, "..", "..", "frontend", "dist")
 
-    dist_dir = next(
-        (c for c in candidates if os.path.exists(os.path.join(c, "index.html"))),
-        candidates[0],
-    )
     index_path = os.path.join(dist_dir, "index.html")
 
     if not os.path.exists(index_path):
@@ -474,7 +556,7 @@ def main():
 
     window.events.loaded += on_loaded
 
-    webview.start(debug=False, http_server=True)
+    webview.start(debug=True, http_server=True)
 
 if __name__ == '__main__':
     main()

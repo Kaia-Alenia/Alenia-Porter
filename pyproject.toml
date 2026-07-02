@@ -1,6 +1,6 @@
 [project]
 name = "alenia-porter"
-version = "6.0.0"
+version = "6.2.0"
 description = "Python code transformation and analysis tool"
 readme = "README.md"
 authors = [
@@ -9,7 +9,7 @@ authors = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "pywebview>=6.0",
+    "pywebview>=6.2",
     "pillow>=10.0",
 ]
 
