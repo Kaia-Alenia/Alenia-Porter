@@ -476,18 +476,14 @@ class Api:
 def main():
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    if "__compiled__" in globals():
-        # Build empaquetado con Nuitka: frontend/dist queda junto al
-        # ejecutable (raíz del paquete), no dentro de src/alenia_porter.
+    if getattr(sys, 'frozen', False) or '__compiled__' in globals():
         base_dir = os.path.dirname(sys.executable)
-        dist_dir = os.path.join(base_dir, "frontend", "dist")
     else:
-        # Entorno de desarrollo: gui_web.py vive en src/alenia_porter/
-        dist_dir = os.path.join(current_dir, "..", "..", "frontend", "dist")
+        base_dir = os.path.abspath(os.path.join(current_dir, '..', '..'))
 
-    index_path = os.path.join(dist_dir, "index.html")
+    html_path = os.path.join(base_dir, 'frontend', 'dist', 'index.html')
 
-    if not os.path.exists(index_path):
+    if not os.path.exists(html_path):
         print("Error: No se encontró el build de React. Ejecuta 'npm run build' en la carpeta frontend.")
         sys.exit(1)
 
@@ -495,7 +491,7 @@ def main():
 
     window = webview.create_window(
         'Alenia Porter',
-        index_path,
+        url=f"file://{html_path}",
         width=480,
         height=860,
         min_size=(400, 700),

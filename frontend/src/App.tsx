@@ -500,7 +500,7 @@ export default function App() {
   const [showExamplesDropdown, setShowExamplesDropdown] = useState(false);
 
   // New Alenia Porter Custom States
-  const [appVersion, setAppVersion] = useState("5.9");
+  const [appVersion, setAppVersion] = useState("6.2");
   const [latestVersion, setLatestVersion] = useState("");
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [updateUrl, setUpdateUrl] = useState("https://github.com/Kaia-Alenia/Alenia-Porter");
