@@ -10,7 +10,7 @@
 
     <style>
         :root {
-            /* Colores Base */
+
             --bg: #08090d;
             --bg-soft: #0c0e14;
             --surface: rgba(18, 20, 28, 0.6);
@@ -18,12 +18,12 @@
             --line: rgba(255, 255, 255, 0.09);
             --line-strong: rgba(255, 255, 255, 0.16);
             
-            /* Tipografía y Textos */
+
             --ink: #f2f0ec;
             --dim: #8d8b9a;
             --dim-2: #5f5d6b;
 
-            /* Acentos */
+
             --purple: #6d3fc9;
             --magenta: #e63d84;
             --amber: #ffab40;
@@ -31,14 +31,14 @@
 
             --grad-signal: linear-gradient(100deg, var(--purple) 0%, var(--magenta) 55%, var(--amber) 100%);
 
-            /* Fuentes */
+
             --font-display: 'Space Grotesk', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
             --font-body: 'Inter', sans-serif;
 
             --radius: 16px;
 
-            /* Variables Dinámicas para el ratón (actualizadas via JS) */
+
             --mouse-x: 50%;
             --mouse-y: 50%;
         }
@@ -91,7 +91,7 @@
             overflow: hidden;
         }
 
-        /* Cuadrícula 3D con cálculos CSS calc() basados en las variables del cursor */
+
         .bg-grid {
             position: absolute;
             inset: -20%;
@@ -99,7 +99,7 @@
                 linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
             background-size: 60px 60px;
-            /* Transformación base */
+
             transform: perspective(600px) rotateX(60deg) translateY(-100px) translateZ(-200px);
             opacity: 0.5;
             mask-image: radial-gradient(circle at center, black 10%, transparent 60%);
@@ -107,7 +107,7 @@
             will-change: transform;
         }
 
-        /* Aplicar el movimiento sutil solo si el dispositivo usa ratón */
+
         @media (hover: hover) and (pointer: fine) {
             .bg-grid {
                 transform: perspective(600px) rotateX(60deg) translateY(-100px) translateZ(-200px)
@@ -116,7 +116,7 @@
             }
         }
 
-        /* Orbes estáticos de soporte visual */
+
         .bg-orb {
             position: absolute;
             border-radius: 50%;
@@ -165,7 +165,7 @@
         .header-inner {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1rem 1.5rem; /* Ajuste fluido */
+            padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -249,7 +249,7 @@
 
         h1 {
             font-family: var(--font-display);
-            /* Tipografía súper fluida: Mínimo 2.5rem, escala ideal, Máximo 4.2rem */
+
             font-size: clamp(2.5rem, 6vw + 1rem, 4.2rem); 
             font-weight: 700;
             letter-spacing: -0.03em;
@@ -450,10 +450,10 @@
             letter-spacing: -0.01em;
         }
 
-        /* Responsive Grid super dinámico (Flexbox alternativo integrado en CSS Grid) */
+
         .stats-grid {
             display: grid;
-            /* La magia fluida: Mínimo 240px, máximo 1 fracción. Sin media queries. */
+
             grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
             gap: 1.5rem;
         }
@@ -466,7 +466,7 @@
             padding: 2rem 1.5rem;
             text-align: center;
             position: relative;
-            /* Preparación para el 3D Tilt suave */
+
             transform-style: preserve-3d;
             transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s cubic-bezier(0.16,1,0.3,1);
             will-change: transform;
@@ -602,7 +602,7 @@
     </style>
 </head>
 <body>
-    <!-- Fondo Parallax optimizado (Controlado via variables CSS en JS) -->
+
     <div id="parallax-bg">
         <div class="bg-orb orb-1"></div>
         <div class="bg-orb orb-2"></div>
@@ -714,7 +714,7 @@
     <section class="features">
         <div class="feature-card reveal reveal-scale delay-1">
             <div class="feature-icon">
-                <!-- Icono rediseñado: 4 Núcleos en paralelo inequívocos -->
+
                 <svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="4" y="4" width="6" height="6" rx="1.5"></rect>
                     <rect x="14" y="4" width="6" height="6" rx="1.5"></rect>
@@ -752,7 +752,7 @@
         </div>
     </section>
 
-    <!-- Recurso SVG Compartido -->
+
     <svg width="0" height="0" style="position:absolute">
         <defs>
             <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -981,7 +981,7 @@
             const fallbackCopy = () => {
                 const textArea = document.createElement("textarea");
                 textArea.value = text;
-                textArea.style.position = "fixed"; // Evita que la pantalla salte
+                textArea.style.position = "fixed";
                 document.body.appendChild(textArea);
                 textArea.focus();
                 textArea.select();
@@ -994,7 +994,7 @@
                 document.body.removeChild(textArea);
             };
 
-            // Intentamos con la API moderna, pero si falla por permisos (como en el iframe), usamos el fallback
+
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text)
                     .then(showCopied)
@@ -1031,8 +1031,8 @@
         }
 
         function setupInteractions() {
-            // 1. Mouse Tracking de alto rendimiento usando variables CSS (Para fondo Parallax)
-            // Solo si el dispositivo acepta hover nativo (ratón/trackpad)
+
+
             if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
                 let rafId = null;
                 document.addEventListener('mousemove', (e) => {
@@ -1053,7 +1053,7 @@
                 });
             }
 
-            // 2. Efecto Ripple
+
             document.querySelectorAll('.cta-btn, .copy-btn, .lang-btn, .tab-btn').forEach(btn => {
                 btn.addEventListener('mousedown', function(e) {
                     const circle = document.createElement('span');
@@ -1074,7 +1074,7 @@
                 });
             });
 
-            // 3. Efecto 3D Tilt super suave usando requestAnimationFrame
+
             if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
                 document.querySelectorAll('.stat-card, .feature-card').forEach(card => {
                     let tiltRafId = null;
@@ -1088,7 +1088,7 @@
                             const centerX = rect.width / 2;
                             const centerY = rect.height / 2;
                             
-                            // Rotación sutil limitada a +-6 grados
+
                             const rotateX = ((y - centerY) / centerY) * -6;
                             const rotateY = ((x - centerX) / centerX) * 6;
                             
@@ -1104,7 +1104,7 @@
             }
         }
 
-        // --- Sistema de Partículas Conectadas ---
+
         function initParticleSystem() {
             const canvas = document.getElementById('particles-canvas');
             if (!canvas) return;
@@ -1118,7 +1118,7 @@
             }
             window.addEventListener('resize', resize);
             
-            // Colores del tema (Morado, Magenta, Ámbar)
+
             const colors = ['#6d3fc9', '#e63d84', '#ffab40'];
 
             class Particle {
@@ -1134,11 +1134,11 @@
                     this.x += this.speedX;
                     this.y += this.speedY;
 
-                    // Rebote en los bordes
+
                     if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
                     if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
 
-                    // Interacción: huir sutilmente del ratón
+
                     if (globalMouseX != null && globalMouseY != null) {
                         let dx = globalMouseX - this.x;
                         let dy = globalMouseY - this.y;
@@ -1159,7 +1159,7 @@
 
             function init() {
                 particlesArray = [];
-                // Ajusta la cantidad según el tamaño de la pantalla para evitar lag
+
                 let numberOfParticles = Math.min((canvas.width * canvas.height) / 12000, 85);
                 for (let i = 0; i < numberOfParticles; i++) {
                     particlesArray.push(new Particle());
@@ -1172,13 +1172,13 @@
                     particlesArray[i].update();
                     particlesArray[i].draw();
                     
-                    // Conectar partículas cercanas con líneas
+
                     for (let j = i; j < particlesArray.length; j++) {
                         let dx = particlesArray[i].x - particlesArray[j].x;
                         let dy = particlesArray[i].y - particlesArray[j].y;
                         let distance = dx * dx + dy * dy;
                         
-                        if (distance < 16000) { // Distancia al cuadrado (aprox 126px)
+                        if (distance < 16000) {
                             ctx.beginPath();
                             ctx.strokeStyle = particlesArray[i].color;
                             ctx.globalAlpha = 1 - (distance / 16000);
@@ -1186,7 +1186,7 @@
                             ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
                             ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
                             ctx.stroke();
-                            ctx.globalAlpha = 1; // Restaurar opacidad
+                            ctx.globalAlpha = 1;
                         }
                     }
                 }
@@ -1197,7 +1197,7 @@
             animate();
         }
 
-        // Ejecutar funciones de inicialización
+
         initScrollAnimations();
         fetchStats();
         setupDownloadButton();
