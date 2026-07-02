@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install nuitka ordered-set zstandard git+https://github.com/Kaia-Alenia/alenia-zenith.git
+          pip install nuitka ordered-set zstandard pywebview pillow requests
 
       - name: Set up FFmpeg
         uses: FedericoCarboni/setup-ffmpeg@v3
@@ -41,11 +41,17 @@ jobs:
           Copy-Item $ffprobePath src\alenia_porter\bin\ffprobe.exe
           Get-ChildItem src\alenia_porter\bin
 
+      - name: Build frontend
+        working-directory: frontend_v2
+        run: |
+          npm install
+          npm run build
+
       - name: Build executable with Nuitka
         env:
           PYTHONPATH: src
         run: |
-          python -m nuitka --standalone --assume-yes-for-downloads --windows-console-mode=disable --enable-plugin=tk-inter --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-files=src/alenia_porter/bin/ffmpeg.exe=alenia_porter/bin/ffmpeg.exe --include-data-files=src/alenia_porter/bin/ffprobe.exe=alenia_porter/bin/ffprobe.exe --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
+          python -m nuitka --standalone --assume-yes-for-downloads --windows-console-mode=disable --enable-plugin=pywebview --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend_v2/dist=frontend_v2/dist --include-data-files=src/alenia_porter/bin/ffmpeg.exe=alenia_porter/bin/ffmpeg.exe --include-data-files=src/alenia_porter/bin/ffprobe.exe=alenia_porter/bin/ffprobe.exe --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
 
       - name: Smoke test executable
         run: |
@@ -61,13 +67,11 @@ jobs:
             exit 1
           }
 
-
       - name: Package build
         run: |
           copy LICENSE porter_launcher.dist\
           ren porter_launcher.dist AleniaPorter
           7z a AleniaPorter-Windows.zip AleniaPorter\
-
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -102,27 +106,43 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install nuitka ordered-set zstandard imageio git+https://github.com/Kaia-Alenia/alenia-zenith.git
+          pip install nuitka ordered-set zstandard pywebview pillow requests pyobjc pyobjc-framework-WebKit
 
       - name: Download and extract FFmpeg for macOS
         run: |
           mkdir -p src/alenia_porter/bin
-          curl -L -o ffmpeg.zip https://evermeet.cx/ffmpeg/getrelease/zip
-          curl -L -o ffprobe.zip https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip
+          FFMPEG_URL="https://evermeet.cx/ffmpeg/getrelease/zip"
+          FFPROBE_URL="https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip"
+          if ! curl -L --fail -o ffmpeg.zip "$FFMPEG_URL"; then
+            echo "Error: no se pudo descargar ffmpeg desde $FFMPEG_URL"
+            exit 1
+          fi
+          if ! curl -L --fail -o ffprobe.zip "$FFPROBE_URL"; then
+            echo "Error: no se pudo descargar ffprobe desde $FFPROBE_URL"
+            exit 1
+          fi
           unzip ffmpeg.zip -d src/alenia_porter/bin/
           unzip ffprobe.zip -d src/alenia_porter/bin/
+          chmod +x src/alenia_porter/bin/ffmpeg src/alenia_porter/bin/ffprobe
           rm *.zip
+
+      - name: Build frontend
+        working-directory: frontend_v2
+        run: |
+          npm install
+          npm run build
 
       - name: Build executable with Nuitka
         env:
           PYTHONPATH: src
         run: |
-          python -m nuitka --standalone --macos-disable-console --enable-plugin=tk-inter --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --macos-app-icon=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter porter_launcher.py
+          python -m nuitka --standalone --macos-disable-console --macos-create-app-bundle --enable-plugin=pywebview --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend_v2/dist=frontend_v2/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --macos-app-icon=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter porter_launcher.py
+
 
       - name: Smoke test executable
         run: |
           rm -f ALENIA_ERROR.txt
-          ./porter_launcher.dist/AleniaPorter --headless
+          ./porter_launcher.dist/AleniaPorter.app/Contents/MacOS/AleniaPorter --headless
           STATUS=$?
           if [ $STATUS -ne 0 ]; then
             echo "El ejecutable fallo con codigo de salida $STATUS"
@@ -133,7 +153,6 @@ jobs:
             cat ALENIA_ERROR.txt
             exit 1
           fi
-
 
       - name: Package build
         run: |
@@ -174,8 +193,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install nuitka ordered-set zstandard git+https://github.com/Kaia-Alenia/alenia-zenith.git
-          sudo apt-get update && sudo apt-get install -y python3-tk ffmpeg xvfb
+          pip install nuitka ordered-set zstandard pywebview pillow requests
+          sudo apt-get update && sudo apt-get install -y xvfb python3-gi python3-gi-cairo gir1.2-webkit2-4.0 libgirepository1.0-dev
+
+      - name: Set up FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
 
       - name: Copy FFmpeg binaries to package
         run: |
@@ -183,16 +205,22 @@ jobs:
           cp $(which ffmpeg) src/alenia_porter/bin/
           cp $(which ffprobe) src/alenia_porter/bin/
 
+      - name: Build frontend
+        working-directory: frontend_v2
+        run: |
+          npm install
+          npm run build
+
       - name: Build executable with Nuitka
         env:
           PYTHONPATH: src
         run: |
-          python -m nuitka --standalone --enable-plugin=tk-inter --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --output-filename=AleniaPorter porter_launcher.py
+          python -m nuitka --standalone --enable-plugin=pywebview --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend_v2/dist=frontend_v2/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --output-filename=AleniaPorter porter_launcher.py
 
       - name: Smoke test executable
         run: |
           rm -f ALENIA_ERROR.txt
-          xvfb-run --auto-servernum ./porter_launcher.dist/AleniaPorter --headless
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x720x24" ./porter_launcher.dist/AleniaPorter --headless
           STATUS=$?
           if [ $STATUS -ne 0 ]; then
             echo "El ejecutable fallo con codigo de salida $STATUS"
@@ -226,9 +254,18 @@ jobs:
             exit 1
           fi
 
+  snyk-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/python@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
   release:
-    needs: [build-windows, build-macos, build-linux]
-    # Only run release job if all builds were verified
+    needs: [build-windows, build-macos, build-linux, snyk-security]
     if: ${{ needs.build-windows.outputs.verified == 'true' && needs.build-macos.outputs.verified == 'true' && needs.build-linux.outputs.verified == 'true' }}
     runs-on: ubuntu-latest
 
@@ -241,6 +278,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          generate_release_notes: true
           files: |
             artifacts/AleniaPorter-Windows/AleniaPorter-Windows.zip
             artifacts/AleniaPorter-macOS/AleniaPorter-macOS.zip

@@ -23,6 +23,7 @@ def startup_db_migration():
         cursor = connection.cursor()
         cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_events (id SERIAL PRIMARY KEY, uuid VARCHAR, nickname VARCHAR, os_family VARCHAR, interface_type VARCHAR, file_type VARCHAR, file_count INTEGER, duration_seconds FLOAT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
         cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS duration_seconds FLOAT;")
+        cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS savings_bytes FLOAT DEFAULT 0.0;")
         cursor.execute("ALTER TABLE telemetry_events ADD COLUMN IF NOT EXISTS nickname VARCHAR;")
         cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_feedback (uuid VARCHAR, nickname VARCHAR, rating INTEGER, comments TEXT, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
         cursor.execute("CREATE TABLE IF NOT EXISTS telemetry_crashes (id SERIAL PRIMARY KEY, app_version VARCHAR, error_code VARCHAR, message TEXT, stack_trace TEXT, os_family VARCHAR, cpu_cores INTEGER, ram_gb INTEGER, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
@@ -47,6 +48,7 @@ class TelemetryPayload(BaseModel):
     file_type: str
     file_count: int
     duration_seconds: float
+    savings_bytes: Optional[float] = 0.0
 
 class FeedbackPayload(BaseModel):
     uuid: str
@@ -112,8 +114,8 @@ def record_event(payload: TelemetryPayload):
         connection = get_db_connection()
         cursor = connection.cursor()
         cursor.execute(
-            "INSERT INTO telemetry_events (uuid, nickname, os_family, interface_type, file_type, file_count, duration_seconds) VALUES (%s, %s, %s, %s, %s, %s, %s);",
-            (payload.uuid, payload.nickname, payload.os_family, payload.interface_type, payload.file_type, payload.file_count, payload.duration_seconds)
+            "INSERT INTO telemetry_events (uuid, nickname, os_family, interface_type, file_type, file_count, duration_seconds, savings_bytes) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);",
+            (payload.uuid, payload.nickname, payload.os_family, payload.interface_type, payload.file_type, payload.file_count, payload.duration_seconds, payload.savings_bytes)
         )
         connection.commit()
         cursor.close()
@@ -149,8 +151,8 @@ def get_global_stats():
             else:
                 avg_time_by_type[f_type] = 0.0
                 
-        cursor.execute("SELECT SUM(duration_seconds), SUM(file_count) FROM telemetry_events;")
-        total_time_sum, total_count_sum = cursor.fetchone()
+        cursor.execute("SELECT SUM(duration_seconds), SUM(file_count), SUM(savings_bytes) FROM telemetry_events;")
+        total_time_sum, total_count_sum, total_savings_sum = cursor.fetchone()
         avg_time_per_file = round(float(total_time_sum) / float(total_count_sum), 3) if total_count_sum and total_time_sum is not None else 0.0
         
         cursor.execute("SELECT nickname, SUM(file_count) as total FROM telemetry_events WHERE nickname IS NOT NULL GROUP BY nickname ORDER BY total DESC LIMIT 10;")
@@ -171,7 +173,8 @@ def get_global_stats():
             "os_distribution": os_distribution,
             "avg_time_per_file": avg_time_per_file,
             "avg_time_by_type": avg_time_by_type,
-            "top_users": top_users
+            "top_users": top_users,
+            "total_bytes_saved": int(total_savings_sum) if total_savings_sum else 0
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal server error")

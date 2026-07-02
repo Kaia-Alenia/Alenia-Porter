@@ -1,2 +1,1 @@
-def hello() -> str:
-    return "Hello from alenia-porter!"
+__version__ = "6.0.0"

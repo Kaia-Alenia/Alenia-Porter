@@ -19,7 +19,7 @@ En sus inicios, Alenia Porter fue diseñado como un optimizador de recursos excl
 
 ## Cómo funciona y qué hace
 
-Alenia Porter actúa como un orquestador inteligente sobre herramientas de procesamiento estándar de la industria (como FFmpeg). Cuando seleccionas un directorio:
+Alenia Porter actúa como un orquestador local sobre herramientas de procesamiento estándar de la industria (como FFmpeg). Cuando seleccionas un directorio:
 
 1. **Escaneo Eficiente:** Explora de manera recursiva todos los archivos multimedia compatibles organizándolos por tipo (Imagen, Video y Audio).
 2. **Conversión Concurrente:** Distribuye el procesamiento utilizando hilos y procesos paralelos para sortear limitaciones de hardware, forzando un control estricto de recursos (un solo hilo por instancia de codificador) para evitar la contención de CPU en equipos de gama baja.
@@ -71,5 +71,3 @@ Para medir el rendimiento de la herramienta y conocer los formatos de archivo m�
 
 **Desarrollado y traducido por Kaia-Alenia Studios**
 US ES FR JP CN RU BR DE
-
-

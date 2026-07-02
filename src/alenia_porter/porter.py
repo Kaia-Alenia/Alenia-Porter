@@ -1,6 +1,4 @@
-__license__ = """
-ALENIA STUDIOS TOOL LICENSE Version 1.0 Copyright (c) 2026 Alenia Studios This tool is designed to be free and accessible for the indie developer community. By using this software, you agree to the following terms: 1. OUTPUT OWNERSHIP & USE: The audio, video, or data files processed by this Software remain 100% your property. No attribution to Alenia Studios is required in your final project for simply using this tool to process your files. 2. ALWAYS FREE & SPREAD THE WORD: This Software is completely free for commercial and non-commercial projects. If you find it useful, we strongly encourage you to recommend it to other developers. 3. CODE ATTRIBUTION: If you modify, fork, or distribute the source code of this Software, you must provide appropriate credit to Alenia Studios and the respective community translators. 4. NO RESALE: Standalone redistribution, sublicensing, or resale of this Software or its source code for profit is strictly prohibited. It must remain free. 5. NO AI TRAINING: The source code, documentation, and logic of this Software may not be used, scraped, or included in datasets for the training of Artificial Intelligence models or machine learning algorithms. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
-"""
+__license__ = "GNU General Public License v3 (GPL v3)"
 import concurrent.futures
 import re
 from importlib.resources import files
@@ -12,6 +10,10 @@ import json
 import traceback
 import subprocess
 import encodings.idna
+import logging
+from logging.handlers import RotatingFileHandler
+import time
+import datetime
 
 def load_dotenv():
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -59,8 +61,31 @@ def get_local_uuid():
 
 def generate_nickname():
     import random
-    adjectives = ["dashing", "happy", "brave", "clever", "silent", "gentle", "swift", "calm", "jolly", "bold", "wild", "bright", "proud", "kind", "lively", "fierce", "eager", "fancy", "cozy", "funky"]
-    nouns = ["robot", "tiger", "panda", "fox", "koala", "eagle", "otter", "badger", "falcon", "wolf", "deer", "rabbit", "bear", "lion", "panther", "hawk", "owl", "dolphin", "whale", "squirrel"]
+    adjectives = [
+        "happy", "dashing", "swift", "clever", "brave", "silent", "creative", "active", "smart", "jolly",
+        "bold", "wild", "bright", "proud", "kind", "lively", "fierce", "eager", "fancy", "cozy",
+        "funky", "epic", "cool", "chill", "golden", "magic", "mystic", "noble", "quick", "rusty",
+        "shady", "stellar", "tricky", "unique", "vast", "zesty", "agile", "calm", "dark", "elite",
+        "grand", "heroic", "iconic", "jade", "keen", "lucky", "mighty", "neon", "retro", "ultra",
+        "crimson", "azure", "solar", "lunar", "cosmic", "cyber", "rapid", "quiet", "merry", "gentle",
+        "brazen", "sneaky", "sleepy", "wandering", "hidden", "flying", "jumping", "swimming", "lost",
+        "famous", "hidden", "silly", "witty", "wise", "playful", "sunny", "stormy", "winter", "spring",
+        "autumn", "summer", "arctic", "desert", "ocean", "jungle", "mountain", "valley", "river", "lake",
+        "forest", "moonlight", "starlight", "sunlight", "twilight", "midnight", "dawn", "dusk", "morning",
+        "evening", "day", "night", "light", "shadow", "ghost", "spirit", "soul", "heart", "mind"
+    ]
+    nouns = [
+        "tiger", "robot", "fox", "eagle", "panther", "coder", "falcon", "puffin", "koala", "badger",
+        "wolf", "deer", "rabbit", "bear", "lion", "hawk", "owl", "dolphin", "whale", "squirrel",
+        "shark", "dragon", "ninja", "wizard", "pirate", "ghost", "knight", "cyborg", "mutant", "alien",
+        "phantom", "rebel", "sniper", "titan", "vampire", "zombie", "goblin", "orc", "troll", "elf",
+        "dwarf", "giant", "mermaid", "yeti", "kraken", "sphinx", "phoenix", "unicorn", "pegasus", "griffin",
+        "leopard", "cheetah", "jaguar", "cougar", "lynx", "bobcat", "puma", "ocelot", "caracal", "serval",
+        "hound", "terrier", "mastiff", "bulldog", "collie", "poodle", "pug", "beagle", "boxer", "husky",
+        "sparrow", "raven", "crow", "dove", "swan", "goose", "duck", "penguin", "ostrich", "emu",
+        "turtle", "tortoise", "lizard", "snake", "crocodile", "alligator", "iguana", "gecko", "chameleon", "skink",
+        "frog", "toad", "salamander", "newt", "axolotl", "fish", "shark", "ray", "eel", "crab"
+    ]
     return f"{random.choice(adjectives)}-{random.choice(nouns)}"
 
 def get_local_nickname():
@@ -91,7 +116,34 @@ def set_local_nickname(nickname):
         return False
 
 
+def get_config_file_path():
+    if os.name == "nt":
+        local_app_data_path = os.getenv("LOCALAPPDATA") or os.path.expanduser("~\\AppData\\Local")
+        config_folder_path = os.path.join(local_app_data_path, "AleniaStudios", "AleniaPorter")
+    else:
+        config_folder_path = os.path.expanduser("~/.config/AleniaStudios/AleniaPorter")
+    return os.path.join(config_folder_path, "config.json")
+
+def get_cancel_flag_path():
+    if os.name == "nt":
+        local_app_data_path = os.getenv("LOCALAPPDATA") or os.path.expanduser("~\\AppData\\Local")
+        config_folder_path = os.path.join(local_app_data_path, "AleniaStudios", "AleniaPorter")
+    else:
+        config_folder_path = os.path.expanduser("~/.config/AleniaStudios/AleniaPorter")
+    return os.path.join(config_folder_path, "alenia_porter_cancel.flag")
+
+def get_telemetry_status():
+    config_path = get_config_file_path()
+    if not os.path.exists(config_path): return False
+    with open(config_path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f).get("telemetry_enabled", False)
+        except:
+            return False
+
 def update_telemetry_stats(file_type, file_count, duration_seconds, headless=False):
+    if not get_telemetry_status():
+        return
     if not file_type or file_count <= 0:
         return
     try:
@@ -120,6 +172,8 @@ def update_telemetry_stats(file_type, file_count, duration_seconds, headless=Fal
         log_error_to_file(f"Telemetry error: {str(e)}")
 
 def send_feedback_stats(rating, comments):
+    if not get_telemetry_status():
+        return False
     try:
         import urllib.request
         import json
@@ -176,6 +230,8 @@ def get_system_ram_gb():
     return 8
 
 def send_crash_report(error_code, message, stack_trace):
+    if not get_telemetry_status():
+        return
     try:
         import urllib.request
         import json
@@ -328,7 +384,11 @@ def load_locales():
             "support_label": "Support us on:",
             "formats_images": "🖼️ IMAGES:",
             "formats_videos": "🎬 VIDEO:",
-            "formats_audio": "🎵 AUDIO:"
+            "formats_audio": "🎵 AUDIO:",
+            "btn_select_folder": "Select Folder",
+            "btn_files": "Select Files",
+            "btn_cancel": "Cancel",
+            "info_cancelling": "Cancelling..."
         },
         "es": {
             "title": "Alenia Porter v5.9",
@@ -354,7 +414,11 @@ def load_locales():
             "support_label": "Apóyanos en:",
             "formats_images": "🖼️ IMÁGENES:",
             "formats_videos": "🎬 VIDEO:",
-            "formats_audio": "🎵 AUDIO:"
+            "formats_audio": "🎵 AUDIO:",
+            "btn_select_folder": "Seleccionar Carpeta",
+            "btn_files": "Seleccionar Archivos",
+            "btn_cancel": "Cancelar",
+            "info_cancelling": "Cancelando..."
         }
     }
     return fallback
@@ -368,271 +432,30 @@ def get_ffmpeg_path():
             if os.path.exists(exe_path_upper):
                 return exe_path_upper
         return "ffmpeg.exe"
-    return "ffmpeg"
+    else:
+        with resource_path(os.path.join("bin", "ffmpeg")) as exe_path:
+            if os.path.exists(exe_path):
+                return exe_path
+        return "ffmpeg"
+
+def setup_logger():
+    log_dir = os.path.dirname(get_config_file_path())
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir, exist_ok=True)
+    log_file = os.path.join(log_dir, "porter.log")
+    
+    logger = logging.getLogger("AleniaPorter")
+    logger.setLevel(logging.ERROR)
+    if not logger.handlers:
+        handler = RotatingFileHandler(log_file, maxBytes=5*1024*1024, backupCount=2, encoding='utf-8')
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    return logger
 
 def log_error_to_file(error_message):
     try:
-        with open("ALENIA_ERROR.txt", "a", encoding="utf-8") as file_handle:
-            file_handle.write(f"\n--- ERROR ---\n{error_message}\n")
+        logger = setup_logger()
+        logger.error(error_message)
     except Exception:
         pass
-
-def stream_files(directory, base_directory, audio_exts, video_exts, image_exts, recursive=True):
-    try:
-        for entry in os.scandir(directory):
-            if entry.is_dir():
-                if entry.name != "Alenia_Optimized" and recursive:
-                    yield from stream_files(entry.path, base_directory, audio_exts, video_exts, image_exts, recursive=recursive)
-            elif entry.is_file():
-                name_lower = entry.name.lower()
-                if name_lower.endswith(audio_exts):
-                    rel = os.path.relpath(entry.path, base_directory)
-                    yield (entry.path, rel, "audio")
-                elif name_lower.endswith(video_exts):
-                    rel = os.path.relpath(entry.path, base_directory)
-                    yield (entry.path, rel, "video")
-                elif name_lower.endswith(image_exts):
-                    rel = os.path.relpath(entry.path, base_directory)
-                    yield (entry.path, rel, "image")
-    except Exception:
-        pass
-
-
-def process_single_file_top_level(file_info, target_audio_format, target_video_format, target_image_format, audio_output_directory, video_output_directory, image_output_directory, ffmpeg_executable_path, subprocess_creation_flags, preserve_structure=False, audio_bitrate="192k", video_crf="23", video_preset="veryfast", image_quality="80"):
-    absolute_path, relative_path, media_type = file_info
-    base_name = os.path.splitext(os.path.basename(relative_path))[0]
-    cleaned_base_name = re.sub(r'[^a-zA-Z0-9_]', '_', base_name).lower()
-
-    orig_size = os.path.getsize(absolute_path)
-    ffmpeg_command = []
-    output_file_path = ""
-    output_file_name = ""
-
-    def _ensure_dir(path):
-        try:
-            os.makedirs(path, exist_ok=True)
-        except Exception:
-            pass
-
-    if media_type == "video":
-        # determine destination directory
-        if preserve_structure:
-            rel_dir = os.path.dirname(relative_path)
-            dest_dir = os.path.join(video_output_directory, rel_dir)
-        else:
-            dest_dir = video_output_directory
-        _ensure_dir(dest_dir)
-
-        # choose output based on user-selected target_video_format
-        if target_video_format == "mp4":
-            output_file_name = f"{cleaned_base_name}.mp4"
-            output_file_path = os.path.join(dest_dir, output_file_name)
-            ffmpeg_command = [
-                ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:v", "libx264", "-crf", str(video_crf), "-preset", video_preset,
-                "-c:a", "aac", "-b:a", str(audio_bitrate),
-                "-threads", "1",
-                output_file_path
-            ]
-        else:
-            # default to webm
-            output_file_name = f"{cleaned_base_name}.webm"
-            output_file_path = os.path.join(dest_dir, output_file_name)
-            ffmpeg_command = [
-                ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:v", "libvpx-vp9", "-crf", str(video_crf), "-b:v", "0",
-                "-cpu-used", "4", "-row-mt", "1",
-                "-c:a", "libopus", "-b:a", str(audio_bitrate),
-                "-threads", "1",
-                output_file_path
-            ]
-    elif media_type == "image":
-        if preserve_structure:
-            rel_dir = os.path.dirname(relative_path)
-            dest_dir = os.path.join(image_output_directory, rel_dir)
-        else:
-            dest_dir = image_output_directory
-        _ensure_dir(dest_dir)
-
-        if target_image_format in ("jpg", "jpeg"):
-            output_file_name = f"{cleaned_base_name}.jpg"
-            output_file_path = os.path.join(dest_dir, output_file_name)
-            # map percent quality to ffmpeg q:v (2 best - 31 worst)
-            try:
-                q = int(image_quality)
-                qv = max(2, min(31, int(31 - (q / 100.0) * 29)))
-            except Exception:
-                qv = 4
-            ffmpeg_command = [
-                ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-q:v", str(qv),
-                output_file_path
-            ]
-        elif target_image_format == "png":
-            output_file_name = f"{cleaned_base_name}.png"
-            output_file_path = os.path.join(dest_dir, output_file_name)
-            ffmpeg_command = [
-                ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                output_file_path
-            ]
-        else:
-            # default to webp
-            output_file_name = f"{cleaned_base_name}.webp"
-            output_file_path = os.path.join(dest_dir, output_file_name)
-            ffmpeg_command = [
-                ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:v", "libwebp", "-quality", str(image_quality),
-                output_file_path
-            ]
-    else:
-        if preserve_structure:
-            rel_dir = os.path.dirname(relative_path)
-            dest_dir = os.path.join(audio_output_directory, rel_dir)
-        else:
-            dest_dir = audio_output_directory
-        _ensure_dir(dest_dir)
-
-        output_file_name = f"{cleaned_base_name}.{target_audio_format}"
-        output_file_path = os.path.join(dest_dir, output_file_name)
-
-        if target_audio_format == "ogg":
-            codec = "libvorbis"
-        elif target_audio_format == "mp3":
-            codec = "libmp3lame"
-        elif target_audio_format == "flac":
-            codec = "flac"
-        elif target_audio_format == "wav":
-            codec = "pcm_s16le"
-        elif target_audio_format == "aac":
-            codec = "aac"
-        else:
-            codec = "libopus"
-
-        if codec in ("flac", "pcm_s16le"):
-            ffmpeg_command = [
-                ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:a", codec,
-                "-threads", "1",
-                output_file_path
-            ]
-        else:
-            ffmpeg_command = [
-                ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-c:a", codec, "-b:a", str(audio_bitrate),
-                "-threads", "1",
-                output_file_path
-            ]
-
-    try:
-        process_handle = subprocess.Popen(
-            ffmpeg_command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            creationflags=subprocess_creation_flags
-        )
-        process_handle.communicate()
-        final_size = os.path.getsize(output_file_path)
-        return (media_type, cleaned_base_name, output_file_name, orig_size, final_size, True, None)
-    except Exception as e:
-        return (media_type, cleaned_base_name, output_file_name, orig_size, 0, False, str(e))
-
-def convert_media(input_directory, target_audio_format, target_video_format, target_image_format, recursive, preserve_structure, audio_bitrate, video_crf, video_preset, image_quality, progress_update_callback, status_update_callback, completion_callback, error_callback, lang_code="es", headless=False):
-    import time
-    start_time = time.time()
-    try:
-        audio_extensions = (".wav", ".mp3", ".flac", ".m4a", ".ogg", ".opus", ".aac", ".wma", ".aiff", ".aif", ".alac", ".amr", ".mid", ".midi", ".mp2", ".mpga", ".au", ".snd", ".ra", ".rm")
-        video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".m2v", ".3gp", ".3g2", ".ts", ".m2ts", ".vob", ".ogv", ".asf", ".divx")
-        image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".tga", ".webp")
-        
-        # BOLT OPTIMIZATION: Cache file generator to list to prevent second redundant disk read operation.
-        file_list = list(stream_files(input_directory, input_directory, audio_extensions, video_extensions, image_extensions, recursive=recursive))
-        total_files_count = len(file_list)
-
-        if total_files_count == 0:
-            completion_callback(0, input_directory, 0, 0)
-            return
-
-        target_folder_name = "Alenia_Optimized"
-        output_directory_path = os.path.join(input_directory, target_folder_name)
-        audio_output_directory = os.path.join(output_directory_path, "audio")
-        video_output_directory = os.path.join(output_directory_path, "video")
-        image_output_directory = os.path.join(output_directory_path, "images")
-
-        ffmpeg_executable_path = get_ffmpeg_path()
-        subprocess_creation_flags = 0
-        if os.name == "nt":
-            subprocess_creation_flags = 0x08000000
-
-        audio_count = 0
-        video_count = 0
-        image_count = 0
-
-        total_original_size = 0
-        total_final_size = 0
-        processed_files_count = 0
-
-        max_workers = max(1, os.cpu_count() - 1)
-        with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
-            futures = {
-                executor.submit(
-                    process_single_file_top_level,
-                    file_info,
-                    target_audio_format,
-                    target_video_format,
-                    target_image_format,
-                    audio_output_directory,
-                    video_output_directory,
-                    image_output_directory,
-                    ffmpeg_executable_path,
-                    subprocess_creation_flags,
-                    preserve_structure,
-                    audio_bitrate,
-                    video_crf,
-                    video_preset,
-                    image_quality
-                ): file_info for file_info in file_list
-            }
-
-            for future in concurrent.futures.as_completed(futures):
-                media_type, cleaned_base_name, output_file_name, orig_size, final_size, success, error_msg = future.result()
-                if success:
-                    total_original_size += orig_size
-                    total_final_size += final_size
-                    if media_type == "video":
-                        video_count += 1
-                    elif media_type == "image":
-                        image_count += 1
-                    else:
-                        audio_count += 1
-                else:
-                    if error_msg:
-                        log_error_to_file(error_msg)
-
-                processed_files_count += 1
-                progress_update_callback(processed_files_count, total_files_count)
-
-        duration_seconds = time.time() - start_time
-        if audio_count > 0:
-            update_telemetry_stats("audio", audio_count, duration_seconds, headless)
-        if video_count > 0:
-            update_telemetry_stats("video", video_count, duration_seconds, headless)
-        if image_count > 0:
-            update_telemetry_stats("image", image_count, duration_seconds, headless)
-
-        completion_callback(processed_files_count, output_directory_path, total_original_size, total_final_size)
-
-    except Exception as conversion_exception:
-        exception_traceback = traceback.format_exc()
-        log_error_to_file(exception_traceback)
-        try:
-            send_crash_report("CONVERSION_ERROR", str(conversion_exception), exception_traceback)
-        except:
-            pass
-        error_callback(str(conversion_exception))

@@ -3,6 +3,7 @@
 [![Build Status](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/build.yml/badge.svg)](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/build.yml)
 [![Pages Deploy](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/pages.yml/badge.svg)](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/pages.yml)
 [![GitHub release](https://img.shields.io/github/v/release/Kaia-Alenia/Alenia-Porter?include_prereleases&color=accent)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
+[![Downloads](https://img.shields.io/github/downloads/Kaia-Alenia/Alenia-Porter/total)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 **High-performance universal media optimizer.**
@@ -19,7 +20,7 @@ Originally, Alenia Porter was designed as a resource optimizer dedicated exclusi
 
 ## How It Works and What It Does
 
-Alenia Porter acts as an intelligent orchestrator over industry-standard processing tools (such as FFmpeg). When you select a directory:
+Alenia Porter acts as a local orchestrator over industry-standard processing tools (such as FFmpeg). When you select a directory:
 
 1. **Efficient Scanning:** Recursively scans all compatible media files, organizing them by type (Image, Video, and Audio).
 2. **Concurrent Conversion:** Distributes processing using concurrent threads and parallel processes to bypass hardware bottlenecks, forcing strict resource control (a single thread per encoder instance) to avoid CPU contention on low-end systems.

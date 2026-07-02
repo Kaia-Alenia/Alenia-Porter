@@ -8,11 +8,11 @@ bin/
 src/alenia_porter/bin/
 compilar_alenia.bat
 demo_assets/
-.zenith_cache.json
+
 clean_assets.py
 
 
-# Added by cargo
+
 
 /target
 .coverage
@@ -23,3 +23,40 @@ porter_launcher.sh
 requirements.txt
 *.build/
 *.dist/
+.venv/
+.venv-1/
+.pytest_cache/
+.vscode/
+
+
+fill_telemetry.py
+formats.txt
+parse_formats.py
+parsed_formats.txt
+patch_locales.py
+verify_formats.py
+verify_build.sh
+test_dir/
+test_assets/
+test_media_conversion/
+test_results/
+test_validate_out/
+
+test_*.py
+test_*.js
+
+/ap
+/cmd/ap/ap
+bin/act
+
+
+frontend_v2/roadmap.txt
+frontend_v2/fetch_roadmap.js
+frontend_v2/patch_formulas.py
+frontend_v2/dist/
+frontend_v2/node_modules/
+telemetry-service/.env
+*.bak
+*_backup.*
+cmd/telemetry/
+tools/

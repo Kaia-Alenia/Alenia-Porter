@@ -4,370 +4,707 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alenia Porter - Optimizador de Medios</title>
-    <!-- Add Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(17, 24, 39, 0.7);
-            --accent: #8b5cf6;
-            --accent-hover: #a78bfa;
-            --accent-gradient: linear-gradient(135deg, #8b5cf6, #ec4899);
-            --text-color: #f3f4f6;
-            --text-dim: #9ca3af;
-            --success: #10b981;
+            /* Colores Base */
+            --bg: #08090d;
+            --bg-soft: #0c0e14;
+            --surface: rgba(18, 20, 28, 0.6);
+            --surface-2: rgba(255, 255, 255, 0.035);
+            --line: rgba(255, 255, 255, 0.09);
+            --line-strong: rgba(255, 255, 255, 0.16);
+            
+            /* Tipografía y Textos */
+            --ink: #f2f0ec;
+            --dim: #8d8b9a;
+            --dim-2: #5f5d6b;
+
+            /* Acentos */
+            --purple: #6d3fc9;
+            --magenta: #e63d84;
+            --amber: #ffab40;
+            --success: #34d399;
+
+            --grad-signal: linear-gradient(100deg, var(--purple) 0%, var(--magenta) 55%, var(--amber) 100%);
+
+            /* Fuentes */
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-body: 'Inter', sans-serif;
+
+            --radius: 16px;
+
+            /* Variables Dinámicas para el ratón (actualizadas via JS) */
+            --mouse-x: 50%;
+            --mouse-y: 50%;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        @keyframes backgroundShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        html { 
+            scroll-behavior: smooth; 
+            overflow-x: hidden; 
         }
 
         body {
-            background-color: var(--bg-color);
-            /* Radial gradient background for depth */
-            background-image:
-                radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.15), transparent 25%);
-            background-attachment: fixed;
-            background-size: 200% 200%;
-            animation: backgroundShift 15s ease infinite;
-            color: var(--text-color);
-            font-family: 'Outfit', 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--ink);
+            font-family: var(--font-body);
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
         }
 
-        /* Scroll Animations */
+        a { color: inherit; }
+
+        ::selection { background: var(--magenta); color: #fff; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #parallax-bg {
+            position: fixed;
+            inset: -10%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* Cuadrícula 3D con cálculos CSS calc() basados en las variables del cursor */
+        .bg-grid {
+            position: absolute;
+            inset: -20%;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            /* Transformación base */
+            transform: perspective(600px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+            opacity: 0.5;
+            mask-image: radial-gradient(circle at center, black 10%, transparent 60%);
+            -webkit-mask-image: radial-gradient(circle at center, black 10%, transparent 60%);
+            will-change: transform;
+        }
+
+        /* Aplicar el movimiento sutil solo si el dispositivo usa ratón */
+        @media (hover: hover) and (pointer: fine) {
+            .bg-grid {
+                transform: perspective(600px) rotateX(60deg) translateY(-100px) translateZ(-200px)
+                           translateX(calc((var(--mouse-x) - 50vw) * -0.03)) 
+                           translateY(calc((var(--mouse-y) - 50vh) * -0.03));
+            }
+        }
+
+        /* Orbes estáticos de soporte visual */
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.35;
+        }
+        .orb-1 {
+            width: 450px; height: 450px;
+            background: rgba(230, 61, 132, 0.15);
+            top: 20%; right: -10%;
+        }
+        .orb-2 {
+            width: 500px; height: 500px;
+            background: rgba(109, 63, 201, 0.12);
+            bottom: -10%; left: -5%;
+        }
+
         .reveal {
             opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, opacity;
         }
-
+        .reveal-up { transform: translateY(30px); }
+        .reveal-scale { transform: translateY(20px) scale(0.97); }
+        
         .reveal.active {
             opacity: 1;
-            transform: translateY(0);
+            transform: translate(0) scale(1);
         }
 
-        .delay-1 { transition-delay: 0.1s; }
-        .delay-2 { transition-delay: 0.2s; }
-        .delay-3 { transition-delay: 0.3s; }
-        .delay-4 { transition-delay: 0.4s; }
-        .delay-5 { transition-delay: 0.5s; }
-        .delay-6 { transition-delay: 0.6s; }
+        .delay-1 { transition-delay: 0.05s; }
+        .delay-2 { transition-delay: 0.10s; }
+        .delay-3 { transition-delay: 0.15s; }
+        .delay-4 { transition-delay: 0.20s; }
 
         header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(8, 9, 13, 0.65);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .header-inner {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1rem 1.5rem; /* Ajuste fluido */
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: 800;
+            font-family: var(--font-display);
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            font-weight: 700;
             color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+            gap: 0.55rem;
+            letter-spacing: -0.01em;
         }
 
-        .logo span {
-            color: var(--accent);
+        .logo .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--grad-signal);
+            box-shadow: 0 0 12px rgba(230, 61, 132, 0.7);
         }
+
+        .logo span { color: var(--dim); font-weight: 500; }
+
+        .header-actions { display: flex; gap: clamp(0.5rem, 1.5vw, 1rem); align-items: center; }
+
+        .lang-btn {
+            position: relative;
+            overflow: hidden;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            color: var(--ink);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+        .lang-btn:hover { border-color: var(--line-strong); background: rgba(255,255,255,0.08); }
+
+        .github-icon-link {
+            color: var(--dim);
+            display: flex;
+            align-items: center;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .github-icon-link:hover { color: var(--ink); transform: translateY(-2px); }
 
         .hero {
-            max-width: 1200px;
-            margin: 4rem auto;
-            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: clamp(4rem, 10vw, 8rem) 1.5rem clamp(3rem, 8vw, 6rem);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .eyebrow {
+            font-family: var(--font-mono);
+            font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+            letter-spacing: 0.12em;
+            color: var(--amber);
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .eyebrow::before, .eyebrow::after {
+            content: '';
+            width: 24px; height: 1px;
+            background: var(--amber);
+            opacity: 0.4;
         }
 
         h1 {
-            font-size: 3.5rem;
-            font-weight: 900;
+            font-family: var(--font-display);
+            /* Tipografía súper fluida: Mínimo 2.5rem, escala ideal, Máximo 4.2rem */
+            font-size: clamp(2.5rem, 6vw + 1rem, 4.2rem); 
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
             margin-bottom: 1.5rem;
-            line-height: 1.2;
-            background: linear-gradient(to right, #ffffff, var(--accent), #ec4899);
+            background: var(--grad-signal);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+            background-clip: text;
         }
 
         .tagline {
-            font-size: 1.25rem;
-            color: var(--text-dim);
-            max-width: 700px;
-            margin: 0 auto 2.5rem auto;
-            font-family: 'Inter', sans-serif;
+            font-size: clamp(1rem, 2vw, 1.15rem);
+            color: var(--dim);
+            max-width: 650px;
+            margin-bottom: 3.5rem;
+            line-height: 1.7;
+        }
+
+        .download-block { width: 100%; max-width: 540px; margin: 0 auto; }
+
+        .tab-switch {
+            position: relative;
+            display: inline-flex;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--line);
+            border-radius: 30px;
+            padding: 4px;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(8px);
+        }
+
+        .tab-indicator {
+            position: absolute;
+            top: 4px; left: 4px;
+            height: calc(100% - 8px);
+            border-radius: 26px;
+            background: var(--grad-signal);
+            transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1), width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+            z-index: 0;
+        }
+
+        .tab-btn {
+            position: relative;
+            z-index: 1;
+            background: transparent;
+            border: none;
+            color: var(--dim);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            padding: 0.7rem 1.5rem;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: color 0.25s ease;
+        }
+        .tab-btn.active { color: #0a0a0f; font-weight: 600; }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: tabFade 0.4s ease forwards; }
+        @keyframes tabFade { 
+            from { opacity: 0; transform: translateY(8px); } 
+            to { opacity: 1; transform: translateY(0); } 
         }
 
         .cta-btn {
-            background: var(--accent-gradient);
-            color: white;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
+            position: relative;
+            overflow: hidden;
+            background: var(--grad-signal);
+            color: #0a0a0f;
+            padding: 1rem 2rem;
+            border-radius: var(--radius);
             text-decoration: none;
             font-weight: 700;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
-            display: inline-block;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: var(--font-display);
+            font-size: clamp(0.95rem, 2vw, 1.05rem);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 8px 24px rgba(230, 61, 132, 0.25);
+            width: 100%;
+        }
+        .cta-btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -60%;
+            width: 40%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.55), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.6s ease;
+        }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(230, 61, 132, 0.4); }
+        .cta-btn:hover::after { left: 130%; }
+
+        .platform-row {
+            font-size: 0.82rem;
+            color: var(--dim);
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1.25rem;
+            font-family: var(--font-mono);
+        }
+        .platform-link { color: var(--dim); text-decoration: none; border-bottom: 1px dotted var(--dim-2); transition: color 0.2s ease, border-color 0.2s ease; }
+        .platform-link:hover { color: var(--amber); border-color: var(--amber); }
+
+        .cli-container {
+            background: rgba(18, 20, 28, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        .cta-btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6);
+        .cli-caption {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--dim);
+            margin-bottom: 0.8rem;
         }
 
-        .dashboard-section {
-            max-width: 1200px;
-            margin: 4rem auto;
-            padding: 2rem;
+        .cli-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .cli-title {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--amber);
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            position: relative;
+            overflow: hidden;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--line);
+            color: var(--ink);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover { background: var(--magenta); border-color: transparent; color: #fff; }
+
+        .cli-command {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #6fe3b8;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            background: rgba(0,0,0,0.4);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px inset rgba(255,255,255,0.05);
+        }
+
+        .dashboard-section { 
+            width: 100%;
+            max-width: 1200px; 
+            margin: 2rem auto 0; 
+            padding: 2rem 1.5rem; 
+            position: relative; 
+            z-index: 10; 
+        }
+
+        .section-kicker {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            color: var(--dim);
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 0.8rem;
         }
 
         .dashboard-title {
             text-align: center;
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 2.5rem;
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            font-weight: 700;
+            margin-bottom: clamp(2.5rem, 5vw, 4rem);
+            letter-spacing: -0.01em;
         }
 
+        /* Responsive Grid super dinámico (Flexbox alternativo integrado en CSS Grid) */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 2rem;
+            /* La magia fluida: Mínimo 240px, máximo 1 fracción. Sin media queries. */
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+            gap: 1.5rem;
         }
 
         .stat-card {
-            background-color: var(--card-bg);
+            background: var(--surface);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 2rem;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 2rem 1.5rem;
             text-align: center;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            /* Preparación para el 3D Tilt suave */
+            transform-style: preserve-3d;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s cubic-bezier(0.16,1,0.3,1);
+            will-change: transform;
         }
+        
+        .stat-card > * { transform: translateZ(30px); display: block; }
 
         .stat-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--accent-gradient);
-            transition: height 0.3s ease;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: var(--dim-2);
+            border-top-left-radius: var(--radius);
+            border-top-right-radius: var(--radius);
+            transform: translateZ(0);
         }
+        .stat-card.type-audio::before { background: var(--amber); }
+        .stat-card.type-video::before { background: var(--magenta); }
+        .stat-card.type-image::before { background: var(--purple); }
+        .stat-card.type-active::before { background: var(--success); }
 
-        .stat-card.active-users-card::before {
-            background: linear-gradient(to right, var(--success), #34d399);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(139, 92, 246, 0.3);
-            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.2);
-        }
-
-        .stat-card:hover::before {
-            height: 6px;
+        .stat-card:hover { 
+            border-color: var(--line-strong); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            z-index: 2; 
         }
 
         .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin: 1rem 0;
-            font-family: 'Outfit', sans-serif;
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 2.6rem);
+            font-weight: 700;
+            margin: 0.8rem 0 0.4rem;
+            color: #fff;
         }
 
         .stat-label {
-            color: var(--text-dim);
+            color: var(--dim);
             text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 1.5px;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
             font-weight: 600;
+            font-family: var(--font-mono);
         }
 
-        .os-list {
-            margin-top: 1.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            justify-content: center;
+        #avg-time-details {
+            font-size: 0.75rem; color: var(--dim); margin-top: 1rem;
+            display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;
+            font-family: var(--font-mono);
         }
-
-        .os-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.8rem;
-            color: var(--text-color);
-            display: inline-flex;
-            align-items: center;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-        }
-
-        .os-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
+        #avg-time-details span { 
+            background: rgba(0,0,0,0.3); 
+            padding: 0.35rem 0.6rem; 
+            border-radius: 12px; 
+            border: 1px solid var(--line); 
         }
 
         .features {
             max-width: 1200px;
-            margin: 6rem auto;
-            padding: 2rem;
+            margin: clamp(4rem, 10vw, 7rem) auto;
+            padding: 0 1.5rem;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+            gap: 2rem;
+            position: relative;
+            z-index: 10;
         }
 
         .feature-card {
-            background-color: var(--card-bg);
+            background: var(--surface);
             backdrop-filter: blur(10px);
             padding: 2.5rem;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius);
+            border: 1px solid var(--line);
+            transform-style: preserve-3d;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease-out;
+            will-change: transform;
         }
+        .feature-card > * { transform: translateZ(30px); }
 
-        .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(139, 92, 246, 0.3);
-            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.15);
+        .feature-card:hover { 
+            border-color: var(--line-strong); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            z-index: 2; 
         }
 
         .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            display: inline-block;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            width: 52px; height: 52px;
+            margin-bottom: 1.5rem;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--line-strong);
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
+        .feature-icon svg { width: 26px; height: 26px; }
 
         .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            font-weight: 800;
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: #fff;
         }
+        .feature-card p { color: var(--dim); font-size: 0.95rem; line-height: 1.7; }
 
-        .feature-card p {
-            color: var(--text-dim);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-anim 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: rgba(255, 255, 255, 0.25);
+            pointer-events: none;
+            z-index: 0;
         }
+        @keyframes ripple-anim { to { transform: scale(2.5); opacity: 0; } }
 
         footer {
             text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-dim);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.9rem;
-            margin-top: 2rem;
-            background: rgba(0,0,0,0.2);
+            padding: 4rem 1.5rem;
+            color: var(--dim);
+            border-top: 1px solid var(--line);
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            background: rgba(8, 9, 13, 0.8);
+            position: relative;
+            z-index: 10;
         }
+        footer a { color: var(--amber); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        footer p { margin-bottom: 0.6rem; }
 
-        footer a {
-            color: var(--accent);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        footer a:hover {
-            color: var(--accent-hover);
-            text-decoration: underline;
-        }
-
-        .lang-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .lang-btn:hover {
-            background: var(--accent-gradient);
-            border-color: transparent;
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
-            transform: scale(1.05);
-        }
     </style>
 </head>
 <body>
-    <header class="reveal">
-        <div class="logo">
-            Alenia<span>Porter</span>
+    <!-- Fondo Parallax optimizado (Controlado via variables CSS en JS) -->
+    <div id="parallax-bg">
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+        <canvas id="particles-canvas"></canvas>
+        <div class="bg-grid"></div>
+    </div>
+
+    <header class="reveal reveal-up">
+        <div class="header-inner">
+            <div class="logo"><span class="dot"></span>Alenia<span>Porter</span></div>
+            <div class="header-actions">
+                <a href="https://github.com/Kaia-Alenia/Alenia-Porter" class="github-icon-link" aria-label="GitHub">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+                <button id="lang-btn" class="lang-btn" onclick="toggleLanguage()">EN</button>
+            </div>
         </div>
-        <button id="lang-btn" class="lang-btn" onclick="toggleLanguage()">EN</button>
     </header>
 
-    <section class="hero reveal delay-1">
-        <h1 data-i18n="heroTitle">Optimización Multimedia Universal</h1>
-        <p class="tagline" data-i18n="heroTagline">Comprime y adapta música, vídeos e imágenes con la potencia de procesamiento paralelo multihilo optimizada para creadores indie.</p>
-        <a href="https://github.com/Kaia-Alenia/Alenia-Porter" class="cta-btn" data-i18n="githubBtn">Ver en GitHub</a>
+    <section class="hero">
+        <div class="reveal reveal-scale delay-1">
+            <div class="eyebrow" data-i18n="eyebrow">CÓDIGO ABIERTO · MULTIPLATAFORMA · GPL V3</div>
+            <h1 data-i18n="heroTitle">Optimización Multimedia Universal</h1>
+            <p class="tagline" data-i18n="heroTagline">Comprime y adapta música, vídeos e imágenes con procesamiento paralelo multihilo, optimizado para creadores indie.</p>
+        </div>
+
+        <div class="download-block reveal reveal-up delay-2">
+            <div class="tab-switch" role="tablist">
+                <span class="tab-indicator"></span>
+                <button class="tab-btn active" data-tab="app" role="tab" data-i18n="tabApp">App de Escritorio</button>
+                <button class="tab-btn" data-tab="cli" role="tab" data-i18n="tabCli">CLI</button>
+            </div>
+
+            <div class="tab-panel active" data-panel="app">
+                <a href="#" id="main-download-btn" class="cta-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: relative; z-index: 2;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span id="main-download-text" data-i18n="dlWindows" style="position: relative; z-index: 2;">Descargar para Windows (.zip)</span>
+                </a>
+                <div class="platform-row">
+                    <span data-i18n="otherOS">Otras plataformas:</span>
+                    <a href="https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest/download/AleniaPorter-Windows.zip" class="platform-link">Windows</a>
+                    <a href="https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest/download/AleniaPorter-macOS.zip" class="platform-link">macOS</a>
+                    <a href="https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest/download/AleniaPorter-Linux.tar.gz" class="platform-link">Linux</a>
+                </div>
+            </div>
+
+            <div class="tab-panel" data-panel="cli">
+                <div class="cli-container">
+                    <div class="cli-caption" data-i18n="cliCaption">Instalación en una sola línea, multiplataforma:</div>
+                    <div class="cli-header">
+                        <span class="cli-title">Alenia Porter CLI</span>
+                        <button id="copy-btn" class="copy-btn" onclick="copyCliCommand()" data-i18n="copyBtn">Copiar</button>
+                    </div>
+                    <pre class="cli-command"><code id="cli-code">curl -sSfL https://raw.githubusercontent.com/Kaia-Alenia/Alenia-Porter/main/install.sh | bash</code></pre>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <section class="dashboard-section reveal">
-        <h2 class="dashboard-title reveal" data-i18n="dashboardTitle">Estadísticas de la Comunidad en Tiempo Real</h2>
+    <section class="dashboard-section">
+        <div class="reveal reveal-up">
+            <div class="section-kicker" data-i18n="dashboardKicker">EN TIEMPO REAL</div>
+            <h2 class="dashboard-title" data-i18n="dashboardTitle">Estadísticas de la Comunidad</h2>
+        </div>
+        
         <div class="stats-grid">
-            <div class="stat-card reveal delay-1">
+            <div class="stat-card type-audio reveal reveal-scale delay-1">
                 <div class="stat-label" data-i18n="statAudio">Archivos de Audio</div>
                 <div class="stat-value" id="audio-count" data-val="0">0</div>
             </div>
-            <div class="stat-card reveal delay-2">
+            <div class="stat-card type-video reveal reveal-scale delay-2">
                 <div class="stat-label" data-i18n="statVideo">Archivos de Video</div>
                 <div class="stat-value" id="video-count" data-val="0">0</div>
             </div>
-            <div class="stat-card reveal delay-3">
+            <div class="stat-card type-image reveal reveal-scale delay-3">
                 <div class="stat-label" data-i18n="statImages">Imágenes Optimizadas</div>
                 <div class="stat-value" id="image-count" data-val="0">0</div>
             </div>
-            <div class="stat-card reveal delay-4">
+            <div class="stat-card reveal reveal-scale delay-4">
                 <div class="stat-label" data-i18n="statTime">Tiempo Medio (por archivo)</div>
                 <div class="stat-value" id="avg-time" data-val="0" data-suffix="s">0s</div>
-                <div id="avg-time-details" style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center;"></div>
+                <div id="avg-time-details"></div>
             </div>
-            <div class="stat-card active-users-card reveal delay-5">
+            <div class="stat-card type-active reveal reveal-scale delay-1">
                 <div class="stat-label" data-i18n="statActive">Usuarios Activos</div>
                 <div class="stat-value" id="active-users" data-val="0">0</div>
             </div>
-            <div class="stat-card reveal delay-1">
+            <div class="stat-card reveal reveal-scale delay-2">
                 <div class="stat-label" data-i18n="statWindows">Usuarios Windows</div>
                 <div class="stat-value" id="users-windows" data-val="0">0</div>
             </div>
-            <div class="stat-card reveal delay-2">
+            <div class="stat-card reveal reveal-scale delay-3">
                 <div class="stat-label" data-i18n="statLinux">Usuarios Linux</div>
                 <div class="stat-value" id="users-linux" data-val="0">0</div>
             </div>
-            <div class="stat-card reveal delay-3">
+            <div class="stat-card reveal reveal-scale delay-4">
                 <div class="stat-label" data-i18n="statMacos">Usuarios macOS</div>
                 <div class="stat-value" id="users-macos" data-val="0">0</div>
             </div>
@@ -375,22 +712,56 @@
     </section>
 
     <section class="features">
-        <div class="feature-card reveal delay-1">
-            <div class="feature-icon">⚡</div>
+        <div class="feature-card reveal reveal-scale delay-1">
+            <div class="feature-icon">
+                <!-- Icono rediseñado: 4 Núcleos en paralelo inequívocos -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="4" width="6" height="6" rx="1.5"></rect>
+                    <rect x="14" y="4" width="6" height="6" rx="1.5"></rect>
+                    <rect x="4" y="14" width="6" height="6" rx="1.5"></rect>
+                    <rect x="14" y="14" width="6" height="6" rx="1.5"></rect>
+                </svg>
+            </div>
             <h3 data-i18n="featMultithreadTitle">Multihilo Real</h3>
             <p data-i18n="featMultithreadDesc">Migración a ProcessPoolExecutor sorteando el GIL de Python para una velocidad de procesamiento sin precedentes en equipos multi-núcleo.</p>
         </div>
-        <div class="feature-card reveal delay-2">
-            <div class="feature-icon">📦</div>
+        <div class="feature-card reveal reveal-scale delay-2">
+            <div class="feature-icon">
+                <svg viewBox="0 0 32 32" fill="none" stroke="url(#iconGrad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 10 L16 4 L28 10 L28 22 L16 28 L4 22 Z"/>
+                    <path d="M4 10 L16 16 L28 10"/>
+                    <line x1="16" y1="16" x2="16" y2="28"/>
+                </svg>
+            </div>
             <h3 data-i18n="featDependenciesTitle">Cero Dependencias</h3>
             <p data-i18n="featDependenciesDesc">FFmpeg se integra de forma transparente en el paquete final para que funcione nada más descargar, sin configuraciones complejas.</p>
         </div>
-        <div class="feature-card reveal delay-3">
-            <div class="feature-icon">🎯</div>
+        <div class="feature-card reveal reveal-scale delay-3">
+            <div class="feature-icon">
+                <svg viewBox="0 0 32 32" fill="none" stroke="url(#iconGrad)" stroke-width="2.2" stroke-linecap="round">
+                    <line x1="8" y1="4" x2="8" y2="28"/>
+                    <circle cx="8" cy="12" r="2.4" fill="#12141c"/>
+                    <line x1="16" y1="4" x2="16" y2="28"/>
+                    <circle cx="16" cy="20" r="2.4" fill="#12141c"/>
+                    <line x1="24" y1="4" x2="24" y2="28"/>
+                    <circle cx="24" cy="9" r="2.4" fill="#12141c"/>
+                </svg>
+            </div>
             <h3 data-i18n="featOptimTitle">Optimización Avanzada</h3>
             <p data-i18n="featOptimDesc">Optimización inteligente basada en perfiles y presets para garantizar la máxima calidad con el menor tamaño de archivo posible.</p>
         </div>
     </section>
+
+    <!-- Recurso SVG Compartido -->
+    <svg width="0" height="0" style="position:absolute">
+        <defs>
+            <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#6d3fc9"/>
+                <stop offset="55%" stop-color="#e63d84"/>
+                <stop offset="100%" stop-color="#ffab40"/>
+            </linearGradient>
+        </defs>
+    </svg>
 
     <footer class="reveal delay-1">
         <p data-i18n="footerLicense">© 2026 Alenia Studios. Licenciado bajo GNU GPL v3.</p>
@@ -401,10 +772,14 @@
         const translations = {
             es: {
                 title: "Alenia Porter - Optimizador de Medios",
+                eyebrow: "CÓDIGO ABIERTO · MULTIPLATAFORMA · GPL V3",
                 heroTitle: "Optimización Multimedia Universal",
-                heroTagline: "Comprime y adapta música, vídeos e imágenes con la potencia de procesamiento paralelo multihilo optimizada para creadores indie.",
-                githubBtn: "Ver en GitHub",
-                dashboardTitle: "Estadísticas de la Comunidad en Tiempo Real",
+                heroTagline: "Comprime y adapta música, vídeos e imágenes con procesamiento paralelo multihilo, optimizado para creadores indie.",
+                tabApp: "App de Escritorio",
+                tabCli: "CLI",
+                cliCaption: "Instalación en una sola línea, multiplataforma:",
+                dashboardKicker: "EN TIEMPO REAL",
+                dashboardTitle: "Estadísticas de la Comunidad",
                 statAudio: "Archivos de Audio",
                 statVideo: "Archivos de Video",
                 statImages: "Imágenes Optimizadas",
@@ -420,14 +795,23 @@
                 featOptimTitle: "Optimización Avanzada",
                 featOptimDesc: "Optimización inteligente basada en perfiles y presets para garantizar la máxima calidad con el menor tamaño de archivo posible.",
                 footerLicense: "© 2026 Alenia Studios. Licenciado bajo GNU GPL v3.",
-                footerContact: "Contacto oficial: "
+                footerContact: "Contacto oficial: ",
+                otherOS: "Otras plataformas:",
+                dlWindows: "Descargar para Windows (.zip)",
+                dlMacos: "Descargar para macOS (.zip)",
+                dlLinux: "Descargar para Linux (.tar.gz)",
+                copyBtn: "Copiar"
             },
             en: {
                 title: "Alenia Porter - Media Optimizer",
+                eyebrow: "OPEN SOURCE · CROSS-PLATFORM · GPL V3",
                 heroTitle: "Universal Multimedia Optimization",
-                heroTagline: "Compress and adapt music, videos, and images with multi-threaded parallel processing power optimized for indie creators.",
-                githubBtn: "View on GitHub",
-                dashboardTitle: "Real-Time Community Stats",
+                heroTagline: "Compress and adapt music, videos, and images with multi-threaded parallel processing, optimized for indie creators.",
+                tabApp: "Desktop App",
+                tabCli: "CLI",
+                cliCaption: "One-line, cross-platform install:",
+                dashboardKicker: "REAL-TIME",
+                dashboardTitle: "Community Stats",
                 statAudio: "Audio Files",
                 statVideo: "Video Files",
                 statImages: "Optimized Images",
@@ -443,23 +827,25 @@
                 featOptimTitle: "Advanced Optimization",
                 featOptimDesc: "Smart optimization based on profiles and presets to guarantee the highest quality with the smallest possible file size.",
                 footerLicense: "© 2026 Alenia Studios. Licensed under GNU GPL v3.",
-                footerContact: "Official Contact: "
+                footerContact: "Official Contact: ",
+                otherOS: "Other platforms:",
+                dlWindows: "Download for Windows (.zip)",
+                dlMacos: "Download for macOS (.zip)",
+                dlLinux: "Download for Linux (.tar.gz)",
+                copyBtn: "Copy"
             }
         };
 
         let currentLang = "es";
+        let globalMouseX = null;
+        let globalMouseY = null;
 
         function applyTranslations() {
             document.title = translations[currentLang].title;
-            const elements = document.querySelectorAll("[data-i18n]");
-            elements.forEach(el => {
+            document.querySelectorAll("[data-i18n]").forEach(el => {
                 const key = el.getAttribute("data-i18n");
                 if (translations[currentLang][key] !== undefined) {
-                    if (key === "footerContact") {
-                        el.innerHTML = translations[currentLang][key];
-                    } else {
-                        el.textContent = translations[currentLang][key];
-                    }
+                    el.textContent = translations[currentLang][key];
                 }
             });
             document.getElementById("lang-btn").textContent = currentLang === "es" ? "EN" : "ES";
@@ -470,20 +856,23 @@
             applyTranslations();
         }
 
-        function reveal() {
-            var reveals = document.querySelectorAll(".reveal");
-            for (var i = 0; i < reveals.length; i++) {
-                var windowHeight = window.innerHeight;
-                var elementTop = reveals[i].getBoundingClientRect().top;
-                var elementVisible = 50;
+        function initScrollAnimations() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
 
-                if (elementTop < windowHeight - elementVisible) {
-                    reveals[i].classList.add("active");
-                }
-            }
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         }
-        window.addEventListener("scroll", reveal);
-        reveal();
 
         function animateValue(obj, start, end, duration, suffix = "") {
             let startTimestamp = null;
@@ -492,19 +881,13 @@
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                 const easeOut = progress * (2 - progress);
                 const currentVal = Math.floor(easeOut * (end - start) + start);
-
                 if (end % 1 !== 0) {
-                     const currentValFloat = (easeOut * (end - start) + start).toFixed(2);
-                     obj.innerHTML = currentValFloat.toLocaleString() + suffix;
+                    obj.textContent = (easeOut * (end - start) + start).toFixed(2).toLocaleString() + suffix;
                 } else {
-                     obj.innerHTML = currentVal.toLocaleString() + suffix;
+                    obj.textContent = currentVal.toLocaleString() + suffix;
                 }
-
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                } else {
-                    obj.innerHTML = end.toLocaleString() + suffix;
-                }
+                if (progress < 1) window.requestAnimationFrame(step);
+                else obj.textContent = end.toLocaleString() + suffix;
             };
             window.requestAnimationFrame(step);
         }
@@ -520,24 +903,16 @@
                         { id: "image-count", value: data.stats.image },
                         { id: "active-users", value: data.active_users }
                     ];
-
                     if (data.avg_time_per_file !== undefined) {
                         statsMap.push({ id: "avg-time", value: data.avg_time_per_file, suffix: "s" });
                     }
-
-                    let winCount = 0;
-                    let linCount = 0;
-                    let macCount = 0;
+                    let winCount = 0, linCount = 0, macCount = 0;
                     if (data.os_distribution) {
                         for (const [os, count] of Object.entries(data.os_distribution)) {
                             const osLower = os.toLowerCase();
-                            if (osLower.includes("win")) {
-                                winCount += count;
-                            } else if (osLower.includes("lin")) {
-                                linCount += count;
-                            } else if (osLower.includes("mac") || osLower.includes("dar")) {
-                                macCount += count;
-                            }
+                            if (osLower.includes("win")) winCount += count;
+                            else if (osLower.includes("lin")) linCount += count;
+                            else if (osLower.includes("mac") || osLower.includes("dar")) macCount += count;
                         }
                     }
                     statsMap.push({ id: "users-windows", value: winCount });
@@ -551,17 +926,14 @@
                             animateValue(el, 0, stat.value, 2000, stat.suffix || "");
                         }
                     });
-                    
+
                     const avgDetails = document.getElementById("avg-time-details");
-                    avgDetails.innerHTML = "";
+                    avgDetails.textContent = "";
                     if (data.avg_time_by_type) {
                         const types = { audio: "🎵", video: "🎥", image: "🖼️" };
                         for (const [type, avg] of Object.entries(data.avg_time_by_type)) {
                             const icon = types[type] || "📄";
                             const item = document.createElement("span");
-                            item.style.background = "rgba(255, 255, 255, 0.05)";
-                            item.style.padding = "0.2rem 0.5rem";
-                            item.style.borderRadius = "12px";
                             item.innerText = `${icon} ${avg}s`;
                             avgDetails.appendChild(item);
                         }
@@ -571,7 +943,267 @@
                 console.error("Error cargando estadísticas", e);
             }
         }
+
+        function getOS() {
+            const ua = window.navigator.userAgent.toLowerCase();
+            if (ua.indexOf("win") !== -1) return "windows";
+            if (ua.indexOf("mac") !== -1) return "macos";
+            if (ua.indexOf("linux") !== -1) return "linux";
+            return "windows";
+        }
+
+        function setupDownloadButton() {
+            const os = getOS();
+            const btn = document.getElementById("main-download-btn");
+            const textEl = document.getElementById("main-download-text");
+            if (os === "windows") {
+                btn.href = "https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest/download/AleniaPorter-Windows.zip";
+                textEl.setAttribute("data-i18n", "dlWindows");
+            } else if (os === "macos") {
+                btn.href = "https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest/download/AleniaPorter-macOS.zip";
+                textEl.setAttribute("data-i18n", "dlMacos");
+            } else {
+                btn.href = "https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest/download/AleniaPorter-Linux.tar.gz";
+                textEl.setAttribute("data-i18n", "dlLinux");
+            }
+            applyTranslations();
+        }
+
+        function copyCliCommand() {
+            const text = document.getElementById("cli-code").innerText;
+            const btn = document.getElementById("copy-btn");
+            
+            const showCopied = () => {
+                btn.textContent = currentLang === "es" ? "Copiado" : "Copied";
+                setTimeout(() => { btn.textContent = translations[currentLang].copyBtn; }, 2000);
+            };
+
+            const fallbackCopy = () => {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed"; // Evita que la pantalla salte
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showCopied();
+                } catch (err) {
+                    console.error('No se pudo copiar: ', err);
+                }
+                document.body.removeChild(textArea);
+            };
+
+            // Intentamos con la API moderna, pero si falla por permisos (como en el iframe), usamos el fallback
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text)
+                    .then(showCopied)
+                    .catch((err) => {
+                        console.warn("Clipboard API bloqueada, usando fallback...", err);
+                        fallbackCopy();
+                    });
+            } else {
+                fallbackCopy();
+            }
+        }
+
+        function setupTabs() {
+            const buttons = document.querySelectorAll(".tab-btn");
+            const panels = document.querySelectorAll(".tab-panel");
+            const indicator = document.querySelector(".tab-indicator");
+
+            function activate(tab) {
+                buttons.forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+                panels.forEach(p => p.classList.toggle("active", p.dataset.panel === tab));
+                const activeBtn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+                if (activeBtn && indicator) {
+                    indicator.style.width = activeBtn.offsetWidth + "px";
+                    indicator.style.transform = `translateX(${activeBtn.offsetLeft}px)`;
+                }
+            }
+
+            buttons.forEach(b => b.addEventListener("click", () => activate(b.dataset.tab)));
+            activate("app");
+            window.addEventListener("resize", () => {
+                const current = document.querySelector(".tab-btn.active");
+                if (current) activate(current.dataset.tab);
+            });
+        }
+
+        function setupInteractions() {
+            // 1. Mouse Tracking de alto rendimiento usando variables CSS (Para fondo Parallax)
+            // Solo si el dispositivo acepta hover nativo (ratón/trackpad)
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                let rafId = null;
+                document.addEventListener('mousemove', (e) => {
+                    globalMouseX = e.clientX;
+                    globalMouseY = e.clientY;
+                    if(rafId) cancelAnimationFrame(rafId);
+                    rafId = requestAnimationFrame(() => {
+                        const x = (e.clientX / window.innerWidth) * 100;
+                        const y = (e.clientY / window.innerHeight) * 100;
+                        document.documentElement.style.setProperty('--mouse-x', `${x}%`);
+                        document.documentElement.style.setProperty('--mouse-y', `${y}%`);
+                    });
+                });
+
+                document.addEventListener('mouseleave', () => {
+                    globalMouseX = null;
+                    globalMouseY = null;
+                });
+            }
+
+            // 2. Efecto Ripple
+            document.querySelectorAll('.cta-btn, .copy-btn, .lang-btn, .tab-btn').forEach(btn => {
+                btn.addEventListener('mousedown', function(e) {
+                    const circle = document.createElement('span');
+                    const diameter = Math.max(this.clientWidth, this.clientHeight);
+                    const radius = diameter / 2;
+                    circle.style.width = circle.style.height = `${diameter}px`;
+                    
+                    const rect = this.getBoundingClientRect();
+                    circle.style.left = `${e.clientX - rect.left - radius}px`;
+                    circle.style.top = `${e.clientY - rect.top - radius}px`;
+                    circle.classList.add('ripple');
+                    
+                    const existing = this.querySelector('.ripple');
+                    if (existing) existing.remove();
+                    this.appendChild(circle);
+                    
+                    setTimeout(() => circle.remove(), 600);
+                });
+            });
+
+            // 3. Efecto 3D Tilt super suave usando requestAnimationFrame
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                document.querySelectorAll('.stat-card, .feature-card').forEach(card => {
+                    let tiltRafId = null;
+                    
+                    card.addEventListener('mousemove', e => {
+                        if (tiltRafId) cancelAnimationFrame(tiltRafId);
+                        tiltRafId = requestAnimationFrame(() => {
+                            const rect = card.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const y = e.clientY - rect.top;
+                            const centerX = rect.width / 2;
+                            const centerY = rect.height / 2;
+                            
+                            // Rotación sutil limitada a +-6 grados
+                            const rotateX = ((y - centerY) / centerY) * -6;
+                            const rotateY = ((x - centerX) / centerX) * 6;
+                            
+                            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                        });
+                    });
+                    
+                    card.addEventListener('mouseleave', () => {
+                        if (tiltRafId) cancelAnimationFrame(tiltRafId);
+                        card.style.transform = '';
+                    });
+                });
+            }
+        }
+
+        // --- Sistema de Partículas Conectadas ---
+        function initParticleSystem() {
+            const canvas = document.getElementById('particles-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particlesArray = [];
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                init();
+            }
+            window.addEventListener('resize', resize);
+            
+            // Colores del tema (Morado, Magenta, Ámbar)
+            const colors = ['#6d3fc9', '#e63d84', '#ffab40'];
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 1.5 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.5;
+                    this.speedY = (Math.random() - 0.5) * 0.5;
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+
+                    // Rebote en los bordes
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+
+                    // Interacción: huir sutilmente del ratón
+                    if (globalMouseX != null && globalMouseY != null) {
+                        let dx = globalMouseX - this.x;
+                        let dy = globalMouseY - this.y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < 140) {
+                            this.x -= dx * 0.015;
+                            this.y -= dy * 0.015;
+                        }
+                    }
+                }
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function init() {
+                particlesArray = [];
+                // Ajusta la cantidad según el tamaño de la pantalla para evitar lag
+                let numberOfParticles = Math.min((canvas.width * canvas.height) / 12000, 85);
+                for (let i = 0; i < numberOfParticles; i++) {
+                    particlesArray.push(new Particle());
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particlesArray.length; i++) {
+                    particlesArray[i].update();
+                    particlesArray[i].draw();
+                    
+                    // Conectar partículas cercanas con líneas
+                    for (let j = i; j < particlesArray.length; j++) {
+                        let dx = particlesArray[i].x - particlesArray[j].x;
+                        let dy = particlesArray[i].y - particlesArray[j].y;
+                        let distance = dx * dx + dy * dy;
+                        
+                        if (distance < 16000) { // Distancia al cuadrado (aprox 126px)
+                            ctx.beginPath();
+                            ctx.strokeStyle = particlesArray[i].color;
+                            ctx.globalAlpha = 1 - (distance / 16000);
+                            ctx.lineWidth = 0.6;
+                            ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                            ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                            ctx.stroke();
+                            ctx.globalAlpha = 1; // Restaurar opacidad
+                        }
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+
+            resize();
+            animate();
+        }
+
+        // Ejecutar funciones de inicialización
+        initScrollAnimations();
         fetchStats();
+        setupDownloadButton();
+        setupTabs();
+        setupInteractions();
+        initParticleSystem();
     </script>
 </body>
 </html>

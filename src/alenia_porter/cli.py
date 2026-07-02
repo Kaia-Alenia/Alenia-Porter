@@ -19,9 +19,7 @@ def global_exception_handler(exctype, value, tb):
 
 sys.excepthook = global_exception_handler
 
-try:
-    import zenith
-    zenith.ignite(file=__file__, show_banner=False)
+
 
     import threading
     import webbrowser
@@ -32,6 +30,7 @@ try:
     import argparse
     from alenia_porter import updater
     from alenia_porter import porter
+    from alenia_porter import media_engine
 
     def thread_exception_handler(args):
         tb_text = "".join(traceback.format_exception(args.exc_type, args.exc_value, args.exc_traceback))
@@ -99,6 +98,7 @@ class ToolTip(object):
 def main():
     parser = argparse.ArgumentParser(description="Alenia Porter - Media Optimizer")
     parser.add_argument("--headless", action="store_true", help="Run in headless mode (no GUI)")
+    parser.add_argument("--terminal", action="store_true", help="Run the terminal UI mode")
     args = parser.parse_args()
 
     if args.headless:
@@ -107,6 +107,17 @@ def main():
         if not locales:
             sys.exit(1)
         print("✓ Application initialized successfully")
+        return
+
+    if args.terminal:
+        try:
+            from alenia_porter import terminal_cli
+            terminal_cli.terminal_main()
+        except Exception as e:
+            tb_text = traceback.format_exc()
+            porter.log_error_to_file(tb_text)
+            print(f"Error launching terminal mode: {e}")
+            sys.exit(1)
         return
 
     import tkinter as tk
@@ -210,6 +221,42 @@ def main():
                 except Exception:
                     return None
 
+        def _update_widget_colors(widget, bg, fg, accent, link):
+            wclass = widget.winfo_class()
+            if wclass in ("Frame", "TFrame", "Canvas", "Toplevel", "Tk"):
+                try: widget.configure(bg=bg, highlightthickness=0, highlightbackground=bg)
+                except: pass
+            elif wclass == "Label":
+                try: widget.configure(bg=bg, fg=fg, highlightthickness=0, highlightbackground=bg)
+                except: pass
+            elif wclass == "Button":
+                try:
+                    # Update background for standard buttons. 
+                    # We assume accent buttons have fg="white" and we shouldn't touch them.
+                    if widget.cget("fg") != "white":
+                        # If it's a link button, keep its fg, otherwise update fg.
+                        widget.configure(bg=bg, activebackground=bg, highlightthickness=0, highlightbackground=bg)
+                        # We identify link buttons by checking if their current fg equals the OLD link color.
+                        # Wait, we only have the NEW link color. 
+                        # Let's check the font. If it has 'underline', it's a link.
+                        font_info = widget.cget("font")
+                        if "underline" in font_info.lower():
+                            widget.configure(fg=link)
+                        else:
+                            widget.configure(fg=fg)
+                    else:
+                        # Accent button
+                        widget.configure(bg=accent, activebackground=accent, highlightthickness=0, highlightbackground=bg)
+                except: pass
+            elif wclass == "Checkbutton":
+                try: widget.configure(bg=bg, fg=fg, activebackground=bg, activeforeground=fg, selectcolor=accent, highlightthickness=0, highlightbackground=bg)
+                except: pass
+            elif wclass == "TCombobox":
+                try: widget.tk.eval(f'[ttk::combobox::PopdownWindow {widget._w}].f.l configure -background "{bg}" -foreground "{fg}" -selectbackground "{accent}"')
+                except: pass
+            for child in widget.winfo_children():
+                _update_widget_colors(child, bg, fg, accent, link)
+
         def apply_theme_to_ui():
             bg = current_theme.get("bg_main", "#1e1e1e")
             fg = current_theme.get("fg_main", "#ffffff")
@@ -217,9 +264,8 @@ def main():
             accent = current_theme.get("accent", "#8b5cf6")
             link = current_theme.get("link", "#F96854")
         
-            root_window.configure(bg=bg)
-            top_navigation_bar.configure(bg=bg)
-        
+            _update_widget_colors(root_window, bg, fg, accent, link)
+
             char_path = current_theme.get("char_sprite", "assets/images/kaia_default.png")
             image_cache["char"] = load_theme_image(char_path)
             if image_cache["char"]:
@@ -249,24 +295,52 @@ def main():
                 pass
         
             header_label.configure(bg=bg, fg=fg)
-            format_selection_frame.configure(bg=bg)
             format_label.configure(bg=bg, fg=fg_dim)
         
-            # Apply theme to comboboxes and labels if present
+            # Apply theme to comboboxes
             try:
-                audio_combobox.configure(background=bg, foreground=fg)
-                video_combobox.configure(background=bg, foreground=fg)
-                image_combobox.configure(background=bg, foreground=fg)
+                style = ttk.Style()
+                style.configure("TCombobox", fieldbackground=bg, background=bg, foreground=fg, arrowcolor=accent, selectbackground=accent, selectforeground=bg, borderwidth=0, lightcolor=bg, darkcolor=bg, bordercolor=bg, relief="flat")
+                style.map("TCombobox", 
+                          fieldbackground=[("readonly", bg)], 
+                          foreground=[("readonly", fg)],
+                          selectbackground=[("readonly", accent)],
+                          selectforeground=[("readonly", bg)])
+                style.configure("TCheckbutton", background=bg, foreground=fg_dim)
+                root_window.option_add('*TCombobox*Listbox.background', bg)
+                root_window.option_add('*TCombobox*Listbox.foreground', fg)
+                root_window.option_add('*TCombobox*Listbox.selectBackground', accent)
+                root_window.option_add('*TCombobox*Listbox.selectForeground', bg)
+                root_window.option_add('*TCombobox*Listbox.font', ("Arial", 10))
+                root_window.option_add('*TCombobox*Listbox.relief', 'flat')
+                root_window.option_add('*TCombobox*Listbox.highlightthickness', 0)
+                root_window.option_add('*TCombobox*Listbox.borderwidth', 0)
             except Exception:
                 pass
-            try:
-                # checkbuttons and labels adjust automatically via parent bg/fg
-                pass
-            except Exception:
-                pass
-        
+            
+            def _force_popdown_colors(cb, bg, fg, selectbg):
+                fg_dim = current_theme.get("fg_dim", "#a3a3a3")
+                try:
+                    popdown = cb.tk.call('ttk::combobox::PopdownWindow', cb)
+                    cb.tk.call(f'{popdown}.f.l', 'configure', '-background', bg, '-foreground', fg, '-selectbackground', selectbg, '-selectforeground', bg, '-highlightthickness', 1, '-highlightbackground', bg, '-highlightcolor', bg, '-borderwidth', 0)
+                    cb.tk.call(f'{popdown}.f', 'configure', '-background', bg, '-highlightthickness', 0, '-borderwidth', 0)
+                    cb.tk.call(f'{popdown}', 'configure', '-background', bg)
+                except Exception:
+                    pass
 
-        
+            def find_comboboxes(parent):
+                cbs = []
+                for child in parent.winfo_children():
+                    if isinstance(child, ttk.Combobox):
+                        cbs.append(child)
+                    cbs.extend(find_comboboxes(child))
+                return cbs
+
+            for cb in find_comboboxes(root_window):
+                _force_popdown_colors(cb, bg, fg, accent)
+                # Bind click to re-force colors in case it was created after theme apply
+                cb.bind('<ButtonPress>', lambda e, cb=cb: _force_popdown_colors(cb, current_theme.get("bg_main", "#1e1e1e"), current_theme.get("fg_main", "#ffffff"), current_theme.get("accent", "#8b5cf6")), add="+")
+                
             select_folder_button.configure(bg=accent, fg="white")
             info_status_label.configure(bg=bg, fg=fg_dim)
         
@@ -548,6 +622,8 @@ def main():
             root_window.after(0, lambda: info_status_label.config(text=active_translation["msg_done"].format(processed_count), fg=success_color))
             draw_progress(100)
             root_window.after(0, lambda: select_folder_button.config(state=tk.NORMAL))
+            root_window.after(0, lambda: select_files_button.config(state=tk.NORMAL))
+            root_window.after(0, lambda: cancel_button.config(state=tk.DISABLED))
         
             if os.name == "nt": 
                 try: os.startfile(output_path)
@@ -566,51 +642,61 @@ def main():
             error_color = current_theme.get("error", "#f87171")
             root_window.after(0, lambda: info_status_label.config(text=active_translation["msg_err"], fg=error_color))
             root_window.after(0, lambda: select_folder_button.config(state=tk.NORMAL))
+            root_window.after(0, lambda: select_files_button.config(state=tk.NORMAL))
+            root_window.after(0, lambda: cancel_button.config(state=tk.DISABLED))
 
-        def trigger_media_conversion():
+        def trigger_media_conversion(mode="folder"):
             active_translation = languages_dictionary[current_language_code]
             warning_color = current_theme.get("warning", "#fbbf24")
-            selected_directory = filedialog.askdirectory(title=active_translation["btn_select"])
-            if not selected_directory: return
+            
+            selected_directory = None
+            selected_files = None
+            if mode == "folder":
+                selected_directory = filedialog.askdirectory(title=active_translation["btn_select"])
+                if not selected_directory: return
+            else:
+                selected_files = filedialog.askopenfilenames(title=active_translation.get("btn_files", "Seleccionar Archivos de Medios"))
+                if not selected_files: return
+                
             select_folder_button.config(state=tk.DISABLED)
+            select_files_button.config(state=tk.DISABLED)
+            cancel_button.config(state=tk.NORMAL)
+            
             info_status_label.config(text=active_translation["info_wait"], fg=warning_color)
             draw_progress(0)
-            # collect targets and start conversion with per-type options
             (a_code, v_code, i_code, rec_flag, preserve_flag, audio_bitrate, video_crf, video_preset, image_quality, a_enabled, v_enabled, i_enabled) = collect_targets()
-            # If a type is disabled, pass placeholder values and porter will simply not find files for that type
+            safe_mode_enabled = configuration_data.get("safe_mode_enabled", False)
             threading.Thread(
-                target=porter.convert_media,
-                args=(selected_directory, a_code, v_code, i_code, rec_flag, preserve_flag, audio_bitrate, video_crf, video_preset, image_quality, on_progressbar_increment, None, on_conversion_success, on_conversion_failure, current_language_code, False),
+                target=media_engine.convert_media,
+                args=(selected_directory, a_code, v_code, i_code, rec_flag, preserve_flag, audio_bitrate, video_crf, video_preset, image_quality, a_enabled, v_enabled, i_enabled, on_progressbar_increment, None, on_conversion_success, on_conversion_failure, current_language_code, False, safe_mode_enabled, selected_files),
                 daemon=True
             ).start()
 
         def refresh_format_labels(*args):
             active_translation = languages_dictionary[current_language_code]
-            # audio translations
             a0 = active_translation.get('format_ogg', 'OGG')
             a1 = active_translation.get('format_opus', 'OPUS')
-            audio_vals = [a0, a1, 'MP3', 'FLAC', 'WAV', 'AAC']
+            audio_vals = [a0, a1, 'MP3', 'FLAC', 'WAV', 'AAC', 'M4A', 'WMA', 'ALAC']
             try:
                 audio_combobox['values'] = audio_vals
-                audio_display_var.set(audio_vals[0])
             except Exception:
                 pass
-            # video
-            video_vals = ['WEBM', 'MP4']
+            video_vals = ['MP4', 'MKV', 'WEBM', 'AVI', 'MOV', 'FLV', 'GIF', 'WMV', 'MPEG', 'M4V']
             try:
                 video_combobox['values'] = video_vals
-                video_display_var.set(video_vals[0])
             except Exception:
                 pass
-            # images
-            image_vals = ['WEBP', 'JPG', 'PNG']
+            image_vals = ['WEBP', 'JPG', 'PNG', 'BMP', 'TIFF', 'ICO', 'PDF']
             try:
                 image_combobox['values'] = image_vals
-                image_display_var.set(image_vals[0])
             except Exception:
                 pass
 
         root_window = tk.Tk()
+        style = ttk.Style(root_window)
+        if "clam" in style.theme_names():
+            style.theme_use("clam")
+        
         def report_callback_exception(exc, val, tb):
             tb_text = "".join(traceback.format_exception(exc, val, tb))
             porter.log_error_to_file(tb_text)
@@ -631,14 +717,14 @@ def main():
         except: pass
         initial_translation = languages_dictionary[current_language_code]
         root_window.title(initial_translation["title"])
-        root_window.geometry("480x550")
+        root_window.geometry("520x620")
         bg_main = current_theme.get("bg_main", "#1e1e1e")
         fg_main = current_theme.get("fg_main", "#ffffff")
         fg_dim = current_theme.get("fg_dim", "#a3a3a3")
         accent_color = current_theme.get("accent", "#8b5cf6")
         link_color = current_theme.get("link", "#F96854")
         root_window.configure(bg=bg_main)
-        top_navigation_bar = tk.Frame(root_window, bg=bg_main)
+        top_navigation_bar = tk.Frame(root_window, bg=bg_main, highlightthickness=0)
         top_navigation_bar.pack(fill="x", padx=10, pady=5)
         patreon_link_button = tk.Button(top_navigation_bar, text=initial_translation["btn_patreon"], bg=bg_main, fg=link_color, relief="flat", cursor="hand2", borderwidth=0, highlightthickness=0, activebackground=bg_main, command=show_support_info, font=("Arial", 9, "bold", "underline"))
         patreon_link_button.pack(side="left")
@@ -659,10 +745,10 @@ def main():
 
         header_label = tk.Label(root_window, text=initial_translation["header"], font=("Arial", 14, "bold"), bg=bg_main, fg=fg_main)
         header_label.pack(pady=(5, 15))
-        format_selection_frame = tk.Frame(root_window, bg=bg_main)
-        format_selection_frame.pack(pady=5)
-        format_label = tk.Label(format_selection_frame, text=initial_translation["select_format"], bg=bg_main, fg=fg_dim, font=("Arial", 9))
-        format_label.pack()
+        format_selection_frame = tk.Frame(root_window, bg=bg_main, highlightthickness=0)
+        format_selection_frame.pack(pady=5, fill="x", padx=10)
+        format_label = tk.Label(format_selection_frame, text=initial_translation["select_format"], bg=bg_main, fg=fg_dim, font=("Arial", 9), highlightthickness=0)
+        format_label.pack(pady=(0, 10))
         # Per-type format selectors and options
         audio_enabled_var = tk.BooleanVar(value=True)
         video_enabled_var = tk.BooleanVar(value=True)
@@ -670,102 +756,153 @@ def main():
         recursive_var = tk.BooleanVar(value=True)
 
         # Display mappings
-        audio_options_display = [initial_translation.get("format_ogg", "OGG"), initial_translation.get("format_opus", "OPUS"), "MP3", "FLAC", "WAV", "AAC"]
+        audio_options_display = [initial_translation.get("format_ogg", "OGG"), initial_translation.get("format_opus", "OPUS"), "MP3", "FLAC", "WAV", "AAC", "M4A", "WMA", "ALAC"]
         audio_display_var = tk.StringVar(value=audio_options_display[0])
-        audio_combobox = ttk.Combobox(format_selection_frame, textvariable=audio_display_var, values=audio_options_display, state="readonly", width=12)
 
-        video_options_display = ["WEBM", "MP4"]
+        video_options_display = ["MP4", "MKV", "WEBM", "AVI", "MOV", "FLV", "GIF", "WMV", "MPEG", "M4V"]
         video_display_var = tk.StringVar(value=video_options_display[0])
-        video_combobox = ttk.Combobox(format_selection_frame, textvariable=video_display_var, values=video_options_display, state="readonly", width=8)
 
-        image_options_display = ["WEBP", "JPG", "PNG"]
+        image_options_display = ["WEBP", "JPG", "PNG", "BMP", "TIFF", "ICO", "PDF"]
         image_display_var = tk.StringVar(value=image_options_display[0])
-        image_combobox = ttk.Combobox(format_selection_frame, textvariable=image_display_var, values=image_options_display, state="readonly", width=8)
 
-        # Layout in a compact row
-        row_frame = tk.Frame(format_selection_frame, bg=bg_main)
-        row_frame.pack(pady=6)
+        # Preset Profile Selector
+        profile_frame = tk.Frame(format_selection_frame, bg=bg_main, highlightthickness=0)
+        profile_frame.pack(fill="x", padx=10, pady=(0, 10))
+        tk.Label(profile_frame, text="Preset Profile:", bg=bg_main, fg=fg_main, font=("Arial", 9, "bold")).pack(side="left")
+        profile_var = tk.StringVar(value="Balanceado")
+        profile_combobox = ttk.Combobox(profile_frame, textvariable=profile_var, values=["Balanceado", "Discord / Redes", "Web", "Lossless / Master", "Manual"], state="readonly", width=20)
+        profile_combobox.pack(side="left", padx=10)
 
-        # Audio column
-        audio_col = tk.Frame(row_frame, bg=bg_main)
-        audio_col.pack(side=tk.LEFT, padx=8)
-        tk.Checkbutton(audio_col, text="Audio", variable=audio_enabled_var, bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0).pack()
-        audio_combobox.pack(in_=audio_col)
+        def on_profile_change(event):
+            prof = profile_var.get()
+            if prof == "Balanceado":
+                video_crf_var.set("23 (Media)")
+                video_preset_var.set("veryfast")
+                audio_bitrate_var.set("192k")
+                image_quality_var.set("80")
+            elif prof == "Discord / Redes":
+                video_crf_var.set("28 (Baja)")
+                video_preset_var.set("faster")
+                audio_bitrate_var.set("128k")
+                image_quality_var.set("70")
+            elif prof == "Web":
+                video_crf_var.set("23 (Media)")
+                video_preset_var.set("fast")
+                audio_bitrate_var.set("128k")
+                image_quality_var.set("75")
+            elif prof == "Lossless / Master":
+                video_crf_var.set("18 (Max)")
+                video_preset_var.set("medium")
+                audio_bitrate_var.set("320k")
+                image_quality_var.set("100")
+            
+        profile_combobox.bind("<<ComboboxSelected>>", on_profile_change)
 
-        # Video column
-        video_col = tk.Frame(row_frame, bg=bg_main)
-        video_col.pack(side=tk.LEFT, padx=8)
-        tk.Checkbutton(video_col, text="Video", variable=video_enabled_var, bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0).pack()
-        video_combobox.pack(in_=video_col)
-
-        # Image column
-        image_col = tk.Frame(row_frame, bg=bg_main)
-        image_col.pack(side=tk.LEFT, padx=8)
-        tk.Checkbutton(image_col, text="Images", variable=image_enabled_var, bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0).pack()
-        image_combobox.pack(in_=image_col)
-
-        # Quality and bitrate controls
-        quality_frame = tk.Frame(format_selection_frame, bg=bg_main)
-        quality_frame.pack(pady=(8,0), fill="x")
-
-        # Preserve structure
-        preserve_structure_var = tk.BooleanVar(value=False)
-        tk.Checkbutton(quality_frame, text="Preserve folder structure", variable=preserve_structure_var, bg=bg_main, fg=fg_dim, borderwidth=0, activebackground=bg_main).pack(anchor="w")
-
-        # Audio bitrate
+        # Modern Layout using a grid inside format_selection_frame
+        settings_frame = tk.Frame(format_selection_frame, bg=bg_main, highlightthickness=0)
+        settings_frame.pack(fill="x", expand=True, padx=5)
+        
+        settings_frame.columnconfigure(0, weight=1)
+        settings_frame.columnconfigure(1, weight=1)
+        settings_frame.columnconfigure(2, weight=1)
+        
+        # Audio Panel
+        audio_col = tk.Frame(settings_frame, bg=bg_main, highlightthickness=0)
+        audio_col.grid(row=0, column=0, padx=8, sticky="n")
+        tk.Checkbutton(audio_col, text="Audio", variable=audio_enabled_var, font=("Arial", 10, "bold"), bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0, highlightthickness=0, cursor="hand2").pack(anchor="w")
+        audio_combobox = ttk.Combobox(audio_col, textvariable=audio_display_var, values=audio_options_display, state="readonly", width=12)
+        audio_combobox.pack(fill="x", pady=(2, 8))
+        tk.Label(audio_col, text="Bitrate:", bg=bg_main, fg=fg_dim, font=("Arial", 8), highlightthickness=0).pack(anchor="w")
         audio_bitrate_var = tk.StringVar(value="192k")
-        tk.Label(quality_frame, text="Audio bitrate:", bg=bg_main, fg=fg_dim, font=("Arial",8)).pack(anchor="w")
-        audio_bitrate_combobox = ttk.Combobox(quality_frame, textvariable=audio_bitrate_var, values=["128k","192k","256k","320k"], state="readonly", width=8)
-        audio_bitrate_combobox.pack(anchor="w", pady=(0,6))
-
-        # Video quality (CRF) and preset
-        video_crf_var = tk.StringVar(value="23")
+        audio_bitrate_combobox = ttk.Combobox(audio_col, textvariable=audio_bitrate_var, values=["128k","192k","256k","320k"], state="readonly", width=10)
+        audio_bitrate_combobox.pack(fill="x")
+        
+        # Video Panel
+        video_col = tk.Frame(settings_frame, bg=bg_main, highlightthickness=0)
+        video_col.grid(row=0, column=1, padx=8, sticky="n")
+        tk.Checkbutton(video_col, text="Video", variable=video_enabled_var, font=("Arial", 10, "bold"), bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0, highlightthickness=0, cursor="hand2").pack(anchor="w")
+        video_combobox = ttk.Combobox(video_col, textvariable=video_display_var, values=video_options_display, state="readonly", width=12)
+        video_combobox.pack(fill="x", pady=(2, 8))
+        tk.Label(video_col, text="CRF | Preset:", bg=bg_main, fg=fg_dim, font=("Arial", 8), highlightthickness=0).pack(anchor="w")
+        video_crf_var = tk.StringVar(value="23 (Media)")
+        video_crf_combobox = ttk.Combobox(video_col, textvariable=video_crf_var, values=["18 (Max)","20 (Alta)","23 (Media)","28 (Baja)"], state="readonly", width=12)
+        video_crf_combobox.pack(fill="x", pady=(0, 4))
         video_preset_var = tk.StringVar(value="veryfast")
-        tk.Label(quality_frame, text="Video CRF:", bg=bg_main, fg=fg_dim, font=("Arial",8)).pack(anchor="w")
-        video_crf_combobox = ttk.Combobox(quality_frame, textvariable=video_crf_var, values=["18","20","23","28"], state="readonly", width=6)
-        video_crf_combobox.pack(anchor="w")
-        tk.Label(quality_frame, text="Video preset:", bg=bg_main, fg=fg_dim, font=("Arial",8)).pack(anchor="w")
-        video_preset_combobox = ttk.Combobox(quality_frame, textvariable=video_preset_var, values=["ultrafast","superfast","veryfast","faster","fast","medium"], state="readonly", width=12)
-        video_preset_combobox.pack(anchor="w", pady=(0,6))
-
-        # Image quality
+        video_preset_combobox = ttk.Combobox(video_col, textvariable=video_preset_var, values=["ultrafast","superfast","veryfast","faster","fast","medium"], state="readonly", width=10)
+        video_preset_combobox.pack(fill="x")
+        
+        # Image Panel
+        image_col = tk.Frame(settings_frame, bg=bg_main, highlightthickness=0)
+        image_col.grid(row=0, column=2, padx=8, sticky="n")
+        tk.Checkbutton(image_col, text="Images", variable=image_enabled_var, font=("Arial", 10, "bold"), bg=bg_main, fg=fg_main, selectcolor=accent_color, activebackground=bg_main, borderwidth=0, highlightthickness=0, cursor="hand2").pack(anchor="w")
+        image_combobox = ttk.Combobox(image_col, textvariable=image_display_var, values=image_options_display, state="readonly", width=12)
+        image_combobox.pack(fill="x", pady=(2, 8))
+        tk.Label(image_col, text="Quality:", bg=bg_main, fg=fg_dim, font=("Arial", 8), highlightthickness=0).pack(anchor="w")
         image_quality_var = tk.StringVar(value="80")
-        tk.Label(quality_frame, text="Image quality:", bg=bg_main, fg=fg_dim, font=("Arial",8)).pack(anchor="w")
-        image_quality_combobox = ttk.Combobox(quality_frame, textvariable=image_quality_var, values=["60","70","80","90","100"], state="readonly", width=6)
-        image_quality_combobox.pack(anchor="w", pady=(0,6))
+        image_quality_combobox = ttk.Combobox(image_col, textvariable=image_quality_var, values=["60","70","80","90","100"], state="readonly", width=10)
+        image_quality_combobox.pack(fill="x")
 
-        # Recursive option
-        tk.Checkbutton(format_selection_frame, text="Recursive (include subfolders)", variable=recursive_var, bg=bg_main, fg=fg_dim, borderwidth=0, activebackground=bg_main).pack(pady=(6,0))
+        # Options Checkboxes
+        options_frame = tk.Frame(format_selection_frame, bg=bg_main, highlightthickness=0)
+        options_frame.pack(pady=(15,0))
+        
+        preserve_structure_var = tk.BooleanVar(value=False)
+        tk.Checkbutton(options_frame, text="Preserve folder structure", variable=preserve_structure_var, bg=bg_main, fg=fg_dim, borderwidth=0, highlightthickness=0, activebackground=bg_main).pack(side=tk.LEFT, padx=10)
+        
+        tk.Checkbutton(options_frame, text="Recursive (include subfolders)", variable=recursive_var, bg=bg_main, fg=fg_dim, borderwidth=0, highlightthickness=0, activebackground=bg_main).pack(side=tk.LEFT, padx=10)
 
-        # helper to map display to internal codes
         def _map_audio_display_to_code(d):
-            m = {
-                initial_translation.get("format_ogg", "OGG"): "ogg",
-                initial_translation.get("format_opus", "OPUS"): "opus",
-                "MP3": "mp3",
-                "FLAC": "flac",
-                "WAV": "wav",
-                "AAC": "aac"
-            }
-            return m.get(d, "opus")
+            d_lower = d.lower()
+            if d_lower in ("ogg", "opus", "mp3", "flac", "wav", "aac", "m4a", "wma", "alac"):
+                return d_lower
+            return "opus"
 
         def _map_video_display_to_code(d):
-            return "mp4" if d.lower() == "mp4" else "webm"
+            d_lower = d.lower()
+            if d_lower in ("mp4", "mkv", "webm", "avi", "mov", "flv", "gif", "wmv", "mpeg", "m4v"):
+                return d_lower
+            return "mp4"
 
         def _map_image_display_to_code(d):
-            if d.lower() in ("jpg", "jpeg"):
+            d_lower = d.lower()
+            if d_lower in ("jpg", "jpeg"):
                 return "jpg"
-            if d.lower() == "png":
-                return "png"
+            if d_lower in ("png", "webp", "bmp", "tiff", "ico", "pdf"):
+                return d_lower
             return "webp"
 
         def collect_targets():
-            return (_map_audio_display_to_code(audio_display_var.get()), _map_video_display_to_code(video_display_var.get()), _map_image_display_to_code(image_display_var.get()), recursive_var.get(), preserve_structure_var.get(), audio_bitrate_var.get(), video_crf_var.get(), video_preset_var.get(), image_quality_var.get(), audio_enabled_var.get(), video_enabled_var.get(), image_enabled_var.get())
+            raw_crf = video_crf_var.get()
+            parsed_crf = raw_crf.split(" ")[0] if " " in raw_crf else raw_crf
+            return (_map_audio_display_to_code(audio_display_var.get()), _map_video_display_to_code(video_display_var.get()), _map_image_display_to_code(image_display_var.get()), recursive_var.get(), preserve_structure_var.get(), audio_bitrate_var.get(), parsed_crf, video_preset_var.get(), image_quality_var.get(), audio_enabled_var.get(), video_enabled_var.get(), image_enabled_var.get())
 
-        select_folder_button = tk.Button(root_window, text=initial_translation["btn_select"], command=trigger_media_conversion, bg=accent_color, fg="white", padx=20, pady=10, borderwidth=0, highlightthickness=0, cursor="hand2")
-        select_folder_button.pack(pady=15)
-        select_folder_button.bind("<Enter>", lambda e: select_folder_button.config(bg=current_theme.get("accent_hover", "#a78bfa")))
-        select_folder_button.bind("<Leave>", lambda e: select_folder_button.config(bg=current_theme.get("accent", "#8b5cf6")))
+        action_buttons_frame = tk.Frame(root_window, bg=bg_main, highlightthickness=0)
+        action_buttons_frame.pack(pady=15)
+        
+        select_folder_button = tk.Button(action_buttons_frame, text=languages_dictionary[current_language_code].get("btn_select_folder", "Seleccionar Carpeta"), command=lambda: trigger_media_conversion(mode="folder"), bg=accent_color, fg="white", padx=15, pady=8, borderwidth=0, highlightthickness=0, cursor="hand2")
+        select_folder_button.pack(side="left", padx=5)
+        
+        select_files_button = tk.Button(action_buttons_frame, text=languages_dictionary[current_language_code].get("btn_files", "Seleccionar Archivos"), command=lambda: trigger_media_conversion(mode="files"), bg=accent_color, fg="white", padx=15, pady=8, borderwidth=0, highlightthickness=0, cursor="hand2")
+        select_files_button.pack(side="left", padx=5)
+
+        def cancel_conversion():
+            with open(porter.get_cancel_flag_path(), "w") as f:
+                f.write("cancel")
+            info_status_label.config(text=languages_dictionary[current_language_code].get("info_cancelling", "Cancelando..."), fg="#fbbf24")
+            cancel_button.config(state=tk.DISABLED)
+
+        cancel_button = tk.Button(action_buttons_frame, text=languages_dictionary[current_language_code].get("btn_cancel", "Cancelar"), command=cancel_conversion, bg="#f87171", fg="white", padx=15, pady=8, borderwidth=0, highlightthickness=0, cursor="hand2", state=tk.DISABLED)
+        cancel_button.pack(side="left", padx=5)
+
+        def apply_btn_hover(btn, normal_bg):
+            btn.bind("<Enter>", lambda e: btn.config(bg=current_theme.get("accent_hover", "#a78bfa")))
+            btn.bind("<Leave>", lambda e: btn.config(bg=normal_bg))
+
+        apply_btn_hover(select_folder_button, accent_color)
+        apply_btn_hover(select_files_button, accent_color)
+        
+        cancel_button.bind("<Enter>", lambda e: cancel_button.config(bg="#fca5a5") if cancel_button["state"] == tk.NORMAL else None)
+        cancel_button.bind("<Leave>", lambda e: cancel_button.config(bg="#f87171") if cancel_button["state"] == tk.NORMAL else None)
         progress_canvas = tk.Canvas(root_window, width=300, height=50, bg=bg_main, highlightthickness=0)
         progress_canvas.pack(pady=5)
         character_label = tk.Label(root_window, bg=bg_main)
@@ -814,6 +951,21 @@ def main():
             tk.Label(content_frame, text=f"UUID: {porter.get_local_uuid()}", bg=bg, fg=fg, font=("Arial", 9)).pack(anchor="w", pady=2)
             total_opt = configuration_data.get("total_optimized", 0)
             tk.Label(content_frame, text=f"Total Optimized Files: {total_opt}", bg=bg, fg=fg, font=("Arial", 10, "bold")).pack(anchor="w", pady=(8, 10))
+
+            telemetry_var = tk.BooleanVar(value=configuration_data.get("telemetry_enabled", False))
+            def toggle_telemetry():
+                configuration_data["telemetry_enabled"] = telemetry_var.get()
+                save_user_configuration(configuration_data)
+
+            tk.Checkbutton(content_frame, text="Enable Telemetry / Enviar datos de uso", variable=telemetry_var, command=toggle_telemetry, bg=bg, fg=fg, selectcolor=accent, activebackground=bg, borderwidth=0, highlightthickness=0).pack(anchor="w", pady=(5, 5))
+
+            safe_mode_var = tk.BooleanVar(value=configuration_data.get("safe_mode_enabled", False))
+            def toggle_safe_mode():
+                configuration_data["safe_mode_enabled"] = safe_mode_var.get()
+                save_user_configuration(configuration_data)
+
+            tk.Checkbutton(content_frame, text="Safe Mode / Modo Seguro", variable=safe_mode_var, command=toggle_safe_mode, bg=bg, fg=fg, selectcolor=accent, activebackground=bg, borderwidth=0, highlightthickness=0).pack(anchor="w", pady=(0, 10))
+
             btn_frame = tk.Frame(content_frame, bg=bg)
             btn_frame.pack()
             close_btn = tk.Button(btn_frame, text="Close", command=popup.destroy, bg=accent, fg="white", padx=20, pady=5, borderwidth=0, cursor="hand2", font=("Arial", 9, "bold"))
@@ -842,8 +994,58 @@ def main():
             tk.Button(btn_f, text="Yes", bg=accent, fg="white", command=do_upd, width=8).pack(side=tk.LEFT, padx=10)
             tk.Button(btn_f, text="No", bg="#555555", fg="white", command=upd_win.destroy, width=8).pack(side=tk.LEFT, padx=10)
 
+        first_run = not os.path.exists(config_file_path)
+
+        def show_telemetry_opt_in():
+            trans_dict = {
+                "es": {
+                    "title": "Alenia Porter - Privacidad",
+                    "desc": "Alenia Porter recopila estadísticas anónimas (telemetría) para mejorar el software.\n¿Deseas participar (Opt-in)? Puedes cambiarlo luego en Ajustes.",
+                    "accept": "Aceptar",
+                    "decline": "Rechazar"
+                },
+                "en": {
+                    "title": "Alenia Porter - Privacy",
+                    "desc": "Alenia Porter collects anonymous usage statistics (telemetry) to improve the software.\nDo you want to participate (Opt-in)? You can change this later in Settings.",
+                    "accept": "Accept",
+                    "decline": "Decline"
+                }
+            }
+            lang = current_language_code if current_language_code in trans_dict else "en"
+            t = trans_dict[lang]
+            bg = current_theme.get("bg_main", "#1e1e1e")
+            fg = current_theme.get("fg_main", "#ffffff")
+            accent = current_theme.get("accent", "#8b5cf6")
+
+            popup = tk.Toplevel(root_window)
+            popup.title(t["title"])
+            popup.geometry("450x220")
+            popup.configure(bg=bg)
+            popup.transient(root_window)
+            popup.wait_visibility()
+            popup.grab_set()
+
+            tk.Label(popup, text=t["desc"], bg=bg, fg=fg, font=("Arial", 10), justify="center", wraplength=400).pack(pady=30)
+            
+            btn_frame = tk.Frame(popup, bg=bg)
+            btn_frame.pack()
+
+            def set_telemetry(val):
+                configuration_data["telemetry_enabled"] = val
+                save_user_configuration(configuration_data)
+                popup.destroy()
+                if first_run:
+                    show_profile_info()
+                elif update_info["found"]:
+                    prompt_update(update_info["ver"], update_info["url"])
+
+            tk.Button(btn_frame, text=t["accept"], command=lambda: set_telemetry(True), bg=accent, fg="white", width=12, borderwidth=0, cursor="hand2").pack(side="left", padx=10)
+            tk.Button(btn_frame, text=t["decline"], command=lambda: set_telemetry(False), bg="#555555", fg="white", width=12, borderwidth=0, cursor="hand2").pack(side="left", padx=10)
+
         def check_startup_prompts():
-            if not os.path.exists(config_file_path):
+            if "telemetry_enabled" not in configuration_data:
+                show_telemetry_opt_in()
+            elif first_run:
                 show_profile_info()
             elif update_info["found"]:
                 prompt_update(update_info["ver"], update_info["url"])

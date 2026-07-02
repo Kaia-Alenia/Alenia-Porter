@@ -1,42 +1,28 @@
-# Contributing to Alenia Porter 🐧
+# Contribuir a Alenia Porter
 
-We appreciate your interest in helping Alenia Studios! Here is how you can contribute to the project:
+¡Gracias por tu interés en contribuir a Alenia Porter! Este es un proyecto open-source diseñado para la comunidad de desarrolladores indie y estamos felices de recibir tus aportes.
 
-## Theme Development
-Create your own visual style by adding a new JSON file to the `themes/` directory. You can customize colors and link specific character sprites from the `assets/` folder.
+## Cómo empezar
+1. Haz un fork de este repositorio.
+2. Clona tu fork localmente: `git clone https://github.com/TU-USUARIO/alenia-porter.git`
+3. Instala las dependencias y crea tu entorno local (preferimos `uv`).
+4. Haz tus cambios en una rama descriptiva: `git checkout -b fix/mi-mejora` o `git checkout -b feat/nueva-funcion`
 
-## Code Contributions
-Help us optimize the conversion engine or enhance the user interface:
-- **UI Logic:** Managed in `main.py` (Strictly no comments allowed).
-- **Core Engine:** Managed in `porter_logic.py` (Strictly no comments allowed).
-- **Architecture:** Powered by the internal Zenith Core.
+## Estructura del Código
+- **`src/alenia_porter/media_engine.py`**: El motor puro que envuelve a FFmpeg y maneja el procesamiento de los medios, Smart Caching y Aceleración por Hardware.
+- **`src/alenia_porter/porter.py`**: Lógica secundaria, utilidades y telemetría.
+- **`src/alenia_porter/cli.py`**: El punto de entrada para la GUI (Tkinter) de la aplicación.
+- **`cmd/ap/main.go`**: La envoltura CLI escrita en Go para ejecución ultra-rápida en terminal.
 
-## Asset Specifications
-To maintain UI integrity, please follow these exact dimensions:
+## Reglas de Contribución
+- **Seguridad primero**: Asegúrate de que tu código no introduce vulnerabilidades. Usamos Snyk en nuestro CI/CD.
+- **Testing**: Todo PR importante debe incluir pruebas (pytest).
+- **Formato**: Ejecuta linter y mantén la consistencia visual del código.
+- **Compatibilidad**: La herramienta debe poder correr en Windows, Linux y macOS sin problemas.
 
-| Asset Type | Path/Example | Dimensions (px) | Notes |
-| :--- | :--- | :--- | :--- |
-| **Main Character** | `kaia_default.png` | **180 × 260** | Main UI assistant (bottom-right). |
-| **Success/Info Character** | `kaia_success.png` | **140 × 180** | Used in popup windows. |
-| **Progress Icon** | `kaia_mini.png` | **24 × 24** | Icon that follows the progress bar. |
-| **Studio Logo** | `studio_logo.png` | **200 × 50** | Branding at the bottom. |
-| **App Icon** | `logo.ico` | **256 × 256** | Standard Windows icon format. |
+## Enviar un Pull Request
+- Detalla los cambios que has realizado en la descripción de tu PR.
+- Asegúrate de que las GitHub Actions (build y snyk) pasan exitosamente.
+- Un mantenedor de Alenia Studios revisará y fusionará tu código.
 
----
-## Localization
-Help us reach more developers by adding new languages to the `locales/` system.
-
-**Current Languages:**
-US English | ES Español | FR Français | JP 日本語 | CN 简体中文 | RU Русский | BR Português | DE Deutsch
-
-> [!IMPORTANT]
-> **Translated by KXLT Alenia Studios**
-> *Professional localization and community support.*
-
----
-### Contribution Guidelines
-- **Zero Dependencies:** Ensure the code remains free of external Python libraries (like Pillow).
-- **No Comments in Scripts:** Keep the source code clean and self-documenting.
-- **Licensing:** All contributions must comply with the ALENIA STUDIOS TOOL LICENSE.
-
-Thank you for being part of Alenia Studios!
+¡Gracias por apoyar el ecosistema indie!

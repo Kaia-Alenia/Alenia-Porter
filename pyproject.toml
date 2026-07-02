@@ -1,14 +1,17 @@
 [project]
 name = "alenia-porter"
-version = "5.9.0"
+version = "6.0.0"
 description = "Python code transformation and analysis tool"
 readme = "README.md"
 authors = [
     { name = "Alejandro Martinez", email = "alejandrotrrsa9@gmail.com" },
     { name = "Kevin Turcios", email = "turcioskevinr@gmail.com" }
 ]
-requires-python = ">=3.13"
-dependencies = []
+requires-python = ">=3.11"
+dependencies = [
+    "pywebview>=6.0",
+    "pillow>=10.0",
+]
 
 [project.scripts]
 porter = "alenia_porter.cli:main"
