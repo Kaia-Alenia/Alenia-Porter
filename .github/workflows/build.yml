@@ -156,6 +156,8 @@ jobs:
           PYTHONPATH: src
         run: |
           python -m nuitka --standalone --macos-disable-console --macos-create-app-bundle --enable-plugin=pywebview --macos-app-name=AleniaPorter --include-package=alenia_porter --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --macos-app-icon=src/alenia_porter/assets/images/logo.png --output-filename=AleniaPorter porter_launcher.py
+          mkdir -p porter_launcher.dist
+          mv *.app porter_launcher.dist/
 
       - name: Set up Go
         uses: actions/setup-go@v5
