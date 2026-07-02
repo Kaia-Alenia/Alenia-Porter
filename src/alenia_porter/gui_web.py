@@ -45,23 +45,10 @@ def load_themes():
         }
     return themes_dict
 
-def image_to_base64(path):
-    if not path: return None
-    with porter.resource_path(path) as full_path:
-        if not os.path.exists(full_path): return None
-        try:
-            with open(full_path, "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                ext = path.split('.')[-1].lower()
-                mime = "image/png"
-                if ext in ["jpg", "jpeg"]: mime = "image/jpeg"
-                elif ext == "gif": mime = "image/gif"
-                return f"data:{mime};base64,{encoded_string}"
-        except Exception:
-            return None
+
 
 class Api:
-    CURRENT_VERSION = "v5.9"
+    CURRENT_VERSION = "v6.0"
 
     def __init__(self, window):
         self.window = window
@@ -113,17 +100,9 @@ class Api:
             
         theme_data = self.available_themes[preset_name]
         
-        images = {
-            "default": image_to_base64(theme_data.get("char_sprite", "assets/images/kaia_default.png")),
-            "success": image_to_base64(theme_data.get("char_success", "assets/images/kaia_success.png")),
-            "info": image_to_base64("assets/images/kaia_info.png"),
-            "support": image_to_base64("assets/images/kaia_support.png")
-        }
-        
         return {
             "nickname": porter.get_local_nickname(),
             "uuid": porter.get_local_uuid(),
-            "translations": self.languages_dictionary.get(self.current_language_code, {}),
             "theme": theme_data, # Legacy theme format for backward compatibility (temporarily)
             "appearance": {
                 "mode": self.appearance_mode,
@@ -131,7 +110,6 @@ class Api:
                 "dark": self.custom_dark_theme
             },
             "available_themes": self.available_themes,
-            "images": images,
             "langCode": self.current_language_code,
             "languages": list(self.languages_dictionary.keys())
         }
@@ -334,31 +312,31 @@ class Api:
 
     def explain_command(self, command):
         """Genera una explicación local y determinista de un comando FFmpeg."""
-        explanation = "Comando de FFmpeg para procesar medios:\\n\\n"
+        explanation = "Comando de FFmpeg para procesar medios:\n\n"
         if "-i " in command:
-            explanation += "- Define el archivo de entrada.\\n"
+            explanation += "- Define el archivo de entrada.\n"
         if "-vcodec copy" in command or "-c:v copy" in command:
-            explanation += "- Copia el video original sin recodificar (rápido).\\n"
+            explanation += "- Copia el video original sin recodificar (rápido).\n"
         elif "-vcodec libx264" in command or "-c:v libx264" in command:
-            explanation += "- Codifica el video en formato H.264 (alta compatibilidad).\\n"
+            explanation += "- Codifica el video en formato H.264 (alta compatibilidad).\n"
         elif "-vcodec libx265" in command or "-c:v libx265" in command:
-            explanation += "- Codifica el video en formato H.265/HEVC (mejor compresión).\\n"
+            explanation += "- Codifica el video en formato H.265/HEVC (mejor compresión).\n"
         
         if "-acodec copy" in command or "-c:a copy" in command:
-            explanation += "- Copia el audio original sin recodificar.\\n"
+            explanation += "- Copia el audio original sin recodificar.\n"
         elif "-acodec aac" in command or "-c:a aac" in command:
-            explanation += "- Codifica el audio en formato AAC.\\n"
+            explanation += "- Codifica el audio en formato AAC.\n"
         
         if "-crf" in command:
-            explanation += "- Aplica un factor de tasa constante (CRF) para controlar la calidad de compresión.\\n"
+            explanation += "- Aplica un factor de tasa constante (CRF) para controlar la calidad de compresión.\n"
         
         if "-vf scale=" in command:
-            explanation += "- Escala la resolución del video.\\n"
+            explanation += "- Escala la resolución del video.\n"
             
         if "-hwaccel" in command or "h264_nvenc" in command or "hevc_nvenc" in command:
-            explanation += "- Utiliza aceleración por hardware de la tarjeta de video (muy rápido).\\n"
+            explanation += "- Utiliza aceleración por hardware de la tarjeta de video (muy rápido).\n"
             
-        explanation += "\\nEste comando optimiza y convierte tus archivos según las preferencias seleccionadas."
+        explanation += "\nEste comando optimiza y convierte tus archivos según las preferencias seleccionadas."
         return explanation
 
 
@@ -475,7 +453,26 @@ class Api:
 
 def main():
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    dist_dir = os.path.join(current_dir, "..", "..", "frontend_v2", "dist")
+
+    if "__compiled__" in globals():
+        # Build empaquetado con Nuitka: frontend_v2/dist queda junto al
+        # ejecutable (raíz del paquete), no dentro de src/alenia_porter.
+        base_dir = os.path.dirname(sys.executable)
+        candidates = [
+            os.path.join(base_dir, "frontend_v2", "dist"),
+            os.path.join(base_dir, "frontend", "dist"),
+        ]
+    else:
+        # Entorno de desarrollo: gui_web.py vive en src/alenia_porter/
+        candidates = [
+            os.path.join(current_dir, "..", "..", "frontend_v2", "dist"),
+            os.path.join(current_dir, "..", "..", "frontend", "dist"),
+        ]
+
+    dist_dir = next(
+        (c for c in candidates if os.path.exists(os.path.join(c, "index.html"))),
+        candidates[0],
+    )
     index_path = os.path.join(dist_dir, "index.html")
 
     if not os.path.exists(index_path):
@@ -547,7 +544,7 @@ def main():
 
     window.events.loaded += on_loaded
 
-    webview.start(debug=True, http_server=True)
+    webview.start(debug=False, http_server=True)
 
 if __name__ == '__main__':
     main()

@@ -4,6 +4,8 @@ dist/
 *.spec
 ALENIA_ERROR.txt
 .env
+.env.local
+.env.example
 bin/
 src/alenia_porter/bin/
 compilar_alenia.bat
@@ -50,11 +52,11 @@ test_*.js
 bin/act
 
 
-frontend_v2/roadmap.txt
-frontend_v2/fetch_roadmap.js
-frontend_v2/patch_formulas.py
-frontend_v2/dist/
-frontend_v2/node_modules/
+frontend/roadmap.txt
+frontend/fetch_roadmap.js
+frontend/patch_formulas.py
+frontend/dist/
+frontend/node_modules/
 telemetry-service/.env
 *.bak
 *_backup.*
