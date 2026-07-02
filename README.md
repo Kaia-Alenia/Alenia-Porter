@@ -5,6 +5,9 @@
 [![GitHub release](https://img.shields.io/github/v/release/Kaia-Alenia/Alenia-Porter?include_prereleases&color=accent)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
 [![Downloads](https://img.shields.io/github/downloads/Kaia-Alenia/Alenia-Porter/total)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat&logo=windows&logoColor=white)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
+[![macOS](https://img.shields.io/badge/macOS-000000?style=flat&logo=apple&logoColor=white)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
+[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
 
 **High-performance universal media optimizer.**
 
@@ -46,7 +49,7 @@ To measure tool performance and understand which file formats are optimized most
 - **Custom Nickname:** Generation and input of readable names for usage statistics and telemetry, managed from the profile menu.
 - **CI/CD Security:** Strict validation in GitHub Actions using automated smoke tests on virtual displays (xvfb) to ensure no unstable version reaches production.
 
-## How to Use
+## How to Use (IDE Edition)
 
 1. Run the **AleniaPorter** executable.
 2. Customize your nickname on the first run to link your local optimization stats.
@@ -54,14 +57,27 @@ To measure tool performance and understand which file formats are optimized most
 4. Click "Select Folder to Convert" and choose the source folder to optimize.
 5. Processed files are generated directly while respecting the original folder structure.
 
-## Roadmap v6.0 (Active Development Phases)
+## CLI Installation
 
-- **Phase 1: Cleanup and Stabilization (v5.9):** Removal of legacy code and integration of automated xvfb tests in CI/CD (Completed).
-- **Phase 2: Telemetry and Data (v6.0):** Local UUID implementation, PostgreSQL database on Render, and readable nicknames for speed benchmarks (In Progress).
-- **Phase 3: Diagnostics and Resilience (v6.1):** Rotating logs and "Safe Mode" implementation if graphics drivers fail to initialize.
-- **Phase 4: Infrastructure and Community (v6.2):** Automatic vulnerability scanning (Snyk/Dependabot) and advanced cross-platform packaging.
-- **Phase 8: CLI Modernization (Go Migration):** Creation of a hybrid orchestrator written in Go for maximum concurrency and fast command-line execution.
-- **Phase 9: Hardware Acceleration (GPU Encoders):** Auto-detection of hardware encoders (NVIDIA NVENC, AMD AMF, Intel QuickSync) with seamless CPU fallback.
+The Command-Line Interface is written in Go, optimized for headless environments and CI/CD pipelines.
+
+**Linux & macOS:**
+```bash
+curl -fsSL https://kaia-alenia.github.io/Alenia-Porter/install.sh | bash
+```
+*(Ensure `~/.local/bin` is in your PATH)*
+
+Once installed, simply type `porter` in your terminal to see all available options.
+
+## CLI vs IDE Edition
+
+| Feature | IDE Edition (GUI) | CLI Edition |
+|---------|-------------------|-------------|
+| **Target Audience** | Content creators, video editors, designers | DevOps, backend devs, CI/CD automation |
+| **Interface** | Dynamic theming, visual drag-and-drop | Minimalist terminal output |
+| **Architecture** | Python with embedded binaries | Native Go binary (Zero dependencies) |
+| **Integration** | Standalone Desktop App | Shell scripts, GitHub Actions, Makefiles |
+| **Performance** | High | Ultra-high (Minimal overhead) |
 
 ---
 
