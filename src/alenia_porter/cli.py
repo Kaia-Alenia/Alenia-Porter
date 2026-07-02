@@ -19,8 +19,7 @@ def global_exception_handler(exctype, value, tb):
 
 sys.excepthook = global_exception_handler
 
-
-
+try:
     import threading
     import webbrowser
     import json
