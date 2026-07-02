@@ -9,6 +9,6 @@ echo -e "${CYAN}✦ Actualizando Alenia Porter CLI...${NC}"
 
 git pull origin main || echo "No se pudo hacer git pull, pero se recompilará el ejecutable."
 
-go build -o porter cmd/ap/main.go
+go build -o porter ./cmd/ap
 
 echo -e "${GREEN}✔ ¡Actualización completa! Por favor, reinicia Porter.${NC}"
