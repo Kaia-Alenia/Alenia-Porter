@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const version = "1.5"
+const version = "1.6"
 
 type choice struct {
 	Value string
@@ -16,8 +16,8 @@ type choice struct {
 
 var (
 	scanAudioExts = []string{".aac", ".aif", ".aiff", ".alac", ".amr", ".au", ".caf", ".daud", ".dts", ".flac", ".m4a", ".mid", ".midi", ".mp2", ".mp3", ".mpga", ".ogg", ".opus", ".ra", ".snd", ".voc", ".wav", ".wma", ".wsaud", ".wv"}
-	scanVideoExts = []string{".3g2", ".3gp", ".adts", ".asf", ".asf_stream", ".avi", ".avif", ".dts", ".divx", ".fits", ".flv", ".m2ts", ".m4v", ".mkv", ".mp4", ".mpg", ".mpeg", ".mpeg1video", ".mpeg2video", ".mpegts", ".mov", ".mxf", ".mxf_d10", ".mxf_opatom", ".nut", ".ogv", ".rm", ".rtp_mpegts", ".rtsp", ".ts", ".vob", ".webm", ".webm_chunk", ".webm_dash_manifest", ".wmv", ".yuv4mpegpipe"}
-	scanImageExts = []string{".apng", ".avif", ".bmp", ".gif", ".ico", ".jpeg", ".jpg", ".mjpeg", ".mpjpeg", ".pdf", ".png", ".smjpeg", ".tga", ".tiff", ".webp"}
+	scanVideoExts = []string{".3g2", ".3gp", ".adts", ".asf", ".asf_stream", ".avi", ".avif", ".dts", ".divx", ".fits", ".flv", ".gif", ".m2ts", ".m4v", ".mkv", ".mp4", ".mpg", ".mpeg", ".mpeg1video", ".mpeg2video", ".mpegts", ".mov", ".mxf", ".mxf_d10", ".mxf_opatom", ".nut", ".ogv", ".rm", ".rtp_mpegts", ".rtsp", ".ts", ".vob", ".webm", ".webm_chunk", ".webm_dash_manifest", ".wmv", ".yuv4mpegpipe"}
+	scanImageExts = []string{".apng", ".avif", ".bmp", ".ico", ".jpeg", ".jpg", ".mjpeg", ".mpjpeg", ".pdf", ".png", ".smjpeg", ".tga", ".tiff", ".webp"}
 
 	audioFormats = []choice{
 		{"aac", "AAC"}, {"aiff", "AIFF"}, {"alac", "ALAC / M4A"}, {"amr", "AMR"},
@@ -39,7 +39,7 @@ var (
 	}
 
 	imageFormats = []choice{
-		{"apng", "APNG"}, {"avif", "AVIF"}, {"bmp", "BMP"}, {"gif", "GIF"},
+		{"apng", "APNG"}, {"avif", "AVIF"}, {"bmp", "BMP"},
 		{"ico", "ICO"}, {"jpeg", "JPEG"}, {"jpg", "JPG"}, {"mjpeg", "MJPEG"},
 		{"mpjpeg", "MPJPEG"}, {"pdf", "PDF"}, {"png", "PNG"}, {"smjpeg", "SMJPEG"},
 		{"tga", "TGA"}, {"tiff", "TIFF"}, {"webp", "WebP"},

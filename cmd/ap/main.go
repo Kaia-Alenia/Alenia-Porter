@@ -721,6 +721,28 @@ func (m mainModel) View() string {
 // ═══════════════════════════════════════════════════════════════════════════
 
 func main() {
+	var newArgs []string
+	if len(os.Args) > 0 {
+		newArgs = append(newArgs, os.Args[0])
+	}
+	for i := 1; i < len(os.Args); i++ {
+		if os.Args[i] == "/lang" || os.Args[i] == "--lang" || os.Args[i] == "lang" {
+			if i+1 < len(os.Args) {
+				if !applyLanguage(os.Args[i+1]) {
+					fmt.Printf("Unsupported language code / Idioma no soportado: %s\n", os.Args[i+1])
+					os.Exit(1)
+				}
+				i++
+			} else {
+				fmt.Println("Language code missing / Falta el código de idioma")
+				os.Exit(1)
+			}
+		} else {
+			newArgs = append(newArgs, os.Args[i])
+		}
+	}
+	os.Args = newArgs
+
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
 		case "version":

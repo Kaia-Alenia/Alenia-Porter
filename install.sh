@@ -13,21 +13,59 @@ BIN_DIR="$HOME/.local/bin"
 mkdir -p "$INSTALL_DIR"
 mkdir -p "$BIN_DIR"
 
-echo "Copiando archivos a $INSTALL_DIR..."
-cp -a . "$INSTALL_DIR"
+# Detectar OS y Arquitectura
+OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+ARCH="$(uname -m)"
+if [ "$ARCH" = "x86_64" ]; then
+    ARCH="amd64"
+elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+    ARCH="arm64"
+fi
 
-echo "Compilando ejecutable de Go..."
-cd "$INSTALL_DIR"
-go build -o porter ./cmd/ap
+if [ "$OS" != "linux" ] && [ "$OS" != "darwin" ]; then
+    echo "Sistema operativo no soportado: $OS"
+    exit 1
+fi
+
+TARGET="porter-${OS}-${ARCH}"
+ARCHIVE="${TARGET}.tar.gz"
+REPO_URL="https://github.com/Kaia-Alenia/Alenia-Porter"
+DOWNLOAD_URL="${REPO_URL}/releases/latest/download/${ARCHIVE}"
+
+echo "Descargando Alenia Porter para ${OS}-${ARCH}..."
+if command -v curl &> /dev/null; then
+    curl -L "$DOWNLOAD_URL" -o "/tmp/${ARCHIVE}"
+elif command -v wget &> /dev/null; then
+    wget -q --show-progress "$DOWNLOAD_URL" -O "/tmp/${ARCHIVE}"
+else
+    echo "Error: Se requiere 'curl' o 'wget' para descargar la aplicación."
+    exit 1
+fi
+
+echo "Extrayendo archivos en $INSTALL_DIR..."
+# Extrae el contenido del tar.gz en /tmp
+tar -xzf "/tmp/${ARCHIVE}" -C "/tmp"
+# Copia el contenido de la carpeta descomprimida al directorio de instalación
+cp -a "/tmp/${TARGET}/." "$INSTALL_DIR/"
+
+# Limpiar temporales
+rm -rf "/tmp/${ARCHIVE}" "/tmp/${TARGET}"
+
+# Asegurar que sea ejecutable
+chmod +x "$INSTALL_DIR/porter"
 
 if ! command -v ffmpeg &> /dev/null; then
-    echo "Descargando binarios estáticos de FFmpeg..."
-    wget -q https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -O /tmp/ffmpeg.tar.xz
-    tar -xf /tmp/ffmpeg.tar.xz -C /tmp
-    mv /tmp/ffmpeg-*-static/ffmpeg "$BIN_DIR/"
-    mv /tmp/ffmpeg-*-static/ffprobe "$BIN_DIR/"
-    rm -rf /tmp/ffmpeg.tar.xz /tmp/ffmpeg-*-static
-    echo -e "${GREEN}FFmpeg instalado correctamente en $BIN_DIR.${NC}"
+    if [ "$OS" = "linux" ]; then
+        echo "Descargando binarios estáticos de FFmpeg para Linux..."
+        wget -q https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -O /tmp/ffmpeg.tar.xz
+        tar -xf /tmp/ffmpeg.tar.xz -C /tmp
+        mv /tmp/ffmpeg-*-static/ffmpeg "$BIN_DIR/"
+        mv /tmp/ffmpeg-*-static/ffprobe "$BIN_DIR/"
+        rm -rf /tmp/ffmpeg.tar.xz /tmp/ffmpeg-*-static
+        echo -e "${GREEN}FFmpeg instalado correctamente en $BIN_DIR.${NC}"
+    elif [ "$OS" = "darwin" ]; then
+        echo -e "${CYAN}FFmpeg no encontrado. Se recomienda instalarlo usando Homebrew: brew install ffmpeg${NC}"
+    fi
 else
     echo "FFmpeg ya está instalado en el sistema."
 fi

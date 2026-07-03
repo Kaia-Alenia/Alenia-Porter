@@ -73,11 +73,33 @@ func runUpdateCmd() tea.Cmd {
 
 func runSelfUpdateCmd() tea.Cmd {
 	projectRoot := resolveProjectRoot()
-	script := `
+	script := fmt.Sprintf(`
 set -e
-git pull --rebase --autostash
-go build -o ap ./cmd/ap
-`
+OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+ARCH="$(uname -m)"
+if [ "$ARCH" = "x86_64" ]; then ARCH="amd64"; fi
+if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then ARCH="arm64"; fi
+
+TARGET="porter-${OS}-${ARCH}"
+ARCHIVE="${TARGET}.tar.gz"
+URL="https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest/download/${ARCHIVE}"
+
+if command -v curl &> /dev/null; then
+    curl -L "$URL" -o "/tmp/${ARCHIVE}"
+elif command -v wget &> /dev/null; then
+    wget -q --show-progress "$URL" -O "/tmp/${ARCHIVE}"
+else
+    echo "Error: Se requiere 'curl' o 'wget' para actualizar."
+    exit 1
+fi
+
+tar -xzf "/tmp/${ARCHIVE}" -C "/tmp"
+rm -f "%s/porter" "%s/ap"
+cp -a "/tmp/${TARGET}/." "%s/"
+chmod +x "%s/porter"
+rm -rf "/tmp/${ARCHIVE}" "/tmp/${TARGET}"
+`, projectRoot, projectRoot, projectRoot, projectRoot)
+
 	cmdUpdate := exec.Command("bash", "-c", script)
 	cmdUpdate.Dir = projectRoot
 	return tea.ExecProcess(cmdUpdate, func(err error) tea.Msg {
@@ -172,8 +194,42 @@ type engineProgressMsg struct {
 	done bool
 }
 
+func getEngineCmd(baseArgs []string) *exec.Cmd {
+	projectRoot := resolveProjectRoot()
+
+	// Check for Windows executable
+	winExe := filepath.Join(projectRoot, "AleniaPorter.exe")
+	if _, err := os.Stat(winExe); err == nil {
+		return exec.Command(winExe, append([]string{"--cli-engine"}, baseArgs...)...)
+	}
+
+	// Check for Linux executable
+	linExe := filepath.Join(projectRoot, "AleniaPorter")
+	if _, err := os.Stat(linExe); err == nil {
+		return exec.Command(linExe, append([]string{"--cli-engine"}, baseArgs...)...)
+	}
+
+	// Check for macOS App Bundle executable
+	macExe := filepath.Join(projectRoot, "AleniaPorter.app", "Contents", "MacOS", "AleniaPorter")
+	if _, err := os.Stat(macExe); err == nil {
+		return exec.Command(macExe, append([]string{"--cli-engine"}, baseArgs...)...)
+	}
+
+	// Fallback for development: use python3
+	srcPath := filepath.Join(projectRoot, "src")
+	if _, err := os.Stat(filepath.Join(srcPath, "alenia_porter")); err != nil {
+		srcPath = filepath.Join(projectRoot, "src")
+	}
+	env := append(os.Environ(), "PYTHONPATH="+srcPath)
+
+	pythonArgs := append([]string{"-m", "alenia_porter.headless"}, baseArgs...)
+	cmd := exec.Command("python3", pythonArgs...)
+	cmd.Env = env
+	return cmd
+}
+
 func startEngineCmd(dir, video, vExtra, audio, aExtra, image, iExtra string, setEngineState func(*exec.Cmd, *bufio.Scanner)) tea.Cmd {
-	cmdArgs := []string{"-m", "alenia_porter.headless", dir, "--vformat", video, "--aformat", audio, "--iformat", image}
+	cmdArgs := []string{dir, "--vformat", video, "--aformat", audio, "--iformat", image}
 	if vExtra != "" {
 		cmdArgs = append(cmdArgs, "--vextra", vExtra)
 	}
@@ -183,15 +239,8 @@ func startEngineCmd(dir, video, vExtra, audio, aExtra, image, iExtra string, set
 	if iExtra != "" {
 		cmdArgs = append(cmdArgs, "--iextra", iExtra)
 	}
-	projectRoot := resolveProjectRoot()
-	srcPath := filepath.Join(projectRoot, "src")
-	if _, err := os.Stat(filepath.Join(srcPath, "alenia_porter")); err != nil {
-		srcPath = filepath.Join(projectRoot, "src")
-	}
-	env := append(os.Environ(), "PYTHONPATH="+srcPath)
 
-	engineCmd := exec.Command("python3", cmdArgs...)
-	engineCmd.Env = env
+	engineCmd := getEngineCmd(cmdArgs)
 	stdout, err := engineCmd.StdoutPipe()
 	if err != nil {
 		return failCmd("Failed to create stdout pipe: %v", err)
@@ -250,7 +299,7 @@ func runEngine(targetDir, videoFormat, vExtra, audioFormat, aExtra, imageFormat,
 	fmt.Println()
 	info(T("engine_start"))
 
-	cmdArgs := []string{"-m", "alenia_porter.headless", targetDir, "--vformat", videoFormat, "--aformat", audioFormat, "--iformat", imageFormat}
+	cmdArgs := []string{targetDir, "--vformat", videoFormat, "--aformat", audioFormat, "--iformat", imageFormat}
 	if vExtra != "" {
 		cmdArgs = append(cmdArgs, "--vextra", vExtra)
 	}
@@ -260,15 +309,8 @@ func runEngine(targetDir, videoFormat, vExtra, audioFormat, aExtra, imageFormat,
 	if iExtra != "" {
 		cmdArgs = append(cmdArgs, "--iextra", iExtra)
 	}
-	projectRoot := resolveProjectRoot()
-	srcPath := filepath.Join(projectRoot, "src")
-	if _, err := os.Stat(filepath.Join(srcPath, "alenia_porter")); err != nil {
-		srcPath = filepath.Join(projectRoot, "src")
-	}
-	env := append(os.Environ(), "PYTHONPATH="+srcPath)
 
-	cmd := exec.Command("python3", cmdArgs...)
-	cmd.Env = env
+	cmd := getEngineCmd(cmdArgs)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		fail("Failed to create stdout pipe: %v", err)

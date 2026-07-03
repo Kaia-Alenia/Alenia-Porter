@@ -1,84 +1,359 @@
-# Alenia Porter v6.2 🐧
+<div align="center">
 
+# Alenia Porter v6.3
+
+*Optimizador multimedia universal de alto rendimiento — imágenes, video y audio en una sola herramienta.*
+
+---
+
+**Construcción y CI**
+<br>
 [![Build Status](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/build.yml/badge.svg)](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/build.yml)
 [![Pages Deploy](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/pages.yml/badge.svg)](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/pages.yml)
-[![GitHub release](https://img.shields.io/github/v/release/Kaia-Alenia/Alenia-Porter?include_prereleases&color=accent)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
+[![GitHub release](https://img.shields.io/github/v/release/Kaia-Alenia/Alenia-Porter?include_prereleases&color=6c8ebf&label=latest)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
+[![Downloads](https://img.shields.io/github/downloads/Kaia-Alenia/Alenia-Porter/total?color=4caf50)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
+
+**Licencia y Estadísticas**
+<br>
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat&logo=windows&logoColor=white)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
-[![macOS](https://img.shields.io/badge/macOS-000000?style=flat&logo=apple&logoColor=white)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
-[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
+[![Coding time (all-time)](https://devglobe.app/api/badge/Kaia-Alenia/coding-time-all.svg?theme=dark)](https://devglobe.app/developers/Kaia-Alenia)
 
-**Optimizador multimedia universal de alto rendimiento.**
+</div>
 
-Alenia Porter es una herramienta profesional, multiplataforma y autónoma diseñada para automatizar la optimización, compresión y preparación de recursos multimedia (imágenes, video y audio).
+---
 
-## Expansión Universal: De Motores de Juegos a Propósito General
+Alenia Porter es una herramienta profesional, multiplataforma y autónoma que automatiza la optimización, compresión y preparación de recursos multimedia. Incluye binarios de FFmpeg integrados — sin dependencias externas, sin configuración previa.
 
-En sus inicios, Alenia Porter fue diseñado como un optimizador de recursos exclusivo para motores de videojuegos como Ren'Py y Godot. A partir de esta versión, la herramienta ha evolucionado para convertirse en un **optimizador multimedia de propósito general**. 
+Originalmente diseñado para motores de videojuegos (Ren'Py, Godot), ha evolucionado hacia un **optimizador multimedia de propósito general** para músicos, editores de video, desarrolladores web y creadores de contenido.
 
-### ¿Por qué esta transición?
-- **Independencia de Motores:** La lógica anterior generaba archivos de configuración restrictivos (como `audio_defines.rpy` y `video_defines.rpy` en Ren'Py) que podían corromper proyectos en conversiones masivas. Ahora delegamos la indexación de recursos de manera nativa al motor de juego o framework que utilices, haciéndolo compatible con cualquier entorno.
-- **Público Objetivo Ampliado:** Al ser de código abierto bajo la licencia GPL v3, expandimos el alcance para músicos, editores de video, desarrolladores web y creadores de contenido que requieren compresión ultra rápida a formatos de alta fidelidad como OGG, OPUS, WEBM y WEBP sin pérdida apreciable de calidad y sin configurar pipelines complejos.
+---
 
-## Cómo funciona y qué hace
+## Edición IDE (Interfaz Gráfica)
 
-Alenia Porter actúa como un orquestador local sobre herramientas de procesamiento estándar de la industria (como FFmpeg). Cuando seleccionas un directorio:
+<div align="center">
 
-1. **Escaneo Eficiente:** Explora de manera recursiva todos los archivos multimedia compatibles organizándolos por tipo (Imagen, Video y Audio).
-2. **Conversión Concurrente:** Distribuye el procesamiento utilizando hilos y procesos paralelos para sortear limitaciones de hardware, forzando un control estricto de recursos (un solo hilo por instancia de codificador) para evitar la contención de CPU en equipos de gama baja.
-3. **Optimización Adaptativa:**
-   - **Imágenes:** Convierte y comprime imágenes a formatos modernos de alto rendimiento.
-   - **Video:** Codifica secuencias de video a contenedores WebM/OGV optimizados para web y reproductores livianos.
-   - **Audio:** Transcodifica pistas de audio a OGG u OPUS reduciendo drástrxamente el peso de almacenamiento final mientras preserva el espectro acústico.
-4. **Resiliencia de Procesamiento:** Implementa un sistema de control de fallos y telemetría de rendimiento que genera reportes automáticos en caso de interrupciones inesperadas.
+<!-- TODO: Reemplazar con la captura real del dashboard principal de la aplicación -->
+<img src="https://via.placeholder.com/860x500/0d1117/58a6ff?text=[ Edición IDE — Captura del Dashboard Principal ]" alt="Alenia Porter IDE Dashboard" width="860" />
+
+*Panel principal — selector de carpeta, selector de formato, barra de progreso en tiempo real*
+
+</div>
+
+<br>
+
+<div align="center">
+
+### Descargar Edición IDE
+
+| [![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest) | [![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest) | [![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest) |
+| :---: | :---: | :---: |
+| [Descargar `.exe`](https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest) | [Descargar `.dmg`](https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest) | [Descargar `.AppImage`](https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest) |
+| Windows 10 / 11 | macOS 12 Monterey+ | Ubuntu 20.04+ / Arch |
+
+</div>
+
+<br>
+
+**Inicio rápido:**
+
+1. Ejecuta el ejecutable **AleniaPorter**.
+2. Configura un apodo personalizado en el primer inicio (vincula tus estadísticas locales de forma anónima).
+3. Elige el formato de salida preferido para audio (OGG u OPUS), video (WebM o MP4) e imágenes (WebP o JPG).
+4. Haz clic en **Select Folder** y selecciona el directorio de origen.
+5. Los archivos procesados se guardan en una subcarpeta `Alenia_Optimized/`, respetando la estructura de directorios original.
+
+<div align="center">
+
+<!-- TODO: Reemplazar con captura del panel de configuración y selección de formatos -->
+<img src="https://via.placeholder.com/860x420/0d1117/58a6ff?text=[ Edición IDE — Configuración y Selección de Formatos ]" alt="Panel de Configuración de Alenia Porter" width="860" />
+
+*Selección de formato, controles de calidad y selector de tema*
+
+</div>
+
+---
+
+## Edición CLI (Línea de Comandos)
+
+<div align="center">
+
+<img src="docs/images/cli-preview.png" alt="Alenia Porter CLI Pantalla Principal" width="860" />
+
+*TUI principal — paleta de comandos, historial de sesión y selector de idioma*
+
+</div>
+
+<br>
+
+<div align="center">
+
+<!-- TODO: Reemplazar con una captura del flujo /optimize durante una conversión activa -->
+<img src="https://via.placeholder.com/860x400/0d1117/39d353?text=[ Edición CLI — Flujo /optimize (Conversión Activa) ]" alt="Alenia Porter CLI Flujo Optimize" width="860" />
+
+*Flujo `/optimize` — escaneo de directorio, selección de formato y progreso en tiempo real*
+
+</div>
+
+<br>
+
+<div align="center">
+
+<!-- TODO: Reemplazar con una captura que muestre el resumen de conversión completada -->
+<img src="https://via.placeholder.com/860x300/0d1117/39d353?text=[ Edición CLI — Conversión Completada ]" alt="Alenia Porter CLI Conversión Completa" width="860" />
+
+*Resumen de conversión — archivos procesados, rutas de salida, tiempo transcurrido*
+
+</div>
+
+<br>
+
+La CLI es un **binario nativo en Go** autocontenido — sin Python, sin Node, sin runtime. Diseñada para servidores headless, pipelines CI/CD y flujos de automatización.
+
+<div align="center">
+
+### Instalar CLI
+
+| [![Windows](https://img.shields.io/badge/Windows_(PowerShell)-0078D6?style=for-the-badge&logo=powershell&logoColor=white)](#) | [![Linux & macOS](https://img.shields.io/badge/Linux_&_macOS_(Bash)-1f883d?style=for-the-badge&logo=gnubash&logoColor=white)](#) |
+| :---: | :---: |
+| Abre **PowerShell como Administrador** y ejecuta: | Abre una terminal y ejecuta: |
+| `irm https://kaia-alenia.github.io/Alenia-Porter/install.ps1 \| iex` | `curl -fsSL https://kaia-alenia.github.io/Alenia-Porter/install.sh \| bash` |
+| Instala `porter.exe` en `%LOCALAPPDATA%\Programs\AleniaPorterCLI` | Añade el symlink `porter` a `~/.local/bin` |
+| Requiere Windows 10 1607+ | Requiere `git` y `go` instalados |
+
+</div>
+
+<br>
+
+Una vez instalado, escribe `porter` en cualquier terminal para abrir la TUI interactiva.
+
+**Modo no interactivo** (omite la TUI completamente, útil para scripts y CI):
+
+```
+porter version
+porter optimize <directorio> --vformat mp4 --aformat mp3 --iformat webp
+```
+
+**Dentro de la TUI**, los comandos usan el prefijo `/`. Escribe `/` para ver sugerencias de autocompletado:
+
+| Comando | Descripción |
+|---------|-------------|
+| `/optimize` | Inicia una conversión guiada — pregunta la carpeta y luego los formatos paso a paso |
+| `/help` | Muestra todos los comandos y atajos de teclado |
+| `/formulas` | Muestra la referencia de codecs FFmpeg y configuraciones comunes |
+| `/lang [código]` | Cambia el idioma (`en`, `es`, `fr`, `ja`, `zh`, `ru`, `pt-br`, `de`, `pt`) |
+| `/v-preset [valor]` | Establece el preset de codificación de video (ej. `slow`, `fast`, `ultrafast`) |
+| `/v-crf [valor]` | Establece el valor CRF de calidad de video (ej. `17`, `23`, `28`) |
+| `/a-bitrate [valor]` | Establece el bitrate de audio (ej. `128k`, `192k`, `320k`) |
+| `/clear` | Limpia el historial de la sesión |
+| `/update` | Ejecuta el script de actualización del proyecto |
+| `/self-update` | Descarga el código fuente más reciente y recompila el binario |
+| `/exit` | Cierra la TUI |
+
+
+---
+
+## Formatos de Entrada Soportados
+
+Todos los formatos a continuación son **detectados automáticamente** al escanear directorios de origen de forma recursiva.
+
+### Audio
+
+| Formato | Extensión | Notas |
+|---------|-----------|-------|
+| MP3 | `.mp3` | MPEG Capa 3 |
+| WAV | `.wav` | PCM sin comprimir |
+| FLAC | `.flac` | Sin pérdida |
+| AAC | `.aac` | Advanced Audio Coding |
+| OGG Vorbis | `.ogg` | Abierto, con pérdida |
+| Opus | `.opus` | Moderno, ultra-eficiente |
+| M4A | `.m4a` | AAC en contenedor MPEG-4 |
+| WMA | `.wma` | Windows Media Audio |
+| AIFF / AIF | `.aiff` `.aif` | Audio sin procesar de Apple |
+| ALAC | `.alac` | Apple Lossless |
+| AMR | `.amr` | Codec de voz móvil |
+| MIDI | `.mid` `.midi` | Música secuenciada |
+| MP2 | `.mp2` | MPEG Capa 2 (legado) |
+| MPGA | `.mpga` | Stream de audio MPEG |
+| AU / SND | `.au` `.snd` | Formato de audio Unix |
+| RA / RM | `.ra` `.rm` | RealAudio (legado) |
+
+### Video
+
+| Formato | Extensión | Notas |
+|---------|-----------|-------|
+| MP4 | `.mp4` | H.264 / AAC |
+| MKV | `.mkv` | Contenedor Matroska |
+| WebM | `.webm` | VP9 / Opus |
+| AVI | `.avi` | Contenedor Microsoft (legado) |
+| MOV | `.mov` | Apple QuickTime |
+| WMV | `.wmv` | Windows Media Video |
+| FLV | `.flv` | Flash Video (legado) |
+| M4V | `.m4v` | Video Apple iTunes |
+| MPG / MPEG | `.mpg` `.mpeg` `.m2v` | MPEG-1/2 |
+| 3GP / 3G2 | `.3gp` `.3g2` | Video móvil |
+| TS / M2TS | `.ts` `.m2ts` | Transport Stream |
+| VOB | `.vob` | DVD Video Object |
+| OGV | `.ogv` | Ogg Theora |
+| ASF | `.asf` | Advanced Systems Format |
+| DivX | `.divx` | Video codificado en DivX |
+
+### Imágenes
+
+| Formato | Extensión | Notas |
+|---------|-----------|-------|
+| PNG | `.png` | Raster sin pérdida |
+| JPEG | `.jpg` `.jpeg` | Con pérdida, universal |
+| WebP | `.webp` | Moderno, con/sin pérdida |
+| BMP | `.bmp` | Mapa de bits sin comprimir |
+| TGA | `.tga` | Targa (texturas de juegos) |
+| TIFF | `.tiff` | Alta calidad para impresión |
+| GIF | `.gif` | Animado / legado |
+| ICO | `.ico` | Icono de Windows |
+| PDF | `.pdf` | Documento portátil (lectura) |
+| AVIF | `.avif## Formatos de Salida (Objetivos de Conversión)
+
+> **Estabilidad:** `Estable` = ruta de código dedicada | `Inestable` = fallback genérico de FFmpeg, puede producir archivos vacíos o corruptos | `Roto` = protocolo de streaming o formato sin soporte de escritura
+
+### Salida de Audio
+
+| Formato | Extensión | Codec | Estabilidad |
+|---------|-----------|-------|-------------|
+| OGG Vorbis | `.ogg` | `libvorbis` | Estable |
+| Opus | `.opus` | `libopus` | Estable |
+| MP3 | `.mp3` | `libmp3lame` | Estable |
+| FLAC | `.flac` | `flac` | Estable |
+| WAV | `.wav` | `pcm_s16le` | Estable |
+| AAC | `.aac` | `aac` | Estable |
+| M4A | `.m4a` | `aac` | Estable |
+| WMA | `.wma` | `wmav2` | Estable |
+| ALAC | `.m4a` | `alac` | Estable |
+| AIFF | `.aiff` | `pcm_s16be` | Estable |
+| WavPack | `.wv` | `wavpack` | Estable |
+| AU | `.au` | `pcm_s16be` | Estable |
+| AMR | `.amr` | `amr_nb` (8kHz mono, forzado) | Estable |
+| AC3 | `.ac3` | `ac3` | Estable |
+| DTS | `.dts` | `dca` | Estable |
+| CAF | `.caf` | `pcm_s16le` | Estable |
+
+### Salida de Video
+
+| Formato | Extensión | Codec | Estabilidad |
+|---------|-----------|-------|-------------|
+| MP4 | `.mp4` | `libx264` / NVENC / QSV / AMF | Estable |
+| WebM | `.webm` | `libvpx-vp9` / vp9_nvenc | Estable |
+| MKV | `.mkv` | `libx264` | Estable |
+| AVI | `.avi` | `libx264` | Estable |
+| MOV | `.mov` | `libx264` | Estable |
+| M4V | `.m4v` | `libx264` | Estable |
+| FLV | `.flv` | `libx264` | Estable |
+| TS | `.ts` | `libx264` | Estable |
+| 3GP / 3G2 | `.3gp` `.3g2` | `libx264` | Estable |
+| WMV | `.wmv` | `wmv2` | Estable |
+| MPEG / MPG / M2V | `.mpeg` `.mpg` `.m2v` | `mpeg2video` | Estable |
+| OGV | `.ogv` | `libtheora` | Estable |
+| GIF | `.gif` | encoder `gif` (15fps, máx 640px) | Estable |
+| VOB | `.vob` | Fallback genérico — sin encoder asignado | Inestable |
+| ASF | `.asf` | Fallback genérico — sin encoder asignado | Inestable |
+| RM / RealMedia | `.rm` | Fallback genérico — sin encoder asignado | Inestable |
+| AVIF (video) | `.avif` | Fallback genérico — requiere build con `libavif` | Inestable |
+| MXF | `.mxf` | Fallback genérico | Inestable |
+| NUT | `.nut` | Fallback genérico (contenedor experimental) | Inestable |
+| ADTS | `.adts` | Solo demuxer de audio — no es un contenedor de video | Roto |
+| ASF Stream | `.asf_stream` | Protocolo de streaming — no se puede escribir a archivo | Roto |
+| FITS | `.fits` | Formato de imagen de astronomía — no es un contenedor de video | Roto |
+| RTP / MPEG-TS | `.rtp_mpegts` | Protocolo de streaming — no se puede escribir a archivo | Roto |
+| RTSP | `.rtsp` | Protocolo de streaming — no se puede escribir a archivo | Roto |
+| WebM Chunk | `.webm_chunk` | Fragmento de streaming — no es un archivo independiente | Roto |
+| WebM DASH Manifest | `.webm_dash_manifest` | Solo metadatos de manifiesto | Roto |
+| YUV4MPEG Pipe | `.yuv4mpegpipe` | Formato de pipe sin procesar — no es un contenedor de archivo | Roto |
+
+### Salida de Imágenes
+
+| Formato | Extensión | Notas | Estabilidad |
+|---------|-----------|-------|-------------|
+| WebP | `.webp` | `libwebp`, calidad controlada vía `-q:v` | Estable |
+| JPEG / JPG | `.jpg` `.jpeg` | Calidad mapeada a escala `-q:v` de FFmpeg | Estable |
+| PNG | `.png` | Sin pérdida | Estable |
+| BMP | `.bmp` | Sin comprimir | Estable |
+| TIFF | `.tiff` | Calidad de archivo | Estable |
+| TGA | `.tga` | Texturas de juegos | Estable |
+| ICO | `.ico` | Auto-escalado a máx 256×256, pixel format `rgba` forzado | Estable |
+| PDF | `.pdf` | Vía Pillow (no FFmpeg), convierte a RGB primero | Estable |
+| GIF (desde imagen) | `.gif` | FFmpeg aplica filtro de 15fps + escala a imagen estática — produce un GIF de 1 frame; puede verse corrupto en algunos visores | Inestable |
+| AVIF | `.avif` | Cae a handler genérico — requiere build FFmpeg con `libavif` | Inestable |
+| APNG | `.apng` | Cae a handler genérico — muxer de PNG animado poco fiable en builds estándar | Inestable |
+| MJPEG | `.mjpeg` | Demuxer de FFmpeg, no un formato de salida de imagen | Roto |
+| MPJPEG | `.mpjpeg` | Stream JPEG multiparte — no es un formato de archivo | Roto |
+| SMJPEG | `.smjpeg` | Formato de juego Loki — sin soporte de escritura en FFmpeg | Roto |
+
+---
+
+## Pendientes / Problemas Conocidos
+
+| Formato | Contexto | Causa Raíz |
+|---------|----------|------------|
+| Salida AVIF | Imagen + Video | Sin handler dedicado — cae a FFmpeg genérico; requiere flag de compilación `libavif` |
+| Salida APNG | Imagen | Sin handler dedicado — muxer de PNG animado produce resultados inconsistentes |
+| GIF como salida de imagen | Imagen | El motor aplica un filtro de video (15fps, 480px) a imágenes estáticas — se crea un GIF de 1 frame que puede parecer corrupto |
+| MJPEG / MPJPEG / SMJPEG | Salida de imagen | Son demuxers o formatos de streaming, no contenedores de archivo — seleccionarlos como destino produce archivos corruptos o vacíos |
+| Salida VOB / ASF / RM | Video | Sin encoder explícito asignado — cae a handler genérico, resultado varía según el formato de origen |
+| ADTS / RTSP / RTP / WebM Chunk / DASH Manifest / YUV4MPEG | Video | Protocolos de streaming o formatos pipe — no pueden usarse como destinos de archivo independientes |
+| Entrada `.wv` (modo carpeta) | Edición IDE | WavPack está en el filtro del selector de archivos de la GUI pero **falta en las extensiones de audio de `media_engine.py`** — no será detectado al escanear una carpeta |
+| HEIC / HEIF | Cualquiera | Sin encoder FFmpeg sin un codec comercial — no planeado |
+| MIDI como salida de audio | Audio | Formato secuenciado, no PCM — no puede re-encodearse |
+| RA / RM como salida de audio | Audio | Codec RealMedia no disponible en distribuciones estándar de FFmpeg |dear |
+| Salida RA / RM | No soportado | Codec RealMedia no disponible en las distribuciones de FFmpeg |
+
+---
+
+## Arquitectura
+
+| Componente | Tecnología | Descripción |
+|------------|------------|-------------|
+| **Edición IDE** | Python + Nuitka + pywebview | Ejecutable independiente con UI React integrada |
+| **Frontend UI** | React 19 + TypeScript + Vite | Renderizado en WebView del sistema (sin navegador) |
+| **Motor de Media** | Python + FFmpeg (integrado) | Procesamiento concurrente vía `ThreadPoolExecutor` |
+| **Edición CLI** | Go 1.25.11 + Bubble Tea | Binario TUI nativo, cero dependencias |
+| **CI/CD** | GitHub Actions | Builds + smoke tests en Windows, macOS, Linux |
+| **Aceleración GPU** | NVENC / QSV / AMF (auto-detección) | Usado para codificación MP4 y WebM cuando está disponible |
+
+---
+
+## Cómo Funciona
+
+1. **Escaneo Eficiente** — Escanea directorios recursivamente por extensión, separando archivos de audio, video e imagen.
+2. **Procesamiento Concurrente** — Usa `ThreadPoolExecutor` con `(CPU count - 1)` workers. Cada subproceso FFmpeg se fuerza a usar un solo hilo para evitar contención en hardware de gama baja.
+3. **Deduplicación Inteligente** — Una caché SHA-256 (`.alenia_cache.json`) omite archivos ya convertidos en ejecuciones posteriores.
+4. **Auto-detección de GPU** — Consulta la lista de encoders de FFmpeg en tiempo de ejecución y selecciona NVIDIA NVENC, Intel QSV o AMD AMF cuando están disponibles, con fallback a encoders de software.
+5. **Resiliencia ante Fallos** — Ante un fallo de FFmpeg, reintenta automáticamente en modo seguro (solo software). Genera volcados de crash con marca de tiempo para diagnóstico.
+
+---
 
 ## Telemetría y Privacidad
 
-Para medir el rendimiento de la herramienta y conocer los formatos de archivo más optimizados por la comunidad, Alenia Porter incorpora un sistema básico de telemetría asíncrona.
+Alenia Porter incluye un sistema de telemetría ligero, **totalmente anónimo** y asíncrono.
 
-- **Absoluta Privacidad:** **No recopilamos información personal o sensible** (como nombres reales, contraseñas, correos, archivos procesados o datos del disco duro).
-- **Datos Recopilados:** Únicamente se envía el identificador de instalación único y anónimo (UUID), el apodo legible elegido por el usuario (nickname), el tipo de sistema operativo, el modo de ejecución (GUI/CLI), la extensión del formato optimizado (ej. "mp3", "webp"), el conteo total de archivos procesados y el tiempo empleado en segundos.
-- **Transparencia:** Toda la información estadística agregada es enviada de forma segura para consolidar benchmarks públicos sobre el rendimiento de la herramienta en distintas plataformas.
+- **No se recopilan datos personales** — sin nombres de archivos, sin nombres reales, sin contraseñas, sin contenido del disco.
+- **Qué se envía:** UUID anónimo, apodo elegido, tipo de SO, modo de ejecución (GUI/CLI), extensión del formato de salida (ej. `webp`), conteo de archivos y tiempo transcurrido.
+- **Propósito:** benchmarks públicos para medir el rendimiento en distintas plataformas y configuraciones de hardware.
 
-## Características Clave
-
-- **Herramienta Autónoma (Zero Dependencies):** Los ejecutables empaquetados incluyen binarios internos (como FFmpeg), permitiendo que funcione sin instalar Python ni dependencias adicionales en el sistema.
-- **Multiplataforma:** Total compatibilidad con Windows, macOS y Linux.
-- **Temas Dinámicos:** Personalización de colores de la interfaz con múltiples temas cargados dinámicamente desde JSON.
-- **Personalización de Nickname:** Generación e ingreso de nombres legibles para estadísticas de uso y telemetría, administrados desde el menú de usuario.
-- **Seguridad en Integración Continua (CI/CD):** Validación estricta en GitHub Actions utilizando pruebas de humo automatizadas sobre displays virtuales (xvfb) para asegurar que ninguna versión inestable llegue a producción.
-
-## Cómo usar (Edición IDE)
-
-1. Ejecuta el archivo ejecutable **AleniaPorter**.
-2. Personaliza tu apodo en el primer inicio para vincular tus estadísticas locales de optimización.
-3. Selecciona tu formato de audio preferido (OGG u OPUS).
-4. Haz clic en "Select Folder to Convert" y elige la carpeta de origen que deseas optimizar.
-5. Los archivos procesados se generarán directamente respetando la estructura interna original.
-
-## Instalación (CLI)
-
-La Interfaz de Línea de Comandos está escrita en Go, optimizada para entornos sin entorno gráfico (headless) y automatización CI/CD.
-
-**Linux & macOS:**
-```bash
-curl -fsSL https://kaia-alenia.github.io/Alenia-Porter/install.sh | bash
-```
-*(Asegúrate de que `~/.local/bin` esté en tu PATH)*
-
-Una vez instalada, simplemente escribe `porter` en tu terminal para ver todas las opciones disponibles.
+---
 
 ## CLI vs Edición IDE
 
 | Característica | Edición IDE (GUI) | Edición CLI |
 |----------------|-------------------|-------------|
-| **Público Objetivo** | Creadores de contenido, editores, diseñadores | DevOps, desarrolladores backend, automatización |
-| **Interfaz** | Temas dinámicos, visual (arrastrar y soltar) | Salida de terminal minimalista |
-| **Arquitectura** | Python con binarios integrados | Binario nativo en Go (Cero dependencias) |
+| **Público Objetivo** | Creadores de contenido, editores, diseñadores | DevOps, devs backend, automatización CI/CD |
+| **Interfaz** | UI React con temas dinámicos | TUI minimalista con Bubble Tea |
+| **Arquitectura** | Python + pywebview + FFmpeg integrado | Binario Go nativo, cero dependencias |
 | **Integración** | Aplicación de escritorio independiente | Scripts de shell, GitHub Actions, Makefiles |
-| **Rendimiento** | Alto | Ultra-alto (Sobrecarga mínima) |
+| **Aceleración GPU** | Auto (NVENC / QSV / AMF) | Auto (mismo backend FFmpeg) |
+| **Procesamiento por Lotes** | Por carpeta con progreso en vivo | Directorio o lista de archivos vía flags |
+| **Rendimiento** | Alto | Ultra-alto (sobrecarga mínima) |
 
 ---
+
+<div align="center">
 
 **Licencia:** GNU General Public License v3 (GPL v3).
 *Diseñado para ser libre, transparente y accesible para toda la comunidad de desarrolladores y creadores.*
@@ -86,4 +361,6 @@ Una vez instalada, simplemente escribe `porter` en tu terminal para ver todas la
 **Correo Oficial de Alenia Studios:** contact.aleniastudios@gmail.com
 
 **Desarrollado y traducido por Kaia-Alenia Studios**
-US ES FR JP CN RU BR DE
+US &nbsp; ES &nbsp; FR &nbsp; JP &nbsp; CN &nbsp; RU &nbsp; BR &nbsp; DE
+
+</div>

@@ -420,8 +420,8 @@ def convert_media(input_directory, target_audio_format, target_video_format, tar
             except: pass
 
         audio_extensions = (".wav", ".mp3", ".flac", ".m4a", ".ogg", ".opus", ".aac", ".wma", ".aiff", ".aif", ".alac", ".amr", ".mid", ".midi", ".mp2", ".mpga", ".au", ".snd", ".ra", ".rm")
-        video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".m2v", ".3gp", ".3g2", ".ts", ".m2ts", ".vob", ".ogv", ".asf", ".divx")
-        image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".tga", ".webp", ".tiff", ".ico", ".pdf", ".gif", ".avif", ".apng")
+        video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".m2v", ".3gp", ".3g2", ".ts", ".m2ts", ".vob", ".ogv", ".asf", ".divx", ".gif")
+        image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".tga", ".webp", ".tiff", ".ico", ".pdf", ".avif", ".apng")
         
         if input_files and len(input_files) > 0:
             file_list = []

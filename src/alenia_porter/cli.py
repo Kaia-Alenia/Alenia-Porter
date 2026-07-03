@@ -101,7 +101,7 @@ def main():
     args = parser.parse_args()
 
     if args.headless:
-        print("Alenia Porter v6.2 - Headless Mode")
+        print("Alenia Porter v6.3 - Headless Mode")
         locales = porter.load_locales()
         if not locales:
             sys.exit(1)
@@ -122,7 +122,7 @@ def main():
     import tkinter as tk
     from tkinter import filedialog, ttk
 
-    CURRENT_VERSION = "v6.2"
+    CURRENT_VERSION = "v6.3"
     update_info = {"found": False, "ver": None, "url": None}
     try:
         has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
@@ -133,7 +133,7 @@ def main():
     except: pass
 
     try:
-        myappid = "alenia.porter.v6.2"
+        myappid = "alenia.porter.v6.3"
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except Exception:
         pass

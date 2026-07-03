@@ -61,7 +61,7 @@ def image_to_base64(path):
             return None
 
 class Api:
-    CURRENT_VERSION = "v6.2"
+    CURRENT_VERSION = "v6.3"
 
     def __init__(self, window):
         self.window = window
@@ -183,7 +183,7 @@ class Api:
 
     def scan_directory(self, directory_path):
         audio_extensions = (".wav", ".mp3", ".flac", ".m4a", ".ogg", ".opus", ".aac", ".wma", ".aiff", ".aif", ".alac", ".amr", ".mid", ".midi", ".mp2", ".mpga", ".au", ".snd", ".ra", ".rm", ".wv", ".ac3", ".dts", ".caf")
-        video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".m2v", ".3gp", ".3g2", ".ts", ".m2ts", ".vob", ".ogv", ".asf", ".divx")
+        video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".m2v", ".3gp", ".3g2", ".ts", ".m2ts", ".vob", ".ogv", ".asf", ".divx", ".gif")
         image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".tga", ".webp", ".tiff", ".ico", ".pdf", ".avif", ".apng")
         
         audio_count = 0
@@ -221,8 +221,8 @@ class Api:
     def resolve_dropped_paths(self, raw_uris):
         import urllib.parse
         audio_extensions = (".wav", ".mp3", ".flac", ".m4a", ".ogg", ".opus", ".aac", ".wma", ".aiff", ".aif", ".alac", ".amr", ".mid", ".midi", ".mp2", ".mpga", ".au", ".snd", ".ra", ".rm")
-        video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".m2v", ".3gp", ".3g2", ".ts", ".m2ts", ".vob", ".ogv", ".asf", ".divx")
-        image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".tga", ".webp", ".tiff", ".ico", ".pdf", ".gif", ".avif", ".apng")
+        video_extensions = (".mp4", ".mkv", ".webm", ".avi", ".mov", ".wmv", ".flv", ".m4v", ".mpg", ".mpeg", ".m2v", ".3gp", ".3g2", ".ts", ".m2ts", ".vob", ".ogv", ".asf", ".divx", ".gif")
+        image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".tga", ".webp", ".tiff", ".ico", ".pdf", ".avif", ".apng")
         all_media_exts = audio_extensions + video_extensions + image_extensions
 
         resolved = []
