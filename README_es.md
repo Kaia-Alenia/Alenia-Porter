@@ -32,8 +32,7 @@ Originalmente diseñado para motores de videojuegos (Ren'Py, Godot), ha evolucio
 
 <div align="center">
 
-<!-- TODO: Reemplazar con la captura real del dashboard principal de la aplicación -->
-<img src="https://via.placeholder.com/860x500/0d1117/58a6ff?text=[ Edición IDE — Captura del Dashboard Principal ]" alt="Alenia Porter IDE Dashboard" width="860" />
+<img src="docs/images/ide-dashboard.png" alt="Alenia Porter IDE Dashboard" width="860" />
 
 *Panel principal — selector de carpeta, selector de formato, barra de progreso en tiempo real*
 
@@ -64,8 +63,7 @@ Originalmente diseñado para motores de videojuegos (Ren'Py, Godot), ha evolucio
 
 <div align="center">
 
-<!-- TODO: Reemplazar con captura del panel de configuración y selección de formatos -->
-<img src="https://via.placeholder.com/860x420/0d1117/58a6ff?text=[ Edición IDE — Configuración y Selección de Formatos ]" alt="Panel de Configuración de Alenia Porter" width="860" />
+<img src="docs/images/ide-settings.png" alt="Panel de Configuración de Alenia Porter" width="860" />
 
 *Selección de formato, controles de calidad y selector de tema*
 
@@ -87,8 +85,7 @@ Originalmente diseñado para motores de videojuegos (Ren'Py, Godot), ha evolucio
 
 <div align="center">
 
-<!-- TODO: Reemplazar con una captura del flujo /optimize durante una conversión activa -->
-<img src="https://via.placeholder.com/860x400/0d1117/39d353?text=[ Edición CLI — Flujo /optimize (Conversión Activa) ]" alt="Alenia Porter CLI Flujo Optimize" width="860" />
+<img src="docs/images/cli-optimize.png" alt="Alenia Porter CLI Flujo Optimize" width="860" />
 
 *Flujo `/optimize` — escaneo de directorio, selección de formato y progreso en tiempo real*
 
@@ -98,8 +95,7 @@ Originalmente diseñado para motores de videojuegos (Ren'Py, Godot), ha evolucio
 
 <div align="center">
 
-<!-- TODO: Reemplazar con una captura que muestre el resumen de conversión completada -->
-<img src="https://via.placeholder.com/860x300/0d1117/39d353?text=[ Edición CLI — Conversión Completada ]" alt="Alenia Porter CLI Conversión Completa" width="860" />
+<img src="docs/images/cli-complete.png" alt="Alenia Porter CLI Conversión Completa" width="860" />
 
 *Resumen de conversión — archivos procesados, rutas de salida, tiempo transcurrido*
 

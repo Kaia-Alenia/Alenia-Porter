@@ -33,8 +33,7 @@ Originally designed for game engines (Ren'Py, Godot), it has evolved into a **ge
 
 <div align="center">
 
-<!-- TODO: Replace with the actual main application screenshot -->
-<img src="https://via.placeholder.com/860x500/0d1117/58a6ff?text=[ IDE Edition — Main Dashboard Screenshot ]" alt="Alenia Porter IDE Dashboard" width="860" />
+<img src="docs/images/ide-dashboard.png" alt="Alenia Porter IDE Dashboard" width="860" />
 
 *Main dashboard — folder selector, format picker, live progress bar*
 
@@ -65,8 +64,7 @@ Originally designed for game engines (Ren'Py, Godot), it has evolved into a **ge
 
 <div align="center">
 
-<!-- TODO: Replace with a screenshot of the settings/format selection panel -->
-<img src="https://via.placeholder.com/860x420/0d1117/58a6ff?text=[ IDE Edition — Settings & Format Selection ]" alt="Alenia Porter Settings Panel" width="860" />
+<img src="docs/images/ide-settings.png" alt="Alenia Porter Settings Panel" width="860" />
 
 *Format selection, quality sliders, and theme switcher*
 
@@ -88,8 +86,7 @@ Originally designed for game engines (Ren'Py, Godot), it has evolved into a **ge
 
 <div align="center">
 
-<!-- TODO: Replace with a screenshot of the /optimize flow mid-conversion -->
-<img src="https://via.placeholder.com/860x400/0d1117/39d353?text=[ CLI Edition — /optimize Flow (Active Conversion) ]" alt="Alenia Porter CLI Optimize Flow" width="860" />
+<img src="docs/images/cli-optimize.png" alt="Alenia Porter CLI Optimize Flow" width="860" />
 
 *`/optimize` flow — directory scan, format selection, and real-time progress*
 
@@ -99,8 +96,7 @@ Originally designed for game engines (Ren'Py, Godot), it has evolved into a **ge
 
 <div align="center">
 
-<!-- TODO: Replace with a screenshot showing completed conversion output -->
-<img src="https://via.placeholder.com/860x300/0d1117/39d353?text=[ CLI Edition — Conversion Complete Output ]" alt="Alenia Porter CLI Conversion Complete" width="860" />
+<img src="docs/images/cli-complete.png" alt="Alenia Porter CLI Conversion Complete" width="860" />
 
 *Conversion summary — files processed, output paths, elapsed time*
 
