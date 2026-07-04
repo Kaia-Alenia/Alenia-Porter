@@ -75,7 +75,7 @@ Originalmente diseñado para motores de videojuegos (Ren'Py, Godot), ha evolucio
 
 <div align="center">
 
-https://github.com/Kaia-Alenia/Alenia-Porter/raw/main/docs/images/cli-view-process.mp4
+<img src="docs/images/cli-view-process.gif" alt="Alenia Porter CLI Video" width="860" />
 
 *TUI principal — paleta de comandos, historial de sesión y selector de idioma*
 

@@ -76,7 +76,7 @@ Originally designed for game engines (Ren'Py, Godot), it has evolved into a **ge
 
 <div align="center">
 
-https://github.com/Kaia-Alenia/Alenia-Porter/raw/main/docs/images/cli-view-process.mp4
+<img src="docs/images/cli-view-process.gif" alt="Alenia Porter CLI Video" width="860" />
 
 *Main TUI — command palette, history log, and language switcher*
 
