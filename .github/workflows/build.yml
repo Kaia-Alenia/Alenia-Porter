@@ -314,7 +314,7 @@ jobs:
 
   release:
     needs: [build-windows, build-macos, build-linux, snyk-security]
-    if: ${{ needs.build-windows.outputs.verified == 'true' && needs.build-macos.outputs.verified == 'true' && needs.build-linux.outputs.verified == 'true' }}
+    if: ${{ needs.build-windows.outputs.verified == 'true' && needs.build-macos.outputs.verified == 'true' && needs.build-linux.outputs.verified == 'true' && startsWith(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
 
     steps:
