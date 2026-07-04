@@ -1,28 +1,28 @@
-# Contribuir a Alenia Porter
+# Contributing to Alenia Porter
 
-¡Gracias por tu interés en contribuir a Alenia Porter! Este es un proyecto open-source diseñado para la comunidad de desarrolladores indie y estamos felices de recibir tus aportes.
+Thank you for your interest in contributing to Alenia Porter! This is an open-source project designed for the indie developer community and we are happy to receive your contributions.
 
-## Cómo empezar
-1. Haz un fork de este repositorio.
-2. Clona tu fork localmente: `git clone https://github.com/TU-USUARIO/alenia-porter.git`
-3. Instala las dependencias y crea tu entorno local (preferimos `uv`).
-4. Haz tus cambios en una rama descriptiva: `git checkout -b fix/mi-mejora` o `git checkout -b feat/nueva-funcion`
+## Getting Started
+1. Fork this repository.
+2. Clone your fork locally: `git clone https://github.com/YOUR-USERNAME/alenia-porter.git`
+3. Install dependencies and set up your local environment (we prefer `uv`).
+4. Make your changes in a descriptive branch: `git checkout -b fix/my-fix` or `git checkout -b feat/new-feature`
 
-## Estructura del Código
-- **`src/alenia_porter/media_engine.py`**: El motor puro que envuelve a FFmpeg y maneja el procesamiento de los medios, Smart Caching y Aceleración por Hardware.
-- **`src/alenia_porter/porter.py`**: Lógica secundaria, utilidades y telemetría.
-- **`src/alenia_porter/cli.py`**: El punto de entrada para la GUI (Tkinter) de la aplicación.
-- **`cmd/ap/main.go`**: La envoltura CLI escrita en Go para ejecución ultra-rápida en terminal.
+## Code Structure
+- **`src/alenia_porter/media_engine.py`**: The core engine that wraps FFmpeg and handles media processing, Smart Caching, and Hardware Acceleration.
+- **`src/alenia_porter/porter.py`**: Secondary logic, utilities, and telemetry.
+- **`src/alenia_porter/cli.py`**: The entry point for the application's GUI (Tkinter).
+- **`cmd/ap/main.go`**: The CLI wrapper written in Go for ultra-fast execution in the terminal.
 
-## Reglas de Contribución
-- **Seguridad primero**: Asegúrate de que tu código no introduce vulnerabilidades. Usamos Snyk en nuestro CI/CD.
-- **Testing**: Todo PR importante debe incluir pruebas (pytest).
-- **Formato**: Ejecuta linter y mantén la consistencia visual del código.
-- **Compatibilidad**: La herramienta debe poder correr en Windows, Linux y macOS sin problemas.
+## Contribution Guidelines
+- **Security first**: Ensure your code does not introduce vulnerabilities. We use Snyk in our CI/CD.
+- **Testing**: Any major PR must include tests (pytest).
+- **Formatting**: Run the linter and maintain visual consistency of the code.
+- **Compatibility**: The tool must be able to run on Windows, Linux, and macOS seamlessly.
 
-## Enviar un Pull Request
-- Detalla los cambios que has realizado en la descripción de tu PR.
-- Asegúrate de que las GitHub Actions (build y snyk) pasan exitosamente.
-- Un mantenedor de Alenia Studios revisará y fusionará tu código.
+## Submitting a Pull Request
+- Detail the changes you have made in your PR description.
+- Ensure that GitHub Actions (build and snyk) pass successfully.
+- An Alenia Studios maintainer will review and merge your code.
 
-¡Gracias por apoyar el ecosistema indie!
+Thank you for supporting the indie ecosystem!
