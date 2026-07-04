@@ -39,6 +39,7 @@ patch_locales.py
 verify_formats.py
 verify_build.sh
 test_dir/
+testdir/
 test_assets/
 test_media_conversion/
 test_results/

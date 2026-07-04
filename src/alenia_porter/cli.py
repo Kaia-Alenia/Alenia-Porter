@@ -3,6 +3,9 @@ import os
 import traceback
 
 def global_exception_handler(exctype, value, tb):
+    if issubclass(exctype, (SystemExit, KeyboardInterrupt)):
+        sys.__excepthook__(exctype, value, tb)
+        return
     tb_text = "".join(traceback.format_exception(exctype, value, tb))
     try:
         from alenia_porter import porter
@@ -95,13 +98,67 @@ class ToolTip(object):
 
 
 def main():
+    import sys
+    import os
+    import platform
+    import json
+    
+    CURRENT_VERSION = "v6.4"
+    
+    if "--version" in sys.argv or "-v" in sys.argv:
+        print(f"Alenia Porter {CURRENT_VERSION}")
+        sys.exit(0)
+        
+    if "/lang" in sys.argv:
+        idx = sys.argv.index("/lang")
+        if idx + 1 < len(sys.argv):
+            lang = sys.argv[idx + 1]
+            if platform.system() == "Windows":
+                config_folder_path = os.path.join(os.getenv("LOCALAPPDATA", ""), "AleniaStudios", "AleniaPorter")
+            else:
+                config_folder_path = os.path.expanduser("~/.config/AleniaStudios/AleniaPorter")
+            config_file_path = os.path.join(config_folder_path, "config.json")
+            os.makedirs(config_folder_path, exist_ok=True)
+            config = {}
+            if os.path.exists(config_file_path):
+                try:
+                    with open(config_file_path, "r", encoding="utf-8") as f:
+                        config = json.load(f)
+                except: pass
+            config["lang"] = lang
+            with open(config_file_path, "w", encoding="utf-8") as f:
+                json.dump(config, f)
+            print(f"Language updated to {lang}")
+            sys.exit(0)
+        else:
+            print("Error: /lang requires a language code (e.g. en, es)")
+            sys.exit(1)
+
+    if "/update" in sys.argv:
+        from alenia_porter import updater
+        has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
+        if has_update:
+            print(f"Updating from {CURRENT_VERSION} to {new_ver}...")
+            def pcb(pct):
+                sys.stdout.write(f"\rDownloading update: {pct}%")
+                sys.stdout.flush()
+            def on_ready():
+                print("\nUpdate downloaded, restarting...")
+                sys.exit(0)
+            updater.download_and_apply_update(dl_url, pcb, on_ready)
+            sys.exit(0)
+        else:
+            print(f"You already have the latest version ({CURRENT_VERSION}).")
+            sys.exit(0)
+
     parser = argparse.ArgumentParser(description="Alenia Porter - Media Optimizer")
     parser.add_argument("--headless", action="store_true", help="Run in headless mode (no GUI)")
     parser.add_argument("--terminal", action="store_true", help="Run the terminal UI mode")
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
+
 
     if args.headless:
-        print("Alenia Porter v6.3 - Headless Mode")
+        print(f"Alenia Porter {CURRENT_VERSION} - Headless Mode")
         locales = porter.load_locales()
         if not locales:
             sys.exit(1)
@@ -122,7 +179,6 @@ def main():
     import tkinter as tk
     from tkinter import filedialog, ttk
 
-    CURRENT_VERSION = "v6.3"
     update_info = {"found": False, "ver": None, "url": None}
     try:
         has_update, new_ver, dl_url = updater.check_for_updates(CURRENT_VERSION)
@@ -133,7 +189,7 @@ def main():
     except: pass
 
     try:
-        myappid = "alenia.porter.v6.3"
+        myappid = f"alenia.porter.{CURRENT_VERSION}"
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     except Exception:
         pass

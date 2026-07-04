@@ -99,7 +99,9 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
             pass
 
     if media_type == "video":
-        output_file_name = f"{cleaned_base_name}.{target_video_format}"
+        ext_map = {"asf_stream": "asf", "yuv4mpegpipe": "y4m"}
+        actual_ext = ext_map.get(target_video_format, target_video_format)
+        output_file_name = f"{cleaned_base_name}.{actual_ext}"
         if preserve_structure:
             parts = relative_path.replace('\\', '/').split('/')
             if len(parts) > 1 and parts[0].lower() in ("video", "videos"):
@@ -153,15 +155,15 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
         if existing_same_base is not None:
             if existing_same_base.lower() == output_file_path.lower():
                 if os.path.getsize(existing_same_base) > 0:
-                    # Same base name AND same target format → skip (already converted, no need to redo)
-                    return (relative_path, media_type, cleaned_base_name, output_file_name, orig_size, os.path.getsize(existing_same_base), True, None, file_hash, True)
+                    cached_hash = cache_dict.get(relative_path) if cache_dict else None
+                    if cached_hash and cached_hash == file_hash:
+                        return (relative_path, media_type, cleaned_base_name, output_file_name, orig_size, os.path.getsize(existing_same_base), True, None, file_hash, True)
                 else:
                     try:
                         os.remove(existing_same_base)
                     except Exception:
                         pass
             else:
-                # Same base name but DIFFERENT format → delete old and overwrite with new format
                 try:
                     os.remove(existing_same_base)
                 except Exception:
@@ -338,6 +340,10 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
             ffmpeg_command.extend(["-ar", "8000", "-ac", "1", "-b:a", "12.2k"])
         elif codec not in ("pcm_s16le", "alac"):
             ffmpeg_command.extend(["-b:a", str(audio_bitrate)])
+            
+        if codec in ("dca", "aac"):
+            ffmpeg_command.extend(["-strict", "-2"])
+            
         ffmpeg_command.append(output_file_path)
 
     if safe_mode and media_type != "audio":

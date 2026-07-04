@@ -275,10 +275,14 @@ func (m mainModel) executeCommand(line string) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case "/update", "update":
+		m.processing = true
+		m.currentProgress = T("checking_updates")
 		m = m.appendInfo(T("checking_updates"))
 		return m, runUpdateCmd()
 
 	case "/self-update", "self-update":
+		m.processing = true
+		m.currentProgress = T("pulling_source")
 		m = m.appendInfo(T("pulling_source"))
 		return m, runSelfUpdateCmd()
 
@@ -464,6 +468,21 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case clearMsg:
 		m.messages = []string{}
 		m.viewport.SetContent("")
+		return m, nil
+
+	case updateResultMsg:
+		m.processing = false
+		m.currentProgress = ""
+		if msg.err != nil {
+			m = m.appendError("Update failed: %v", msg.err)
+		}
+		lines := strings.Split(strings.TrimSpace(msg.out), "\n")
+		for _, l := range lines {
+			if l != "" {
+				m = m.appendMessage("  " + styleMuted.Render(l))
+			}
+		}
+		m.recalcLayout()
 		return m, nil
 
 	// ─── Progreso del engine Python ─────────────────────────────────────────
@@ -745,14 +764,29 @@ func main() {
 
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
-		case "version":
+		case "version", "--version", "-v":
 			fmt.Printf("alenia porter %s\n", version)
+			os.Exit(0)
+		case "help", "--help", "-h":
+			fmt.Println("Uso: porter [comando] [opciones]")
+			fmt.Println("\nComandos disponibles sin interfaz gráfica:")
+			fmt.Println("  version, --version, -v   Muestra la versión de la aplicación")
+			fmt.Println("  help, --help, -h         Muestra esta ayuda")
+			fmt.Println("  /lang [idioma]           Cambia el idioma (ej: /lang en)")
+			fmt.Println("  optimize ...             Ejecuta la optimización directamente")
+			fmt.Println("\nEjecuta 'porter' sin argumentos para iniciar la interfaz interactiva.")
 			os.Exit(0)
 		case "optimize":
 			if len(os.Args) > 2 {
 				runDirectOptimize()
 				os.Exit(0)
 			}
+			fmt.Println("Error: faltan argumentos para optimize")
+			os.Exit(1)
+		default:
+			fmt.Printf("Comando o argumento desconocido: %s\n", os.Args[1])
+			fmt.Println("Usa 'porter --help' para ver los comandos disponibles.")
+			os.Exit(1)
 		}
 	}
 

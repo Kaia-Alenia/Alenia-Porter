@@ -55,20 +55,23 @@ func resolveProjectRoot() string {
 type quitMsg struct{}
 type errorMsg struct{ err error }
 
+type updateResultMsg struct {
+	out string
+	err error
+}
+
 func runUpdateCmd() tea.Cmd {
 	projectRoot := resolveProjectRoot()
 	updateScript := filepath.Join(projectRoot, "update.sh")
 	if _, err := os.Stat(updateScript); err != nil {
 		return warnCmd(T("no_update_script"), projectRoot)
 	}
-	cmdUpdate := exec.Command("bash", updateScript)
-	cmdUpdate.Dir = projectRoot
-	return tea.ExecProcess(cmdUpdate, func(err error) tea.Msg {
-		if err != nil {
-			return errorMsg{err}
-		}
-		return quitMsg{}
-	})
+	return func() tea.Msg {
+		cmdUpdate := exec.Command("bash", updateScript)
+		cmdUpdate.Dir = projectRoot
+		out, err := cmdUpdate.CombinedOutput()
+		return updateResultMsg{out: string(out), err: err}
+	}
 }
 
 func runSelfUpdateCmd() tea.Cmd {
@@ -94,20 +97,27 @@ else
 fi
 
 tar -xzf "/tmp/${ARCHIVE}" -C "/tmp"
-rm -f "%s/porter" "%s/ap"
-cp -a "/tmp/${TARGET}/." "%s/"
-chmod +x "%s/porter"
+rm -f "%[1]s/porter" "%[1]s/ap"
+cp -a "/tmp/${TARGET}/." "%[1]s/"
+chmod +x "%[1]s/porter"
+if [ -d "$HOME/.local/share/porter" ]; then
+    cp -a "/tmp/${TARGET}/." "$HOME/.local/share/porter/"
+    chmod +x "$HOME/.local/share/porter/porter"
+fi
+if [ -d "$HOME/.alenia-porter" ]; then
+    cp -a "/tmp/${TARGET}/." "$HOME/.alenia-porter/"
+    chmod +x "$HOME/.alenia-porter/porter"
+fi
 rm -rf "/tmp/${ARCHIVE}" "/tmp/${TARGET}"
-`, projectRoot, projectRoot, projectRoot, projectRoot)
+echo "¡Alenia Porter actualizado desde GitHub! Por favor, sal (/exit) y reinicia."
+`, projectRoot)
 
-	cmdUpdate := exec.Command("bash", "-c", script)
-	cmdUpdate.Dir = projectRoot
-	return tea.ExecProcess(cmdUpdate, func(err error) tea.Msg {
-		if err != nil {
-			return errorMsg{err}
-		}
-		return quitMsg{}
-	})
+	return func() tea.Msg {
+		cmdUpdate := exec.Command("bash", "-c", script)
+		cmdUpdate.Dir = projectRoot
+		out, err := cmdUpdate.CombinedOutput()
+		return updateResultMsg{out: string(out), err: err}
+	}
 }
 
 func cleanPath(p string) string {
