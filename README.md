@@ -76,7 +76,7 @@ Originally designed for game engines (Ren'Py, Godot), it has evolved into a **ge
 
 <div align="center">
 
-<video src="docs/images/cli-view-process.mp4" autoplay loop muted controls width="860"></video>
+https://github.com/Kaia-Alenia/Alenia-Porter/raw/main/docs/images/cli-view-process.mp4
 
 *Main TUI — command palette, history log, and language switcher*
 

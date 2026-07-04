@@ -75,7 +75,7 @@ Originalmente diseñado para motores de videojuegos (Ren'Py, Godot), ha evolucio
 
 <div align="center">
 
-<video src="docs/images/cli-view-process.mp4" autoplay loop muted controls width="860"></video>
+https://github.com/Kaia-Alenia/Alenia-Porter/raw/main/docs/images/cli-view-process.mp4
 
 *TUI principal — paleta de comandos, historial de sesión y selector de idioma*
 
