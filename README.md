@@ -76,7 +76,7 @@ Originally designed for game engines (Ren'Py, Godot), it has evolved into a **ge
 
 <div align="center">
 
-<video src="docs/images/cli-view-process.ogv" autoplay loop muted controls width="860"></video>
+<video src="docs/images/cli-view-process.mp4" autoplay loop muted controls width="860"></video>
 
 *Main TUI — command palette, history log, and language switcher*
 

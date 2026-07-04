@@ -75,7 +75,7 @@ Originalmente diseñado para motores de videojuegos (Ren'Py, Godot), ha evolucio
 
 <div align="center">
 
-<video src="docs/images/cli-view-process.ogv" autoplay loop muted controls width="860"></video>
+<video src="docs/images/cli-view-process.mp4" autoplay loop muted controls width="860"></video>
 
 *TUI principal — paleta de comandos, historial de sesión y selector de idioma*
 
