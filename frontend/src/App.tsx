@@ -306,7 +306,7 @@ export default function App() {
 
   // Safe Mode and GPU Hardware Acceleration options (v6.1 & v6.5)
   const [safeMode, setSafeMode] = useState<boolean>(false);
-  const [gpuEncoderDetected, setGpuEncoderDetected] = useState<string>("Ninguno");
+  const [gpuEncoderDetected, setGpuEncoderDetected] = useState<string>("none");
   const [hardwareAccelerationEnabled, setHardwareAccelerationEnabled] = useState<boolean>(true);
 
   // Community Global Stats from Database API
@@ -1073,7 +1073,7 @@ UUID: ${userUuid}
 Nickname: ${userNickname}
 Safe Mode: ${safeMode ? "ENABLED" : "DISABLED"}
 Hardware Acceleration: ${hardwareAccelerationEnabled ? "ENABLED" : "DISABLED"}
-GPU Encoder Detected: ${gpuEncoderDetected}
+GPU Encoder Detected: ${gpuEncoderDetected === "none" ? t("none", "Ninguno") : gpuEncoderDetected}
 
 ACTIVE MEDIA TYPE: ${activeMediaType}
 SELECTED FORMAT: ${format}
@@ -1224,7 +1224,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
     const isGpuActive = hardwareAccelerationEnabled && !safeMode;
     const processStepSpeed = isGpuActive ? 15 : 6; // GPU provides accelerated conversion!
     
-    addLog(isGpuActive ? `[FFmpeg-WASM] GPU Activo: ${gpuEncoderDetected}` : `[FFmpeg-WASM] Usando codificación soft (Drivers inactivos / Safe Mode)`, "info");
+    addLog(isGpuActive ? `[FFmpeg-WASM] GPU Activo: ${gpuEncoderDetected === "none" ? t("none", "Ninguno") : gpuEncoderDetected}` : `[FFmpeg-WASM] Usando codificación soft (Drivers inactivos / Safe Mode)`, "info");
 
     let currentPercent = 0;
     const totalFrames = file.type === "video" ? 360 : 100;
@@ -1510,7 +1510,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
     const isGpuActive = hardwareAccelerationEnabled && !safeMode;
     const processStepSpeed = isGpuActive ? 15 : 6;
 
-    addLog(isGpuActive ? `[FFmpeg-WASM] GPU Activo: ${gpuEncoderDetected}` : `[FFmpeg-WASM] Usando codificación soft (Drivers inactivos / Safe Mode)`, "info");
+    addLog(isGpuActive ? `[FFmpeg-WASM] GPU Activo: ${gpuEncoderDetected === "none" ? t("none", "Ninguno") : gpuEncoderDetected}` : `[FFmpeg-WASM] Usando codificación soft (Drivers inactivos / Safe Mode)`, "info");
 
     let currentPercent = 0;
     const totalFrames = activeMediaType === "video" ? 360 : 100;
@@ -1921,71 +1921,71 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                 >
                   {activeMediaType === "video" && (
                     <>
-                      <optgroup label="── Alta Compatibilidad ──">
-                        <option value="mp4">MP4 (H.264/AAC) — recomendado</option>
-                        <option value="mkv">MKV (Matroska)</option>
-                        <option value="avi">AVI</option>
-                        <option value="mov">MOV (QuickTime)</option>
+                      <optgroup label={t("optgroup_altacompatibilidad", "── Alta Compatibilidad ──")}>
+                        <option value="mp4">{t("opt_mp4", "MP4 (H.264/AAC) — recomendado")}</option>
+                        <option value="mkv">{t("opt_mkv", "MKV (Matroska)")}</option>
+                        <option value="avi">{t("opt_avi", "AVI")}</option>
+                        <option value="mov">{t("opt_mov", "MOV (QuickTime)")}</option>
                       </optgroup>
-                      <optgroup label="── Web / Moderno ──">
-                        <option value="webm">WebM (VP9/Opus)</option>
-                        <option value="m4v">M4V (iTunes)</option>
-                        <option value="ogv">OGV (Ogg Video)</option>
+                      <optgroup label={t("optgroup_webmoderno", "── Web / Moderno ──")}>
+                        <option value="webm">{t("opt_webm", "WebM (VP9/Opus)")}</option>
+                        <option value="m4v">{t("opt_m4v", "M4V (iTunes)")}</option>
+                        <option value="ogv">{t("opt_ogv", "OGV (Ogg Video)")}</option>
                       </optgroup>
-                      <optgroup label="── Otros ──">
-                        <option value="flv">FLV (Flash Video)</option>
-                        <option value="wmv">WMV (Windows)</option>
-                        <option value="mpeg">MPEG (MPEG-1/2)</option>
-                        <option value="ts">TS (Transport Stream)</option>
-                        <option value="3gp">3GP (Móvil)</option>
-                        <option value="gif">GIF (Animación)</option>
+                      <optgroup label={t("optgroup_otros", "── Otros ──")}>
+                        <option value="flv">{t("opt_flv", "FLV (Flash Video)")}</option>
+                        <option value="wmv">{t("opt_wmv", "WMV (Windows)")}</option>
+                        <option value="mpeg">{t("opt_mpeg", "MPEG (MPEG-1/2)")}</option>
+                        <option value="ts">{t("opt_ts", "TS (Transport Stream)")}</option>
+                        <option value="3gp">{t("opt_3gp", "3GP (Móvil)")}</option>
+                        <option value="gif">{t("opt_gif", "GIF (Animación)")}</option>
                       </optgroup>
                     </>
                   )}
                   {activeMediaType === "audio" && (
                     <>
-                      <optgroup label="── Sin pérdida ──">
-                        <option value="flac">FLAC (Lossless)</option>
-                        <option value="wav">WAV (PCM)</option>
-                        <option value="alac">ALAC (Apple Lossless)</option>
-                        <option value="aiff">AIFF</option>
-                        <option value="wv">WV (WavPack)</option>
-                        <option value="au">AU (Sun Audio)</option>
+                      <optgroup label={t("optgroup_sinprdida", "── Sin pérdida ──")}>
+                        <option value="flac">{t("opt_flac", "FLAC (Lossless)")}</option>
+                        <option value="wav">{t("opt_wav", "WAV (PCM)")}</option>
+                        <option value="alac">{t("opt_alac", "ALAC (Apple Lossless)")}</option>
+                        <option value="aiff">{t("opt_aiff", "AIFF")}</option>
+                        <option value="wv">{t("opt_wv", "WV (WavPack)")}</option>
+                        <option value="au">{t("opt_au", "AU (Sun Audio)")}</option>
                       </optgroup>
-                      <optgroup label="── Con pérdida ──">
-                        <option value="mp3">MP3 (MPEG Layer 3)</option>
-                        <option value="aac">AAC</option>
-                        <option value="m4a">M4A (AAC/iTunes)</option>
-                        <option value="opus">Opus</option>
-                        <option value="ogg">OGG (Vorbis)</option>
-                        <option value="wma">WMA (Windows)</option>
-                        <option value="amr">AMR (Móvil)</option>
+                      <optgroup label={t("optgroup_conprdida", "── Con pérdida ──")}>
+                        <option value="mp3">{t("opt_mp3", "MP3 (MPEG Layer 3)")}</option>
+                        <option value="aac">{t("opt_aac", "AAC")}</option>
+                        <option value="m4a">{t("opt_m4a", "M4A (AAC/iTunes)")}</option>
+                        <option value="opus">{t("opt_opus", "Opus")}</option>
+                        <option value="ogg">{t("opt_ogg", "OGG (Vorbis)")}</option>
+                        <option value="wma">{t("opt_wma", "WMA (Windows)")}</option>
+                        <option value="amr">{t("opt_amr", "AMR (Móvil)")}</option>
                       </optgroup>
-                      <optgroup label="── Avanzado ──">
-                        <option value="ac3">AC3 (Dolby Digital)</option>
-                        <option value="dts">DTS</option>
-                        <option value="caf">CAF (Apple Core Audio)</option>
+                      <optgroup label={t("optgroup_avanzado", "── Avanzado ──")}>
+                        <option value="ac3">{t("opt_ac3", "AC3 (Dolby Digital)")}</option>
+                        <option value="dts">{t("opt_dts", "DTS")}</option>
+                        <option value="caf">{t("opt_caf", "CAF (Apple Core Audio)")}</option>
                       </optgroup>
                     </>
                   )}
                   {activeMediaType === "image" && (
                     <>
-                      <optgroup label="── Web moderno ──">
-                        <option value="webp">WebP</option>
-                        <option value="avif">AVIF (AV1 Image)</option>
-                        <option value="apng">APNG (PNG Animado)</option>
+                      <optgroup label={t("optgroup_webmoderno", "── Web moderno ──")}>
+                        <option value="webp">{t("opt_webp", "WebP")}</option>
+                        <option value="avif">{t("opt_avif", "AVIF (AV1 Image)")}</option>
+                        <option value="apng">{t("opt_apng", "APNG (PNG Animado)")}</option>
                       </optgroup>
-                      <optgroup label="── Estándar ──">
-                        <option value="jpg">JPG / JPEG</option>
-                        <option value="png">PNG (Lossless)</option>
-                        <option value="gif">GIF</option>
-                        <option value="bmp">BMP</option>
-                        <option value="tiff">TIFF</option>
-                        <option value="tga">TGA</option>
+                      <optgroup label={t("optgroup_estndar", "── Estándar ──")}>
+                        <option value="jpg">{t("opt_jpg", "JPG / JPEG")}</option>
+                        <option value="png">{t("opt_png", "PNG (Lossless)")}</option>
+                        <option value="gif">{t("opt_gif", "GIF")}</option>
+                        <option value="bmp">{t("opt_bmp", "BMP")}</option>
+                        <option value="tiff">{t("opt_tiff", "TIFF")}</option>
+                        <option value="tga">{t("opt_tga", "TGA")}</option>
                       </optgroup>
-                      <optgroup label="── Especial ──">
-                        <option value="ico">ICO (Favicon)</option>
-                        <option value="pdf">PDF</option>
+                      <optgroup label={t("optgroup_especial", "── Especial ──")}>
+                        <option value="ico">{t("opt_ico", "ICO (Favicon)")}</option>
+                        <option value="pdf">{t("opt_pdf", "PDF")}</option>
                       </optgroup>
                     </>
                   )}
@@ -1995,7 +1995,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
               {/* Resumen de formatos para modo carpeta */}
               {filesQueue.some(f => f.isDirectory) && (
                 <div className="flex flex-col gap-1 p-2 rounded-lg border border-dashed" style={{ borderColor: "rgba(99,102,241,0.4)", background: "rgba(99,102,241,0.04)" }}>
-                  <span className={`text-[8px] font-mono uppercase font-bold tracking-wider ${THEME_COLORS[themeColor].textMuted}`}>Formatos de salida (carpeta)</span>
+                  <span className={`text-[8px] font-mono uppercase font-bold tracking-wider ${THEME_COLORS[themeColor].textMuted}`}>{t("outputFormatsFolder", "Formatos de salida (carpeta)")}</span>
                   <div className="flex gap-1.5 flex-wrap">
                     <span className="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded font-mono font-bold bg-blue-100 text-blue-700 border border-blue-200">
                       <FileVideo size={8} /> {videoFormat.toUpperCase()}
@@ -2007,7 +2007,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                       <FileImage size={8} /> {imageFormat.toUpperCase()}
                     </span>
                   </div>
-                  <span className={`text-[7.5px] font-mono ${THEME_COLORS[themeColor].textMuted}`}>Selecciona cada pestaña para configurar su formato</span>
+                  <span className={`text-[7.5px] font-mono ${THEME_COLORS[themeColor].textMuted}`}>{t("selectTabFormat", "Selecciona cada pestaña para configurar su formato")}</span>
                 </div>
               )}
 
@@ -2046,12 +2046,12 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                     onChange={(e) => setCodec(e.target.value)}
                     className={`custom-select w-full ${THEME_COLORS[themeColor].inputBg} border ${THEME_COLORS[themeColor].inputBorder} ${THEME_COLORS[themeColor].inputText} rounded-lg px-2.5 py-1 text-[11px] focus:outline-none focus:ring-1 ${THEME_COLORS[themeColor].ring}`}
                   >
-                    <option value="libx264">H.264 / AVC (libx264)</option>
-                      <option value="libx265">H.265 / HEVC (libx265)</option>
-                      <option value="libvpx-vp9">VP9 (WebM)</option>
-                      <option value="libaom-av1">AV1 (libaom)</option>
-                      <option value="libsvtav1">AV1 (SVT-AV1, rápido)</option>
-                      <option value="mjpeg">MJPEG</option>
+                    <option value="libx264">{t("opt_libx264", "H.264 / AVC (libx264)")}</option>
+                      <option value="libx265">{t("opt_libx265", "H.265 / HEVC (libx265)")}</option>
+                      <option value="libvpx-vp9">{t("opt_libvpx-vp9", "VP9 (WebM)")}</option>
+                      <option value="libaom-av1">{t("opt_libaom-av1", "AV1 (libaom)")}</option>
+                      <option value="libsvtav1">{t("opt_libsvtav1", "AV1 (SVT-AV1, rápido)")}</option>
+                      <option value="mjpeg">{t("opt_mjpeg", "MJPEG")}</option>
                   </select>
                 </div>
               )}
@@ -2068,11 +2068,11 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                     onChange={(e) => setAudioBitrate(parseInt(e.target.value))}
                     className={`custom-select w-full ${THEME_COLORS[themeColor].inputBg} border ${THEME_COLORS[themeColor].inputBorder} ${THEME_COLORS[themeColor].inputText} rounded-lg px-2.5 py-1 text-[11px] focus:outline-none focus:ring-1 ${THEME_COLORS[themeColor].ring}`}
                   >
-                    <option value="32">32 kbps</option>
-                    <option value="64">64 kbps</option>
-                    <option value="128">128 kbps</option>
-                    <option value="192">192 kbps</option>
-                    <option value="320">320 kbps</option>
+                    <option value="32">{t("opt_32", "32 kbps")}</option>
+                    <option value="64">{t("opt_64", "64 kbps")}</option>
+                    <option value="128">{t("opt_128", "128 kbps")}</option>
+                    <option value="192">{t("opt_192", "192 kbps")}</option>
+                    <option value="320">{t("opt_320", "320 kbps")}</option>
                   </select>
                 </div>
               )}
@@ -2086,9 +2086,9 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                     onChange={(e) => setScale(e.target.value)}
                     className={`custom-select w-full ${THEME_COLORS[themeColor].inputBg} border ${THEME_COLORS[themeColor].inputBorder} ${THEME_COLORS[themeColor].inputText} rounded-lg px-2.5 py-1 text-[11px] focus:outline-none focus:ring-1 ${THEME_COLORS[themeColor].ring}`}
                   >
-                    <option value="original">{t("originalScale")}</option>
-                    <option value="1280x720">720p (HD)</option>
-                    <option value="854x480">480p (SD)</option>
+                    <option value="original">{t("opt_original", "Original")}</option>
+                    <option value="1280x720">{t("opt_1280x720", "720p (HD)")}</option>
+                    <option value="854x480">{t("opt_854x480", "480p (SD)")}</option>
                   </select>
                 </div>
               )}
@@ -2325,7 +2325,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                         }}
                         className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-bold transition-all cursor-pointer font-mono"
                       >
-                        <span>¡Listo! Archivos Guardados en Origen</span>
+                        <span>{t("savedInSource", "¡Listo! Archivos Guardados en Origen")}</span>
                       </button>
                     </div>
                   </div>
@@ -2369,7 +2369,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
               <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                 <div className="flex items-center gap-1.5 text-gray-950 font-display font-black text-xs uppercase tracking-tight">
                   <AlertTriangle size={14} className="text-blue-600 animate-pulse" />
-                  <span>Privacidad de Datos</span>
+                  <span>{t("dataPrivacy", "Privacidad de Datos")}</span>
                 </div>
               </div>
               <p className="text-[10px] text-gray-600 leading-relaxed font-mono">
@@ -2378,7 +2378,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
               </p>
               <div className="flex flex-col gap-1 text-[8.5px] font-mono text-gray-500 bg-gray-50 p-2 rounded-xl">
                 <div className="flex justify-between items-center">
-                  <span>Tu alias anónimo asignado:</span>
+                  <span>{t("yourAlias", "Tu alias anónimo asignado:")}</span>
                   <strong className="text-gray-800 bg-gray-200/60 px-2 py-0.5 rounded-md font-bold">{userNickname}</strong>
                 </div>
                 <div className="flex justify-between items-center">
@@ -2398,7 +2398,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                   }}
                   className="py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-[9.5px] rounded-xl transition-all cursor-pointer text-center"
                 >
-                  Mantener Privado
+                  {t("keepPrivate", "Mantener Privado")}
                 </button>
                 <button
                   type="button"
@@ -2412,7 +2412,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                   }}
                   className="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-[9.5px] rounded-xl transition-all cursor-pointer text-center shadow-xs"
                 >
-                  Compartir y Apoyar
+                  {t("shareAndSupport", "Compartir y Apoyar")}
                 </button>
               </div>
             </div>
@@ -2425,7 +2425,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
             <div className="bg-white rounded-3xl w-full max-w-[320px] p-5 shadow-2xl border border-gray-100 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200">
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <h3 className="font-display font-extrabold text-xs text-gray-950 tracking-tight uppercase">
-                  Información de Versión
+                  {t("versionInfo", "Información de Versión")}
                 </h3>
                 <button
                   type="button"
@@ -2440,12 +2440,12 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
 
               <div className="space-y-3">
                 <div className="flex justify-between items-center bg-gray-50 p-2.5 rounded-xl border border-gray-100">
-                  <span className="text-[10px] text-gray-500 font-mono">Versión Actual</span>
+                  <span className="text-[10px] text-gray-500 font-mono">{t("currentVersion", "Versión Actual")}</span>
                   <span className="text-xs font-bold text-gray-800 bg-gray-200/60 px-2.5 py-0.5 rounded-full font-mono">v{appVersion}</span>
                 </div>
 
                 <div className="flex flex-col gap-1.5 bg-blue-50/40 p-3 rounded-xl border border-blue-100/50">
-                  <span className="text-[9px] text-blue-800 font-mono uppercase tracking-wider font-bold">Enlace a Github</span>
+                  <span className="text-[9px] text-blue-800 font-mono uppercase tracking-wider font-bold">{t("githubLink", "Enlace a Github")}</span>
                   <a
                     href="https://github.com/Kaia-Alenia/Alenia-Porter"
                     target="_blank"
@@ -2461,22 +2461,22 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                   <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl flex flex-col gap-2">
                     <div className="flex items-center gap-1.5 text-amber-800 font-bold text-[10px]">
                       <AlertTriangle size={12} className="text-amber-500 animate-bounce" />
-                      <span>¡NUEVA VERSIÓN DISPONIBLE!</span>
+                      <span>{t("newVersionAvailable", "¡NUEVA VERSIÓN DISPONIBLE!")}</span>
                     </div>
                     <p className="text-[9.5px] text-amber-700 leading-normal">
-                      Hay una actualización disponible en GitHub (v{latestVersion}). Se recomienda actualizar para obtener optimizaciones de audio, video e imágenes.
+                      {t("updateAvailableMsg", `Hay una actualización disponible en GitHub (v${latestVersion}). Se recomienda actualizar para obtener optimizaciones de audio, video e imágenes.`)}
                     </p>
 
                     {isUpdatingVersion ? (
                       <div className="space-y-1.5 mt-1">
                         <div className="flex justify-between text-[8.5px] font-mono text-amber-800 font-bold">
-                          <span>Descargando actualización...</span>
+                          <span>{t("downloadingUpdate", "Descargando actualización...")}</span>
                           <span>{updateProgress}%</span>
                         </div>
                         <div className="w-full bg-amber-200/60 rounded-full h-1.5 overflow-hidden">
                           <div className="bg-amber-500 h-full transition-all duration-150" style={{ width: `${updateProgress}%` }} />
                         </div>
-                        <p className="text-[8px] text-amber-600 text-center">La app se reiniciará automáticamente al terminar</p>
+                        <p className="text-[8px] text-amber-600 text-center">{t("appWillRestart", "La app se reiniciará automáticamente al terminar")}</p>
                       </div>
                     ) : (
                       <div className="flex flex-col gap-1.5 mt-1">
@@ -2484,7 +2484,18 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                           type="button"
                           onClick={async () => {
                             const isPyWebView = !!(window as any).pywebview;
-                            const dlUrl = updateDownloadUrl; // URL directa del binario
+                            let dlUrl = updateDownloadUrl; // URL directa del binario
+                            
+                            if (isPyWebView && !dlUrl) {
+                              try {
+                                const result = await (window as any).pywebview.api.check_update();
+                                if (result && result.dl_url) {
+                                  dlUrl = result.dl_url;
+                                  setUpdateDownloadUrl(dlUrl);
+                                }
+                              } catch(e) {}
+                            }
+
                             if (isPyWebView && dlUrl) {
                               // Actualización real via backend Python
                               setIsUpdatingVersion(true);
@@ -2501,17 +2512,22 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                             } else {
                               const link = updateUrl || "https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest";
                               try {
-                                const parsedUrl = new URL(link);
-                                if (parsedUrl.protocol === "https:" && parsedUrl.hostname === "github.com" && parsedUrl.pathname.startsWith("/Kaia-Alenia/Alenia-Porter")) {
-                                  window.open(parsedUrl.href, "_blank");
+                                if (isPyWebView && (window as any).pywebview.api.open_in_browser) {
+                                  await (window as any).pywebview.api.open_in_browser(link);
+                                } else {
+                                  const parsedUrl = new URL(link);
+                                  if (parsedUrl.protocol === "https:" && parsedUrl.hostname === "github.com" && parsedUrl.pathname.startsWith("/Kaia-Alenia/Alenia-Porter")) {
+                                    window.open(parsedUrl.href, "_blank");
+                                  }
                                 }
                               } catch (e) {
+                                addLog(`[Error] Fallo al abrir enlace: ${e}`, "error");
                               }
                             }
                           }}
                           className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-[10px] rounded-lg transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
                         >
-                          <RefreshCw size={11} className="animate-spin-slow" /> Actualizar ahora
+                          <RefreshCw size={11} className="animate-spin-slow" /> {t("updateNow")}
                         </button>
                       </div>
                     )}
@@ -2734,7 +2750,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col gap-0.5">
                       <span className={`text-[9.5px] font-bold ${THEME_COLORS[themeColor].textPrimary}`}>{t("hardwareAcceleration")}</span>
-                      <span className={`text-[8px] ${THEME_COLORS[themeColor].textMuted} font-mono`}>{t("hwDetectedLabel")}: {gpuEncoderDetected}</span>
+                      <span className={`text-[8px] ${THEME_COLORS[themeColor].textMuted} font-mono`}>{t("hwDetectedLabel")}: {gpuEncoderDetected === "none" ? t("none", "Ninguno") : gpuEncoderDetected}</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input

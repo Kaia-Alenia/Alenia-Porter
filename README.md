@@ -1,6 +1,6 @@
 <div align="center">
 
-# Alenia Porter v6.5
+# Alenia Porter v6.6
 
 *High-performance universal media optimizer — images, video and audio in one tool.*
 

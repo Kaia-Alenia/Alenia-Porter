@@ -8,6 +8,7 @@ import zipfile
 import tarfile
 import subprocess
 import shutil
+import tempfile
 
 REPO_API_URL = "https://api.github.com/repos/Kaia-Alenia/Alenia-Porter/releases/latest"
 
@@ -57,12 +58,20 @@ def download_and_apply_update(download_url, progress_callback, on_ready_to_resta
         is_zip = download_url.endswith(".zip")
         download_path = os.path.join(temp_dir, "update.zip" if is_zip else "update.tar.gz")
         
-        def reporthook(blocknum, blocksize, totalsize):
-            if totalsize > 0:
-                percent = min(100, int((blocknum * blocksize * 100) / totalsize))
-                progress_callback(percent)
-                
-        urllib.request.urlretrieve(download_url, download_path, reporthook)
+        req = urllib.request.Request(download_url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=15) as response, open(download_path, 'wb') as out_file:
+            totalsize = int(response.getheader('Content-Length', '0'))
+            blocksize = 8192
+            downloaded = 0
+            while True:
+                buffer = response.read(blocksize)
+                if not buffer:
+                    break
+                out_file.write(buffer)
+                downloaded += len(buffer)
+                if totalsize > 0:
+                    percent = min(100, int((downloaded * 100) / totalsize))
+                    progress_callback(percent)
         
         def is_within_directory(directory, target):
             return not os.path.relpath(os.path.abspath(target), os.path.abspath(directory)).startswith("..")
@@ -87,14 +96,15 @@ def download_and_apply_update(download_url, progress_callback, on_ready_to_resta
         
     except Exception as e:
         print(f"Update failed: {e}")
+        raise
 
 def create_and_run_trampoline(update_source_dir, system):
     current_dir = os.path.abspath(os.getcwd())
     update_source_dir = os.path.abspath(update_source_dir)
-    parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+    temp_script_dir = tempfile.gettempdir()
     
     if system == "windows":
-        script_path = os.path.join(parent_dir, "update_alenia.bat")
+        script_path = os.path.join(temp_script_dir, "update_alenia.bat")
         bat_content = f"""@echo off
 timeout /t 3 /nobreak > NUL
 taskkill /f /im AleniaPorter.exe > NUL 2>&1
@@ -124,7 +134,7 @@ del "%~f0"
         subprocess.Popen([script_path], creationflags=subprocess.CREATE_NEW_CONSOLE)
         
     else:
-        script_path = os.path.join(parent_dir, "update_alenia.sh")
+        script_path = os.path.join(temp_script_dir, "update_alenia.sh")
         exe_name = "./AleniaPorter"
         sh_content = f"""#!/bin/bash
 sleep 3

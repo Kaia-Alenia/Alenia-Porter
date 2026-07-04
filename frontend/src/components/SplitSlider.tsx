@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Play, Pause, RefreshCw, Volume2, Maximize2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface SplitSliderProps {
   mediaType: "video" | "audio" | "image";
@@ -16,6 +17,7 @@ export default function SplitSlider({
   compressedSizeText,
   originalSizeText,
 }: SplitSliderProps) {
+  const { t } = useTranslation();
   const [sliderPosition, setSliderPosition] = useState(50); // percentage
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.8);
@@ -123,10 +125,10 @@ export default function SplitSlider({
       <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200 text-xs text-gray-600 font-mono">
         <span className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-          PREVISUALIZACIÓN DE COMPRESIÓN EN TIEMPO REAL
+          {t("previewTitle", "PREVISUALIZACIÓN DE COMPRESIÓN EN TIEMPO REAL")}
         </span>
         <div className="flex items-center gap-3">
-          <span className="text-gray-400 text-[10px]">Arrastra la barra para comparar</span>
+          <span className="text-gray-400 text-[10px]">{t("dragToCompare", "Arrastra la barra para comparar")}</span>
         </div>
       </div>
 
@@ -178,7 +180,7 @@ export default function SplitSlider({
             {/* Original Left */}
             <img
               src={mediaSrc}
-              alt="Original"
+              alt={t("original", "Original")}
               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
               referrerPolicy="no-referrer"
             />
@@ -186,7 +188,7 @@ export default function SplitSlider({
             {/* Optimized Right */}
             <img
               src={mediaSrc}
-              alt="Optimized"
+              alt={t("optimized", "Optimized")}
               style={{
                 clipPath: `polygon(${sliderPosition}% 0, 100% 0, 100% 100%, ${sliderPosition}% 100%)`,
                 ...getFilterStyle(),
@@ -230,8 +232,8 @@ export default function SplitSlider({
 
             {/* Left and Right Audio Mode Label */}
             <div className="absolute inset-x-8 top-6 flex justify-between font-mono text-[10px] text-gray-500">
-              <span>Original (No Lossless Cut)</span>
-              <span>Comprimido (Corte de Frecuencias)</span>
+              <span>{t("originalAudioLabel", "Original (No Lossless Cut)")}</span>
+              <span>{t("compressedAudioLabel", "Comprimido (Corte de Frecuencias)")}</span>
             </div>
           </div>
         )}
@@ -251,24 +253,24 @@ export default function SplitSlider({
         {/* Overlay Badges for Original / Compressed */}
         <div className="absolute top-4 left-4 z-20 pointer-events-none">
           <span className="px-3 py-1.5 text-[10px] font-mono font-medium rounded-lg bg-white/95 backdrop-blur-md shadow-sm border border-gray-200 text-gray-700">
-            Original: {originalSizeText}
+            {t("original", "Original")}: {originalSizeText}
           </span>
         </div>
         <div className="absolute top-4 right-4 z-20 pointer-events-none">
           <span className="px-3 py-1.5 text-[10px] font-mono font-bold rounded-lg bg-blue-50/95 backdrop-blur-md shadow-sm border border-blue-200 text-blue-700">
-            Optimizado: {compressedSizeText}
+            {t("optimized", "Optimizado")}: {compressedSizeText}
           </span>
         </div>
 
         {/* Sliding Help Labels on Canvas */}
         {mediaType !== "audio" && (
           <div className="absolute bottom-4 left-4 z-20 pointer-events-none select-none opacity-40 font-mono text-[10px] text-white bg-black/30 px-1.5 py-0.5 rounded">
-            Izquierda: ORIGINAL
+            {t("leftOriginal", "Izquierda: ORIGINAL")}
           </div>
         )}
         {mediaType !== "audio" && (
           <div className="absolute bottom-4 right-4 z-20 pointer-events-none select-none opacity-40 font-mono text-[10px] text-white bg-black/30 px-1.5 py-0.5 rounded">
-            Derecha: ENCODED
+            {t("rightEncoded", "Derecha: ENCODED")}
           </div>
         )}
       </div>
@@ -298,7 +300,7 @@ export default function SplitSlider({
 
           <div className="ml-auto flex items-center gap-2 font-mono text-xs text-gray-500">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-            <span>{isPlaying ? "Reproduciendo previsualización..." : "Listo para reproducir"}</span>
+            <span>{isPlaying ? t("playingPreview", "Reproduciendo previsualización...") : t("readyToPlay", "Listo para reproducir")}</span>
           </div>
         </div>
       )}

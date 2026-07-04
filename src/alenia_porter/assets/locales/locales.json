@@ -327,7 +327,10 @@
         "fBoxblurGauss": "Gaussian blur",
         "fNoise": "Add noise / grain",
         "fVignette": "Dark vignette on edges",
-        "fEdge": "Edge detection"
+        "fEdge": "Edge detection",
+        "keepPrivate": "Keep Private",
+        "shareAndSupport": "Share & Support",
+        "updateNow": "Update Now"
     },
     "es": {
         "title": "ALENIA PORTER",
@@ -657,7 +660,10 @@
         "fBoxblurGauss": "Desenfoque gaussiano",
         "fNoise": "Añadir ruido / grano",
         "fVignette": "Viñeta oscura en bordes",
-        "fEdge": "Deteccion de bordes"
+        "fEdge": "Deteccion de bordes",
+        "keepPrivate": "Mantener Privado",
+        "shareAndSupport": "Compartir y Apoyar",
+        "updateNow": "Actualizar Ahora"
     },
     "fr": {
         "title": "ALENIA PORTER",
@@ -987,7 +993,10 @@
         "fBoxblurGauss": "Flou gaussien",
         "fNoise": "Ajouter du bruit / grain",
         "fVignette": "Vignette sombre sur les bords",
-        "fEdge": "Détection des contours"
+        "fEdge": "Détection des contours",
+        "keepPrivate": "Garder Privé",
+        "shareAndSupport": "Partager et Soutenir",
+        "updateNow": "Mettre à jour"
     },
     "ja": {
         "title": "アレニア・ポーター",
@@ -1306,7 +1315,10 @@
         "fBoxblurGauss": "ガウスぼかし",
         "fNoise": "ノイズ/粒子を追加",
         "fVignette": "エッジに暗いビネット",
-        "fEdge": "エッジ検出"
+        "fEdge": "エッジ検出",
+        "keepPrivate": "非公開にする",
+        "shareAndSupport": "共有してサポート",
+        "updateNow": "Update"
     },
     "zh": {
         "title": "阿莱尼亚传送门",
@@ -1625,7 +1637,10 @@
         "fBoxblurGauss": "高斯模糊",
         "fNoise": "添加噪点/颗粒",
         "fVignette": "边缘暗角",
-        "fEdge": "边缘检测"
+        "fEdge": "边缘检测",
+        "keepPrivate": "保持私有",
+        "shareAndSupport": "分享与支持",
+        "updateNow": "Update"
     },
     "ru": {
         "title": "ALENIA PORTER",
@@ -1869,7 +1884,10 @@
         "nicknameEdit": "Изменить",
         "themeWhite": "Белый",
         "themeDark": "Тёмный",
-        "themeCream": "Кремовый"
+        "themeCream": "Кремовый",
+        "keepPrivate": "Оставить приватным",
+        "shareAndSupport": "Поделиться и поддержать",
+        "updateNow": "Update"
     },
     "pt-br": {
         "title": "Alenia Porter v6.4",
@@ -1995,7 +2013,8 @@
         "quality_best": "Mejor",
         "cmd_none": "Ninguno (Por defecto)",
         "example_remove_audio": "(Remover audio)",
-        "example_remove_video": "(Remover video)"
+        "example_remove_video": "(Remover video)",
+        "updateNow": "Update"
     },
     "de": {
         "title": "ALENIA PORTER",
@@ -2239,7 +2258,10 @@
         "nicknameEdit": "Bearbeiten",
         "themeWhite": "Weiß",
         "themeDark": "Dunkel",
-        "themeCream": "Creme"
+        "themeCream": "Creme",
+        "keepPrivate": "Privat halten",
+        "shareAndSupport": "Teilen & Unterstützen",
+        "updateNow": "Update"
     },
     "pt": {
         "title": "ALENIA PORTER",
@@ -2447,6 +2469,9 @@
         "nicknameEdit": "Editar",
         "themeWhite": "Branco",
         "themeDark": "Escuro",
-        "themeCream": "Creme"
+        "themeCream": "Creme",
+        "keepPrivate": "Manter Privado",
+        "shareAndSupport": "Compartilhar e Apoiar",
+        "updateNow": "Update"
     }
 }

@@ -1,10 +1,11 @@
 # Changelog
 
-## [6.5.0] - Proyecto Principal
+## [6.6.0] - Proyecto Principal
 ### Corregido
 - Resolución de bugs de FFmpeg para exportación y optimización de video.
 - Resolución de bugs de FFmpeg para la conversión de audio.
-- Corrección de la funcionalidad del botón "Actualizar ahora" en la interfaz.
+- Corrección de la funcionalidad del botón "Actualizar ahora" en la interfaz (resuelto congelamiento de UI y descarga directa de GitHub).
+- Corrección de errores de compilación en el frontend por traducciones anidadas.
 
 ## [1.7.0] - CLI
 ### Corregido
@@ -17,6 +18,6 @@
 ### Corregido
 - Mejoras generales y optimización en las rutas de código.
 
-## [1.6.0] - CLI
+## [1.5.0] - CLI
 ### Corregido
 - Mejoras generales y optimización en la interfaz por consola.

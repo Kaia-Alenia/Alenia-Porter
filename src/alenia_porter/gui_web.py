@@ -61,7 +61,7 @@ def image_to_base64(path):
             return None
 
 class Api:
-    CURRENT_VERSION = "v6.3"
+    CURRENT_VERSION = "v6.6"
 
     def __init__(self, window):
         self.window = window
@@ -306,13 +306,25 @@ class Api:
             "dl_url": dl_url
         }
 
+    def open_in_browser(self, url):
+        import webbrowser
+        try:
+            webbrowser.open(url)
+            return True
+        except:
+            return False
+
     def download_update(self, dl_url):
         def _do_update():
+            last_percent = -1
             def progress_cb(percent):
-                try:
-                    self.window.evaluate_js(f'window.updateProgress({int(percent)})')
-                except Exception:
-                    pass
+                nonlocal last_percent
+                if percent != last_percent:
+                    last_percent = percent
+                    try:
+                        self.window.evaluate_js(f'window.updateProgress({int(percent)})')
+                    except Exception:
+                        pass
 
             def ready_cb():
                 try:
