@@ -6,8 +6,8 @@ Only the latest stable release of Alenia Porter is actively supported with secur
 
 | Version | Supported |
 | ------- | --------- |
-| v6.4    | Yes       |
-| < v6.4  | No        |
+| v6.5    | Yes       |
+| < v6.5  | No        |
 
 ## Reporting a Vulnerability
 

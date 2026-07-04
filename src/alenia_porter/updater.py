@@ -98,6 +98,7 @@ def create_and_run_trampoline(update_source_dir, system):
         bat_content = f"""@echo off
 timeout /t 3 /nobreak > NUL
 taskkill /f /im AleniaPorter.exe > NUL 2>&1
+taskkill /f /im ap.exe > NUL 2>&1
 echo Updating Alenia Porter...
 if exist "{current_dir}\\assets" rmdir /s /q "{current_dir}\\assets"
 if exist "{current_dir}\\themes" rmdir /s /q "{current_dir}\\themes"
@@ -108,6 +109,9 @@ if exist "{current_dir}\\cli.py" del /f /q "{current_dir}\\cli.py"
 if exist "{current_dir}\\porter.pyd" del /f /q "{current_dir}\\porter.pyd"
 if exist "{current_dir}\\updater.pyd" del /f /q "{current_dir}\\updater.pyd"
 if exist "{current_dir}\\cli.pyd" del /f /q "{current_dir}\\cli.pyd"
+if exist "{current_dir}\\AleniaPorter.exe" del /f /q "{current_dir}\\AleniaPorter.exe"
+if exist "{current_dir}\\ap.exe" del /f /q "{current_dir}\\ap.exe"
+if exist "{current_dir}\\ap" del /f /q "{current_dir}\\ap"
 xcopy /s /e /y "{update_source_dir}\\*" "{current_dir}\\"
 rmdir /s /q "{update_source_dir}"
 cd /d "{current_dir}"
@@ -125,11 +129,13 @@ del "%~f0"
         sh_content = f"""#!/bin/bash
 sleep 3
 echo "Updating Alenia Porter..."
+kill -9 {os.getpid()} 2>/dev/null
 rm -rf "{current_dir}/assets"
 rm -rf "{current_dir}/themes"
 rm -rf "{current_dir}/bin"
 rm -f "{current_dir}/porter.py" "{current_dir}/updater.py" "{current_dir}/cli.py"
 rm -f "{current_dir}/porter.pyd" "{current_dir}/updater.pyd" "{current_dir}/cli.pyd"
+rm -f "{current_dir}/AleniaPorter" "{current_dir}/AleniaPorter.exe" "{current_dir}/ap" "{current_dir}/ap.exe"
 cp -R "{update_source_dir}/"* "{current_dir}/"
 rm -rf "{update_source_dir}"
 cd "{current_dir}"

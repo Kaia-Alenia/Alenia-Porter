@@ -1,4 +1,4 @@
-name: Build Alenia Porter v6.3
+name: Build Alenia Porter v6.5
 
 on:
   push:
@@ -8,20 +8,25 @@ on:
       - 'v*'
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-windows:
     runs-on: windows-latest
+    timeout-minutes: 60
     outputs:
       verified: ${{ steps.set-verified.outputs.verified }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.11"
 
@@ -31,7 +36,7 @@ jobs:
           pip install nuitka ordered-set zstandard pywebview pillow requests imageio
 
       - name: Set up FFmpeg
-        uses: FedericoCarboni/setup-ffmpeg@v3
+        uses: FedericoCarboni/setup-ffmpeg@36c6454b5a2348e7794ba2d82a21506605921e3d # v3
 
       - name: Copy FFmpeg binaries to package
         run: |
@@ -56,7 +61,7 @@ jobs:
           python -m nuitka --standalone --assume-yes-for-downloads --disable-ccache --windows-console-mode=disable --enable-plugin=pywebview --include-package=alenia_porter --include-module=alenia_porter.gui_web --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg.exe=alenia_porter/bin/ffmpeg.exe --include-data-files=src/alenia_porter/bin/ffprobe.exe=alenia_porter/bin/ffprobe.exe --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
           go-version: '1.25.11'
 
@@ -85,7 +90,7 @@ jobs:
           7z a AleniaPorter-Windows.zip AleniaPorter\
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: AleniaPorter-Windows
           path: AleniaPorter-Windows.zip
@@ -102,15 +107,16 @@ jobs:
 
   build-macos:
     runs-on: macos-latest
+    timeout-minutes: 60
     outputs:
       verified: ${{ steps.set-verified.outputs.verified }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.11"
 
@@ -160,7 +166,7 @@ jobs:
           mv *.app porter_launcher.dist/
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
           go-version: '1.25.11'
 
@@ -200,7 +206,7 @@ jobs:
           zip -r AleniaPorter-macOS.zip AleniaPorter
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: AleniaPorter-macOS
           path: AleniaPorter-macOS.zip
@@ -217,15 +223,16 @@ jobs:
 
   build-linux:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     outputs:
       verified: ${{ steps.set-verified.outputs.verified }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.11"
 
@@ -257,7 +264,7 @@ jobs:
           python -m nuitka --standalone --enable-plugin=pywebview --include-package=alenia_porter --include-module=alenia_porter.gui_web --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --output-filename=AleniaPorter porter_launcher.py
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
           go-version: '1.25.11'
 
@@ -287,7 +294,7 @@ jobs:
           tar -czf AleniaPorter-Linux.tar.gz AleniaPorter
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: AleniaPorter-Linux
           path: AleniaPorter-Linux.tar.gz
@@ -304,10 +311,11 @@ jobs:
 
   snyk-security:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/python@master
+        uses: snyk/actions/python@8e119fbb6c251787721d34ba683ed48eba792766 # master
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -316,15 +324,18 @@ jobs:
     needs: [build-windows, build-macos, build-linux, snyk-security]
     if: ${{ needs.build-windows.outputs.verified == 'true' && needs.build-macos.outputs.verified == 'true' && needs.build-linux.outputs.verified == 'true' && startsWith(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
 
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           path: artifacts
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
         with:
           generate_release_notes: true
           files: |

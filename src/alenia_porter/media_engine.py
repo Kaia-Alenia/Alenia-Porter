@@ -202,7 +202,7 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
                 "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-vf", "fps=15,scale=w=min(640,iw):h=-2",
+                "-vf", "fps=15,scale='min(640,iw)':-2",
                 "-c:v", "gif", "-an", "-threads", "1", output_file_path
             ]
         elif encoder in ("wmv2", "mpeg4", "mpeg2video"):
