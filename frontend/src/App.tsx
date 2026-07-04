@@ -522,8 +522,8 @@ export default function App() {
     localStorage.setItem("alenia_lang", currentLang);
   }, [currentLang]);
 
-  const t = (key: string) => {
-    return (TRANSLATIONS as any)[currentLang]?.[key] || (TRANSLATIONS as any)["en"]?.[key] || key;
+  const t = (key: string, defaultStr?: string) => {
+    return (TRANSLATIONS as any)[currentLang]?.[key] || (TRANSLATIONS as any)["en"]?.[key] || defaultStr || key;
   };
 
   // Registrar callbacks globales del updater (solo al montar)
@@ -545,13 +545,18 @@ export default function App() {
 
   // Verificar actualizaciones: primero via pywebview, fallback a fetch directo
   useEffect(() => {
-    const isPyWebView = !!(window as any).pywebview;
     const checkUpdate = async () => {
+      const isPyWebView = !!(window as any).pywebview;
       try {
         if (isPyWebView) {
+          try {
+            const v = await (window as any).pywebview.api.get_version();
+            if (v) setAppVersion(v.replace(/^v/, ""));
+          } catch(e) {}
+          
           const result = await (window as any).pywebview.api.check_update();
           if (result && result.has_update) {
-            setLatestVersion(result.new_ver || "");
+            setLatestVersion(result.new_ver ? result.new_ver.replace(/^v/, "") : "");
             setUpdateAvailable(true);
             setUpdateDownloadUrl(result.dl_url || "");
             setUpdateUrl(result.dl_url || "https://github.com/Kaia-Alenia/Alenia-Porter");
@@ -575,7 +580,18 @@ export default function App() {
         }
       } catch (_) {}
     };
-    checkUpdate();
+
+    if (window.hasOwnProperty('pywebview')) {
+      checkUpdate();
+    } else {
+      window.addEventListener('pywebviewready', checkUpdate);
+      // Fallback in case it's web and event never fires
+      const timer = setTimeout(checkUpdate, 1500);
+      return () => {
+        window.removeEventListener('pywebviewready', checkUpdate);
+        clearTimeout(timer);
+      };
+    }
   }, [appVersion]);
 
   const logsEndRef = useRef<HTMLDivElement>(null);
