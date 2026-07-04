@@ -78,13 +78,15 @@ func runSelfUpdateCmd() tea.Cmd {
 	projectRoot := resolveProjectRoot()
 	script := fmt.Sprintf(`
 set -e
-OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
-ARCH="$(uname -m)"
-if [ "$ARCH" = "x86_64" ]; then ARCH="amd64"; fi
-if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then ARCH="arm64"; fi
+OS="$(uname -s)"
+if [ "$OS" = "Linux" ]; then
+    ARCHIVE="AleniaPorter-Linux.tar.gz"
+elif [ "$OS" = "Darwin" ]; then
+    ARCHIVE="AleniaPorter-macOS.zip"
+else
+    ARCHIVE="AleniaPorter-Windows.zip"
+fi
 
-TARGET="porter-${OS}-${ARCH}"
-ARCHIVE="${TARGET}.tar.gz"
 URL="https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest/download/${ARCHIVE}"
 
 if command -v curl &> /dev/null; then
@@ -96,19 +98,41 @@ else
     exit 1
 fi
 
-tar -xzf "/tmp/${ARCHIVE}" -C "/tmp"
-rm -f "%[1]s/porter" "%[1]s/ap"
-cp -a "/tmp/${TARGET}/." "%[1]s/"
-chmod +x "%[1]s/porter"
+rm -rf "/tmp/porter_update_temp"
+mkdir -p "/tmp/porter_update_temp"
+
+if [ "$OS" = "Linux" ]; then
+    tar -xzf "/tmp/${ARCHIVE}" -C "/tmp/porter_update_temp"
+else
+    unzip -o "/tmp/${ARCHIVE}" -d "/tmp/porter_update_temp"
+fi
+
+# Buscar el directorio interno
+EXTRACTED_DIR="/tmp/porter_update_temp"
+INNER_DIR=$(ls -d /tmp/porter_update_temp/*/ 2>/dev/null | head -n 1 || true)
+if [ -n "$INNER_DIR" ]; then
+    EXTRACTED_DIR="$INNER_DIR"
+fi
+
+rm -f "%[1]s/porter" "%[1]s/ap" "%[1]s/AleniaPorter" "%[1]s/AleniaPorter.exe"
+cp -a "$EXTRACTED_DIR/." "%[1]s/"
+chmod +x "%[1]s/ap" 2>/dev/null || true
+if [ -f "%[1]s/ap" ]; then
+    cp -a "%[1]s/ap" "%[1]s/porter"
+fi
+chmod +x "%[1]s/porter" "%[1]s/AleniaPorter" 2>/dev/null || true
+
 if [ -d "$HOME/.local/share/porter" ]; then
-    cp -a "/tmp/${TARGET}/." "$HOME/.local/share/porter/"
-    chmod +x "$HOME/.local/share/porter/porter"
+    rm -f "$HOME/.local/share/porter/porter"
+    cp -a "$EXTRACTED_DIR/." "$HOME/.local/share/porter/"
+    chmod +x "$HOME/.local/share/porter/porter" "$HOME/.local/share/porter/AleniaPorter" 2>/dev/null || true
 fi
 if [ -d "$HOME/.alenia-porter" ]; then
-    cp -a "/tmp/${TARGET}/." "$HOME/.alenia-porter/"
-    chmod +x "$HOME/.alenia-porter/porter"
+    rm -f "$HOME/.alenia-porter/porter"
+    cp -a "$EXTRACTED_DIR/." "$HOME/.alenia-porter/"
+    chmod +x "$HOME/.alenia-porter/porter" "$HOME/.alenia-porter/AleniaPorter" 2>/dev/null || true
 fi
-rm -rf "/tmp/${ARCHIVE}" "/tmp/${TARGET}"
+rm -rf "/tmp/${ARCHIVE}" "/tmp/porter_update_temp"
 echo "¡Alenia Porter actualizado desde GitHub! Por favor, sal (/exit) y reinicia."
 `, projectRoot)
 

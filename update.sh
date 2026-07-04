@@ -20,9 +20,16 @@ echo "Actualizando código..."
 git pull origin main || echo "No se pudo hacer git pull, pero se intentará compilar."
 
 echo "Compilando nueva versión..."
-go build -o "$HOME/.local/share/porter/porter" ./cmd/ap || go build -o porter ./cmd/ap
-if [ -d "$HOME/.alenia-porter" ]; then
-    cp -a "$HOME/.local/share/porter/porter" "$HOME/.alenia-porter/porter" || cp -a porter "$HOME/.alenia-porter/porter"
+go build -o /tmp/porter_new ./cmd/ap
+if [ -d "$HOME/.local/share/porter" ]; then
+    rm -f "$HOME/.local/share/porter/porter"
+    cp -a /tmp/porter_new "$HOME/.local/share/porter/porter"
 fi
+if [ -d "$HOME/.alenia-porter" ]; then
+    rm -f "$HOME/.alenia-porter/porter"
+    cp -a /tmp/porter_new "$HOME/.alenia-porter/porter"
+fi
+cp -a /tmp/porter_new ./porter
+rm -f /tmp/porter_new
 
 echo "¡Actualización completa! Por favor, sal (/exit) y reinicia Porter."

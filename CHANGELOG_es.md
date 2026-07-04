@@ -1,10 +1,11 @@
 # Changelog
 
 ## [6.6.0] - Proyecto Principal
-### Corregido
-- Resolución de bugs de FFmpeg para exportación y optimización de video.
-- Resolución de bugs de FFmpeg para la conversión de audio.
-- Corrección de la funcionalidad del botón "Actualizar ahora" en la interfaz (resuelto congelamiento de UI y descarga directa de GitHub).
+- Se corrigió el script de actualización automática (`update.sh`) en Linux para evitar errores de "archivo ocupado" al reemplazar el binario.
+- Se mejoró la lógica de auto-actualización en el CLI `ap` para extraer correctamente `.tar.gz` y `.zip`.
+- Se corrigió el flujo del botón de actualización en la interfaz web para descargar correctamente el binario.
+- Se agregaron comandos de instalación con PowerShell para usuarios de Windows en `docs/index.html`.
+- Se agregó un nuevo script escáner avanzado para i18n (`tools/i18n_check.py`).
 - Corrección de errores de compilación en el frontend por traducciones anidadas.
 
 ## [1.7.0] - CLI

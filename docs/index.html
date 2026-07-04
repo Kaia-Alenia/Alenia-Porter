@@ -659,10 +659,16 @@
                 <div class="cli-container">
                     <div class="cli-caption" data-i18n="cliCaption">Instalación en una sola línea, multiplataforma:</div>
                     <div class="cli-header">
-                        <span class="cli-title">Alenia Porter CLI</span>
-                        <button id="copy-btn" class="copy-btn" onclick="copyCliCommand()" data-i18n="copyBtn">Copiar</button>
+                        <span class="cli-title">Alenia Porter CLI (Linux / macOS)</span>
+                        <button id="copy-btn-unix" class="copy-btn" onclick="copyCliCommand('cli-code-unix', 'copy-btn-unix')" data-i18n="copyBtn">Copiar</button>
                     </div>
-                    <pre class="cli-command"><code id="cli-code">curl -sSfL https://raw.githubusercontent.com/Kaia-Alenia/Alenia-Porter/main/install.sh | bash</code></pre>
+                    <pre class="cli-command" style="margin-bottom:1rem;"><code id="cli-code-unix">curl -sSfL https://raw.githubusercontent.com/Kaia-Alenia/Alenia-Porter/main/install.sh | bash</code></pre>
+
+                    <div class="cli-header">
+                        <span class="cli-title">Alenia Porter CLI (Windows PowerShell)</span>
+                        <button id="copy-btn-win" class="copy-btn" onclick="copyCliCommand('cli-code-win', 'copy-btn-win')" data-i18n="copyBtn">Copiar</button>
+                    </div>
+                    <pre class="cli-command"><code id="cli-code-win">iwr https://raw.githubusercontent.com/Kaia-Alenia/Alenia-Porter/main/install.ps1 -useb | iex</code></pre>
                 </div>
             </div>
         </div>
@@ -969,9 +975,9 @@
             applyTranslations();
         }
 
-        function copyCliCommand() {
-            const text = document.getElementById("cli-code").innerText;
-            const btn = document.getElementById("copy-btn");
+        function copyCliCommand(codeId = "cli-code-unix", btnId = "copy-btn-unix") {
+            const text = document.getElementById(codeId).innerText;
+            const btn = document.getElementById(btnId);
             
             const showCopied = () => {
                 btn.textContent = currentLang === "es" ? "Copiado" : "Copied";
