@@ -876,6 +876,11 @@ var translations = map[string]map[string]string{
 var currentLang = initLanguage()
 
 func initLanguage() string {
+	if cfgLang := getLanguage(); cfgLang != "" {
+		if _, ok := translations[cfgLang]; ok {
+			return cfgLang
+		}
+	}
 	for _, raw := range []string{os.Getenv("LC_ALL"), os.Getenv("LC_MESSAGES"), os.Getenv("LANG")} {
 		if code := normalizeLanguageCode(raw); code != "" {
 			if _, ok := translations[code]; ok {
@@ -910,6 +915,7 @@ func applyLanguage(code string) bool {
 	}
 	if _, ok := translations[code]; ok {
 		currentLang = code
+		setLanguage(code)
 		return true
 	}
 	return false
