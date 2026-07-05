@@ -258,7 +258,7 @@ def send_crash_report(error_code, message, stack_trace):
         payload = {
             "uuid": get_local_uuid(),
             "nickname": get_local_nickname(),
-            "app_version": "v6.3",
+            "app_version": "v6.8",
             "error_code": error_code,
             "message": message,
             "stack_trace": stack_trace,
