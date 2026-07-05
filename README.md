@@ -18,7 +18,6 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Coding time (all-time)](https://devglobe.app/api/badge/Kaia-Alenia/coding-time-all.svg?theme=dark)](https://devglobe.app/developers/Kaia-Alenia)
 [![GitGem](https://gitgem.org/api/badge/github/Kaia-Alenia/Alenia-Porter.svg)](https://gitgem.org/github/Kaia-Alenia/Alenia-Porter)
-
 </div>
 
 ---

@@ -9,9 +9,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// ═══════════════════════════════════════════════════════════════════════════
 // LOGO ASCII  —
-// ═══════════════════════════════════════════════════════════════════════════
 
 const logoText = ` █████╗ ██╗     ███████╗███╗  ██╗██╗ █████╗
 ██╔══██╗██║     ██╔════╝████╗ ██║██║██╔══██╗
@@ -48,9 +46,7 @@ func renderLogoGradient(art string) string {
 	return strings.TrimRight(sb.String(), "\n")
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
 // HEADER —
-// ═══════════════════════════════════════════════════════════════════════════
 
 func renderHeader(width int) string {
 	var logoStr string
@@ -75,9 +71,7 @@ func renderHeader(width int) string {
 	return "\n" + logoStr + "\n" + metaLine + "\n" + sep + "\n"
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
 // FOOTER / STATUS BAR
-// ═══════════════════════════════════════════════════════════════════════════
 
 func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
 	// Lado izquierdo: shortcuts
@@ -88,7 +82,7 @@ func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
 		styleFooterKey.Render("↑↓") +
 		styleSecondary.Render(T("footer_hist"))
 
-	// Lado derecho: idioma y estado
+	// Right side: language and status
 	nick := getNickname()
 	var right string
 	if isProcessing {
@@ -111,9 +105,7 @@ func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
 	return sep + "\n" + styleMuted.Render(line)
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
 // COMMAND PALETTE
-// ═══════════════════════════════════════════════════════════════════════════
 
 type cmdSuggestion struct {
 	cmd  string
@@ -228,9 +220,7 @@ func renderSuggestions(sugs []cmdSuggestion, activeIdx int, width int) string {
 		Render(strings.Join(rows, "\n"))
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
 // SPINNER
-// ═══════════════════════════════════════════════════════════════════════════
 
 var spinnerFrames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
 
@@ -242,9 +232,7 @@ func tickCmd() tea.Cmd {
 	})
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
 // HELPER
-// ═══════════════════════════════════════════════════════════════════════════
 
 func max(a, b int) int {
 	if a > b {

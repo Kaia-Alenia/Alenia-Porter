@@ -549,7 +549,7 @@ export default function App() {
   const [latestVersion, setLatestVersion] = useState("");
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [updateUrl, setUpdateUrl] = useState("https://github.com/Kaia-Alenia/Alenia-Porter");
-  const [updateDownloadUrl, setUpdateDownloadUrl] = useState(""); // URL directa del binario
+  const [updateDownloadUrl, setUpdateDownloadUrl] = useState(""); // Direct binary URL
   const [showVersionModal, setShowVersionModal] = useState(false);
   const [isUpdatingVersion, setIsUpdatingVersion] = useState(false);
   const [updateProgress, setUpdateProgress] = useState(0);
@@ -571,7 +571,7 @@ export default function App() {
     return (TRANSLATIONS as any)[currentLang]?.[key] || (TRANSLATIONS as any)["en"]?.[key] || defaultStr || key;
   };
 
-  // Registrar callbacks globales del updater (solo al montar)
+  // Register global updater callbacks (on mount only)
   useEffect(() => {
     (window as any).updateReadyToRestart = () => {
       setUpdateProgress(100);
@@ -588,7 +588,7 @@ export default function App() {
     };
   }, []);
 
-  // Verificar actualizaciones: primero via pywebview, fallback a fetch directo
+  // Check for updates: first via pywebview, fallback to direct fetch
   useEffect(() => {
     const checkUpdate = async () => {
       const isPyWebView = !!(window as any).pywebview;
@@ -610,7 +610,7 @@ export default function App() {
         }
       } catch (_) {}
 
-      // Fallback: fetch directo para modo dev/web
+      // Fallback: direct fetch for dev/web mode
       try {
         const response = await fetch("https://api.github.com/repos/Kaia-Alenia/Alenia-Porter/releases/latest");
         if (response.ok) {
@@ -800,8 +800,7 @@ export default function App() {
     };
   }, []);
 
-  // ─── Drag & Drop ───────────────────────────────────────────────────────────
-  const dragCounterRef = React.useRef(0);
+    const dragCounterRef = React.useRef(0);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -903,7 +902,7 @@ export default function App() {
         addLog(t("error") + `: ${err}`, "error");
       }
     } else {
-      // ── Navegador web estándar: usar webkitGetAsEntry para soporte de carpetas ──
+      // Standard web browser: use webkitGetAsEntry for folder support
       const videoExts = ["mp4", "webm", "avi", "mkv", "mov", "3gp", "flv", "mpeg", "m4v", "wmv", "ts", "m2ts", "divx", "ogv"];
       const audioExts = ["ogg", "opus", "mp3", "wav", "flac", "aac", "amr", "wma", "m4a", "alac", "aiff", "aif", "ra", "rm"];
       const imageExts = ["webp", "jpg", "jpeg", "png", "gif", "bmp", "ico", "tiff", "tga", "pdf", "avif", "apng"];
@@ -1194,7 +1193,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
     }
 
     addLog(t("batchPaused", "Procesamiento pausado"), "info");
-    setCheckpointIndex(currentQueueIndex); // Guardamos donde se pausó
+    setCheckpointIndex(currentQueueIndex); // Save pause position
     
     setFilesQueue(prev => {
       const updated = [...prev];
@@ -2553,7 +2552,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                           type="button"
                           onClick={async () => {
                             const isPyWebView = !!(window as any).pywebview;
-                            let dlUrl = updateDownloadUrl; // URL directa del binario
+                            let dlUrl = updateDownloadUrl; // Direct binary URL
                             
                             if (isPyWebView && !dlUrl) {
                               try {
@@ -2566,7 +2565,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                             }
 
                             if (isPyWebView && dlUrl) {
-                              // Actualización real via backend Python
+                              // Actual update via Python backend
                               setIsUpdatingVersion(true);
                               setUpdateProgress(0);
                               (window as any).updateProgress = (p: number) => {

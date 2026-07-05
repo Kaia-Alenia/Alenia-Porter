@@ -165,7 +165,7 @@ func NewDirForm() *huh.Form {
 }
 
 // NewFormatsForm — Fase 2: selección de formatos uno por uno
-// Solo incluye grupos para los tipos de archivo que existen en el dir
+// Only include groups for file types that exist in the dir
 func NewFormatsForm(hasVideo, hasAudio, hasImage bool) *huh.Form {
 	var groups []*huh.Group
 

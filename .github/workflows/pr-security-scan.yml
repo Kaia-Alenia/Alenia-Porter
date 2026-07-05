@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write # Requerido para que reviewdog pueda comentar en el PR
+      pull-requests: write # Required for reviewdog to comment on the PR
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -20,6 +20,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           level: warning
-          reporter: github-pr-review # Publica comentarios de revisión directamente en el PR
+          reporter: github-pr-review # Publishes review comments directly on the PR
           trivy_command: fs
           trivy_target: '.'
