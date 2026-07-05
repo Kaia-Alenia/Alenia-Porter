@@ -352,11 +352,17 @@ Alenia Porter incluye un sistema de telemetría ligero, **totalmente anónimo** 
 <div align="center">
 
 **Licencia:** GNU General Public License v3 (GPL v3).
+
+**Licencia para Assets y Música:** Standard Licensing: Alenia Studios Standard (CC BY 4.0 + Additional Terms).
+- **Atribución (Attribution)**: Requerida a Alenia Studios.
+- **No Reventa (No Resale)**: Se prohíbe la redistribución o reventa independiente.
+- **No IA (No AI)**: Se prohíbe su uso para entrenamiento de IA o creación de datasets.
+- **Uso Comercial (Commercial Use)**: Permitido para juegos, videos y proyectos.
 *Diseñado para ser libre, transparente y accesible para toda la comunidad de desarrolladores y creadores.*
 
 **Correo Oficial de Alenia Studios:** contact.aleniastudios@gmail.com
 
 **Desarrollado y traducido por Kaia-Alenia Studios**
-US &nbsp; ES &nbsp; FR &nbsp; JP &nbsp; CN &nbsp; RU &nbsp; BR &nbsp; DE
+🇺🇸 US &nbsp; 🇪🇸 ES &nbsp; 🇫🇷 FR &nbsp; 🇯🇵 JP &nbsp; 🇨🇳 CN &nbsp; 🇷🇺 RU &nbsp; 🇧🇷 BR &nbsp; 🇩🇪 DE
 
 </div>

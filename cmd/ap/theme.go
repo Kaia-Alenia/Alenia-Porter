@@ -2,7 +2,6 @@ package main
 
 import "github.com/charmbracelet/lipgloss"
 
-// ─── Paleta base (inspirada en Gemini dark theme) ──────────────────────────
 const (
 	colorAccentBlue   = lipgloss.Color("#4285F4")
 	colorAccentCyan   = lipgloss.Color("#00BCD4")
@@ -20,7 +19,6 @@ const (
 	colorSurface    = lipgloss.Color("#1E1E1E")
 )
 
-// ─── Estilos semánticos ─────────────────────────────────────────────────────
 var (
 	stylePromptIcon = lipgloss.NewStyle().
 			Foreground(colorAccentBlue).
@@ -53,7 +51,6 @@ var (
 	styleBorder = lipgloss.NewStyle().
 			Foreground(colorBorder)
 
-	// Header ─────────────────────────────────────────────────────────────────
 	styleHeaderLogo = lipgloss.NewStyle().
 			Bold(true).
 			Foreground(colorAccentBlue)
@@ -64,7 +61,6 @@ var (
 	styleHeaderHint = lipgloss.NewStyle().
 			Foreground(colorMuted)
 
-	// Footer / status bar ─────────────────────────────────────────────────────
 	styleFooter = lipgloss.NewStyle().
 			Foreground(colorMuted).
 			BorderTop(true).
@@ -81,7 +77,6 @@ var (
 	styleFooterLang = lipgloss.NewStyle().
 			Foreground(colorAccentBlue)
 
-	// Input area ──────────────────────────────────────────────────────────────
 	styleInputBox = lipgloss.NewStyle().
 			BorderStyle(lipgloss.RoundedBorder()).
 			BorderForeground(colorBorder).
@@ -92,7 +87,6 @@ var (
 				BorderForeground(colorAccentBlue).
 				Padding(0, 1)
 
-	// Command palette ─────────────────────────────────────────────────────────
 	stylePaletteBox = lipgloss.NewStyle().
 			BorderStyle(lipgloss.RoundedBorder()).
 			BorderForeground(colorBorder).
@@ -115,14 +109,12 @@ var (
 				Foreground(colorAccentBlue).
 				Bold(true)
 
-	// Mensajes en el chat ─────────────────────────────────────────────────────
 	styleProgressLabel = lipgloss.NewStyle().
 				Foreground(colorMuted)
 
 	styleSummaryKey = lipgloss.NewStyle().
 			Foreground(colorSecondary)
 
-	// ANSI para paths de código sin lipgloss (compatibilidad con engine Python)
 	Reset   = "\033[0m"
 	Bold    = "\033[1m"
 	Accent  = "\033[38;5;111m"
@@ -132,8 +124,6 @@ var (
 	Muted   = "\033[38;5;244m"
 )
 
-// gradientRune retorna el color del gradiente azul→cian para el logo ASCII
-// posición va de 0.0 a 1.0
 func gradientColor(t float64) lipgloss.Color {
 	if t < 0.5 {
 		return colorAccentBlue

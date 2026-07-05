@@ -658,13 +658,11 @@ func (m *mainModel) recalcLayout() {
 		content += "\n\n" + progressLine
 	}
 
-	// Wrap text appropriately for the current width
 	wrappedContent := lipgloss.NewStyle().Width(m.width - 2).Render(content)
 	m.viewport.SetContent(wrappedContent)
 	m.viewport.GotoBottom()
 }
 
-// VIEW  (layout: header | viewport | palette? | input | footer)
 
 func (m mainModel) View() string {
 	// ─── Flujos modales (huh) toman pantalla completa ────────────────────────
@@ -674,21 +672,17 @@ func (m mainModel) View() string {
 
 	var sb strings.Builder
 
-	// ── Zona 1: Header ───────────────────────────────────────────────────────
 	sb.WriteString(renderHeader(m.width))
 
-	// ── Zona 2: Historial scrollable ─────────────────────────────────────────
 	sb.WriteString(m.viewport.View())
 	sb.WriteString("\n")
 
-	// ── Zona 3a: Command palette (flotante sobre el input, igual que Gemini) ─
 	if m.showPalette && len(m.filteredCmds) > 0 {
 		palette := renderSuggestions(m.filteredCmds, m.paletteIdx, m.width)
 		sb.WriteString(palette)
 		sb.WriteString("\n")
 	}
 
-	// ── Zona 3b: Input box con borde redondeado ───────────────────────────────
 	inputContent := m.textInput.View()
 	var inputBox string
 	if m.focus == InputFocus {
@@ -699,14 +693,10 @@ func (m mainModel) View() string {
 	sb.WriteString(inputBox)
 	sb.WriteString("\n")
 
-	// ── Zona 4: Footer / status bar ──────────────────────────────────────────
-	// Remove spinner from footer if it's processing to avoid duplicate, or just keep it simple.
-	// Since the user wanted it inline, we'll keep the footer clean.
 	var spinner string
 	if !m.processing {
 		spinner = ""
 	} else {
-		// Just a static space or something if needed, or we can leave it empty
 		spinner = " "
 	}
 	sb.WriteString(renderFooter(m.width, m.processing, spinner))
@@ -714,7 +704,6 @@ func (m mainModel) View() string {
 	return sb.String()
 }
 
-// MAIN
 
 func main() {
 	var newArgs []string
