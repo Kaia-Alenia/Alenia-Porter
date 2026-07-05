@@ -35,7 +35,7 @@
 - Ensured the "Update Now" button triggers an in-app download instead of opening a web browser when used within the app.
 - Created a new intelligent `smart_i18n.py` tool in the `tools/` directory to automatically parse and internationalize JSX text and attributes without breaking code.
 
-## [1.7.0] - CLI
+## [1.8.0] - CLI
 ### Fixed
 - General bug fixes and stability improvements.
 - Minor fixes in FFmpeg handling.

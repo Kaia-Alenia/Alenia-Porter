@@ -1,6 +1,6 @@
 <div align="center">
 
-# Alenia Porter v6.7
+# Alenia Porter v6.8
 
 *Optimizador multimedia universal de alto rendimiento — imágenes, video y audio en una sola herramienta.*
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## [6.7.0] - Proyecto Principal
+## [6.8.0] - Proyecto Principal
 ### Corregido
 - **Crítico: crash de encoders de GPU (código de retorno 255 de FFmpeg)** — Los encoders de hardware (`h264_nvenc`, `h264_qsv`, `h264_amf`, `vp9_nvenc`, `vp9_qsv`) ahora se verifican con un frame de prueba real antes de ser seleccionados. En sistemas sin GPU NVIDIA/CUDA compatible, el motor cae correctamente a encoders de software (`libx264`, `libvpx-vp9`) en lugar de fallar con crash.
 - **Conversión de video a GIF rota** — El reintento en modo seguro (activado tras un fallo de FFmpeg) insertaba incorrectamente `-hwaccel none` antes del pipeline `filter_complex` de paleta del GIF, haciendo que el reintento también fallara. El encoder GIF ahora está excluido de la inyección del flag de aceleración por hardware.
@@ -23,7 +23,7 @@
 - Se agregó un nuevo script escáner avanzado para i18n (`tools/i18n_check.py`).
 - Corrección de errores de compilación en el frontend por traducciones anidadas.
 
-## [1.7.0] - CLI
+## [1.8.0] - CLI
 ### Corregido
 - Resolución de bugs generales y mejoras de estabilidad.
 - Correcciones menores en el manejo de FFmpeg.
