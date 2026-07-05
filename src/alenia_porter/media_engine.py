@@ -362,7 +362,7 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
             
         ffmpeg_command.append(output_file_path)
 
-    if safe_mode and media_type != "audio":
+    if safe_mode and media_type != "audio" and not (media_type == "video" and target_video_format == "gif"):
         ffmpeg_command.insert(1, "-hwaccel")
         ffmpeg_command.insert(2, "none")
 

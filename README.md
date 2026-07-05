@@ -1,6 +1,6 @@
 <div align="center">
 
-# Alenia Porter v6.6
+# Alenia Porter v6.7
 
 *High-performance universal media optimizer — images, video and audio in one tool.*
 
@@ -123,11 +123,18 @@ The CLI is a self-contained **native Go binary** — no Python, no Node, no runt
 
 Once installed, type `porter` in any terminal to open the interactive TUI.
 
-**Non-interactive mode** (skips the TUI entirely, useful for scripts and CI):
+### How the CLI Works
 
-```
-porter version
-porter optimize <directory> --vformat mp4 --aformat mp3 --iformat webp
+The CLI binary (`porter` / `porter.exe`) operates in two distinct modes:
+
+#### 1. Interactive TUI Mode (default)
+
+Running `porter` with no arguments launches the **Bubble Tea TUI** — a fully interactive terminal interface with a command palette, live progress bars, and a scrollable log panel.
+
+The TUI internally spawns the Python media engine as a subprocess when a conversion is triggered, streaming real-time progress lines via stdout. This keeps the Go binary at zero runtime dependencies while delegating all FFmpeg orchestration to the Python engine.
+
+```bash
+porter          # Launch full TUI
 ```
 
 **Inside the TUI**, commands use a `/` prefix. Type `/` to see autocomplete suggestions:
@@ -145,6 +152,79 @@ porter optimize <directory> --vformat mp4 --aformat mp3 --iformat webp
 | `/update` | Run the project update script |
 | `/self-update` | Pull latest source and rebuild the binary |
 | `/exit` | Exit the TUI |
+
+#### 2. Non-Interactive (Direct) Mode
+
+Pass `optimize` as the first argument to skip the TUI entirely and run a batch conversion directly from the shell. This is the recommended mode for scripts, CI/CD pipelines, and automation.
+
+```bash
+porter optimize <path> [flags]
+```
+
+**Available flags:**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--vformat <ext>` | `mp4` | Target video format (`mp4`, `mkv`, `webm`, `gif`, `avi`, `mov`, …) |
+| `--aformat <ext>` | `mp3` | Target audio format (`mp3`, `ogg`, `opus`, `flac`, `wav`, `aac`, …) |
+| `--iformat <ext>` | `webp` | Target image format (`webp`, `jpg`, `png`, `bmp`, `tiff`, `ico`, …) |
+| `--vextra <args>` | _(empty)_ | Extra FFmpeg arguments appended before the output for video files |
+| `--aextra <args>` | _(empty)_ | Extra FFmpeg arguments appended before the output for audio files |
+| `--iextra <args>` | _(empty)_ | Extra FFmpeg arguments appended before the output for image files |
+| `--lang <code>` | _(saved config)_ | Override UI language for this run (`en`, `es`, `fr`, …) |
+
+**Usage examples:**
+
+```bash
+# Convert all media in /assets to MP4, MP3, WebP (defaults)
+porter optimize /assets
+
+# Convert videos to MKV, audio to FLAC, images to PNG
+porter optimize /game/assets --vformat mkv --aformat flac --iformat png
+
+# Convert videos to animated GIF (max 640px wide, 15fps, palette-optimized)
+porter optimize /assets/cutscenes --vformat gif
+
+# Apply a custom CRF value with --vextra
+porter optimize /project/video --vformat mp4 --vextra "-crf 17"
+
+# Use in a GitHub Actions workflow
+porter optimize ./assets/raw --vformat webm --aformat opus --iformat webp
+```
+
+**Other non-TUI commands:**
+
+```bash
+porter version      # Print version and exit
+porter --version
+porter -v
+
+porter help         # Show usage and available flags
+porter --help
+porter -h
+```
+
+#### Internal Architecture
+
+```
+porter (Go binary)
+ ├── TUI mode  →  Bubble Tea UI  →  startEngineCmd()
+ │                                       └── spawns: python3 -m alenia_porter.headless
+ │                                                         ├── argparse (--vformat, --aformat, etc.)
+ │                                                         └── media_engine.convert_media()
+ │                                                               ├── ThreadPoolExecutor (CPU-1 workers)
+ │                                                               ├── FFmpeg subprocess per file
+ │                                                               └── stdout: PROGRESS:n/total | DONE:n:path
+ └── Direct mode  →  runDirectOptimize()
+                          └── getEngineCmd()  →  same Python engine subprocess
+```
+
+The engine prints structured lines to stdout that the Go binary parses:
+- `PROGRESS:n/total` — incremental progress (one line per file processed)
+- `DONE:n:output_path` — conversion complete with output path
+- `ERROR:message` — fatal engine error
+
+**GPU Acceleration** is handled transparently by the Python engine: at the start of each session it validates hardware encoders (`h264_nvenc`, `h264_qsv`, `h264_amf`) by running a real test frame through them, and automatically falls back to `libx264` / `libvpx-vp9` on systems without a compatible GPU or CUDA drivers.
 
 
 ---
@@ -323,10 +403,11 @@ All formats below are **automatically detected** by scanning source directories 
 ## How It Works
 
 1. **Efficient Scanning** — Recursively scans directories by extension, separating audio, video, and image files.
-2. **Concurrent Processing** — Uses `ThreadPoolExecutor` with `(CPU count - 1)` workers. Each FFmpeg subprocess is forced to use a single thread to avoid contention on low-end hardware.
+2. **Concurrent Processing** — Uses `ThreadPoolExecutor` with `(CPU count - 1)` workers. Each FFmpeg subprocess is forced to use a single thread (`-threads 1`) to avoid contention on low-end hardware.
 3. **Smart Deduplication** — A SHA-256 cache (`.alenia_cache.json`) skips already-converted files on subsequent runs.
-4. **GPU Auto-detection** — Queries FFmpeg's encoder list at runtime and selects NVIDIA NVENC, Intel QSV, or AMD AMF when available, falling back to software encoders.
-5. **Crash Resilience** — On FFmpeg failure, automatically retries in safe mode (software-only). Generates timestamped crash dumps for diagnostics.
+4. **GPU Auto-detection** — At runtime, queries FFmpeg's encoder list and validates hardware encoders with a real test frame. Selects NVIDIA NVENC, Intel QSV, or AMD AMF when they actually work, falling back to software encoders (`libx264`, `libvpx-vp9`) automatically.
+5. **Crash Resilience** — On FFmpeg failure, automatically retries in safe mode (software-only, no hardware acceleration). Generates timestamped crash dumps to `~/.config/AleniaStudios/AleniaPorter/` for diagnostics.
+6. **Structured IPC** — The Go CLI binary spawns the Python engine as a subprocess and communicates via structured stdout lines (`PROGRESS:n/total`, `DONE:n:path`, `ERROR:message`), keeping the binary self-contained with zero Python runtime dependency.
 
 ---
 
