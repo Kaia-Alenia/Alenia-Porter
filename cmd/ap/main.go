@@ -13,14 +13,12 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-
 type focusState int
 
 const (
 	InputFocus focusState = iota
 	PaletteFocus
 )
-
 
 type optFlowState int
 
@@ -33,33 +31,33 @@ const (
 )
 
 type mainModel struct {
-		width  int
+	width  int
 	height int
 
-		viewport viewport.Model
+	viewport viewport.Model
 	messages []string
 
-		textInput textinput.Model
+	textInput textinput.Model
 	focus     focusState
 
-		allCmds      []cmdSuggestion
+	allCmds      []cmdSuggestion
 	filteredCmds []cmdSuggestion
 	paletteIdx   int
 	showPalette  bool
 
-		langModel tea.Model
+	langModel tea.Model
 
-		engineCmd       *exec.Cmd
+	engineCmd       *exec.Cmd
 	scanner         *bufio.Scanner
 	processing      bool
 	currentProgress string
 
-		spinnerIdx int
+	spinnerIdx int
 
-		inputHistory []string
+	inputHistory []string
 	historyIdx   int
 
-		optState    optFlowState
+	optState    optFlowState
 	optDir      string
 	optVideo    string
 	optVExtra   string
@@ -96,7 +94,7 @@ func initialModel() mainModel {
 		historyIdx:   -1,
 	}
 
-		if isFirstRun() {
+	if isFirstRun() {
 		m = m.appendMessage(styleInfo.Render("  " + T("welcome_title")))
 		m = m.appendMessage(styleMuted.Render("  " + T("welcome_telemetry")))
 		m = m.appendMessage(styleMuted.Render("  " + T("welcome_me_hint")))
@@ -106,7 +104,6 @@ func initialModel() mainModel {
 	}
 	return m
 }
-
 
 func (m mainModel) appendMessage(msg string) mainModel {
 	m.messages = append(m.messages, msg)
@@ -148,7 +145,6 @@ func (m mainModel) echoInput(line string) mainModel {
 	echo := "\n" + stylePromptIcon.Render("❯") + " " + styleUserInput.Render(line)
 	return m.appendMessage(echo)
 }
-
 
 func (m *mainModel) updatePalette() {
 	val := m.textInput.Value()
@@ -193,11 +189,9 @@ func (m *mainModel) updatePalette() {
 	}
 }
 
-
 func (m mainModel) Init() tea.Cmd {
 	return tea.Batch(textinput.Blink, tickCmd())
 }
-
 
 func (m mainModel) executeCommand(line string) (tea.Model, tea.Cmd) {
 	line = strings.TrimSpace(line)
@@ -205,7 +199,7 @@ func (m mainModel) executeCommand(line string) (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
-		m.inputHistory = append(m.inputHistory, line)
+	m.inputHistory = append(m.inputHistory, line)
 	m.historyIdx = -1
 
 	m = m.echoInput(line)
@@ -284,7 +278,6 @@ func (m mainModel) executeCommand(line string) (tea.Model, tea.Cmd) {
 		return m, failCmd("%s '%s'", T("unknown_cmd"), cmd)
 	}
 }
-
 
 func (m mainModel) handleOptInput(line string) (tea.Model, tea.Cmd) {
 	line = strings.TrimSpace(line)
@@ -430,13 +423,12 @@ func (m mainModel) advanceOptState() (mainModel, tea.Cmd) {
 	return m, nil
 }
 
-
 func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {
 
-		case tea.WindowSizeMsg:
+	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
 		m.textInput.Width = msg.Width - 6
@@ -446,14 +438,14 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 
-		case tickMsg:
+	case tickMsg:
 		m.spinnerIdx = (m.spinnerIdx + 1) % len(spinnerFrames)
 		if m.currentProgress != "" {
 			m.recalcLayout()
 		}
 		return m, tickCmd()
 
-		case logMsg:
+	case logMsg:
 		m = m.appendMessage(string(msg))
 		return m, nil
 
@@ -481,7 +473,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.recalcLayout()
 		return m, nil
 
-		case engineProgressMsg:
+	case engineProgressMsg:
 		if msg.done {
 			m.processing = false
 			if m.engineCmd != nil {
@@ -523,7 +515,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, readNextEngineLine(m.scanner)
 	}
 
-		if m.langModel != nil {
+	if m.langModel != nil {
 		lang, cmd := m.langModel.Update(msg)
 		if lang == nil {
 			m.langModel = nil
@@ -537,7 +529,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 
-		switch msg := msg.(type) {
+	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.Type {
 
@@ -560,7 +552,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				return m, nil
 			}
-						if len(m.inputHistory) > 0 {
+			if len(m.inputHistory) > 0 {
 				if m.historyIdx < len(m.inputHistory)-1 {
 					m.historyIdx++
 				}
@@ -577,7 +569,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				return m, nil
 			}
-						if m.historyIdx > 0 {
+			if m.historyIdx > 0 {
 				m.historyIdx--
 				idx := len(m.inputHistory) - 1 - m.historyIdx
 				m.textInput.SetValue(m.inputHistory[idx])
@@ -626,20 +618,19 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-		var cmd tea.Cmd
+	var cmd tea.Cmd
 	m.viewport, cmd = m.viewport.Update(msg)
 	cmds = append(cmds, cmd)
 
 	return m, tea.Batch(cmds...)
 }
 
-
 func (m *mainModel) recalcLayout() {
 	if m.width == 0 {
 		return
 	}
 
-		headerStr := renderHeader(m.width)
+	headerStr := renderHeader(m.width)
 	headerH := lipgloss.Height(headerStr)
 	if headerH < 1 {
 		headerH = 5
