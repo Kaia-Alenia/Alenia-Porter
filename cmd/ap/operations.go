@@ -64,7 +64,7 @@ func runUpdateCmd() tea.Cmd {
 	projectRoot := resolveProjectRoot()
 	updateScript := filepath.Join(projectRoot, "update.sh")
 	if _, err := os.Stat(updateScript); err != nil {
-		return warnCmd(T("no_update_script"), projectRoot)
+		return runSelfUpdateCmd()
 	}
 	return func() tea.Msg {
 		cmdUpdate := exec.Command("bash", updateScript)
