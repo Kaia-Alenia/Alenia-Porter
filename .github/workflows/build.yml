@@ -1,4 +1,4 @@
-name: Build Alenia Porter v6.6
+name: Build Alenia Porter v6.7
 
 on:
   push:

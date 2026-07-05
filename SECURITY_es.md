@@ -6,7 +6,7 @@ Solo la última versión estable de Alenia Porter cuenta con soporte activo y ac
 
 | Versión | Soportada |
 | ------- | --------- |
-| v6.6    | Sí        |
+| v6.7    | Sí        |
 | < v6.5  | No        |
 
 ## Reportar una Vulnerabilidad
