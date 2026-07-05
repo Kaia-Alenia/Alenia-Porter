@@ -59,18 +59,33 @@ def save_cache(output_dir, cache_dict):
             json.dump(cache_dict, f, indent=2)
     except: pass
 
+def _test_encoder(ffmpeg_executable_path, encoder):
+    try:
+        test_cmd = [
+            ffmpeg_executable_path, "-y",
+            "-f", "lavfi", "-i", "color=c=black:s=16x16:d=0.1:r=1",
+            "-frames:v", "1",
+            "-c:v", encoder,
+            "-f", "null", "-"
+        ]
+        result = subprocess.run(test_cmd, capture_output=True, timeout=10)
+        return result.returncode == 0
+    except Exception:
+        return False
+
 def get_best_video_encoder(ffmpeg_executable_path, target_codec):
     try:
         res = subprocess.run([ffmpeg_executable_path, "-encoders"], capture_output=True, text=True, timeout=5)
         encoders = res.stdout.lower()
         if target_codec == "mp4":
-            if "h264_nvenc" in encoders: return "h264_nvenc"
-            if "h264_qsv" in encoders: return "h264_qsv"
-            if "h264_amf" in encoders: return "h264_amf"
+            for hw_encoder in ("h264_nvenc", "h264_qsv", "h264_amf"):
+                if hw_encoder in encoders and _test_encoder(ffmpeg_executable_path, hw_encoder):
+                    return hw_encoder
             return "libx264"
         elif target_codec == "webm":
-            if "vp9_nvenc" in encoders: return "vp9_nvenc"
-            if "vp9_qsv" in encoders: return "vp9_qsv"
+            for hw_encoder in ("vp9_nvenc", "vp9_qsv"):
+                if hw_encoder in encoders and _test_encoder(ffmpeg_executable_path, hw_encoder):
+                    return hw_encoder
             return "libvpx-vp9"
     except Exception:
         pass
@@ -195,8 +210,11 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
             "webm": "libvpx-vp9"
         }
         encoder = encoder_map.get(target_video_format, None)
-        if not safe_mode and target_video_format in ("mp4", "webm"):
-            encoder = get_best_video_encoder(ffmpeg_executable_path, "mp4" if target_video_format == "mp4" else "webm")
+        if target_video_format in ("mp4", "webm"):
+            if safe_mode:
+                encoder = "libx264" if target_video_format == "mp4" else "libvpx-vp9"
+            else:
+                encoder = get_best_video_encoder(ffmpeg_executable_path, "mp4" if target_video_format == "mp4" else "webm")
             
         if encoder == "gif":
             ffmpeg_command = [
