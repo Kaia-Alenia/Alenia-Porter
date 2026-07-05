@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -130,6 +131,7 @@ type CLIConfig struct {
 	Nickname         string `json:"nickname"`
 	TelemetryEnabled bool   `json:"telemetry_enabled"`
 	FirstRunDone     bool   `json:"first_run_done"`
+	Uuid             string `json:"uuid"`
 }
 
 var currentConfig *CLIConfig
@@ -148,12 +150,28 @@ func loadCLIConfig() {
 		Nickname:         "User",
 		TelemetryEnabled: false,
 		FirstRunDone:     false,
+		Uuid:             "",
 	}
 	path := filepath.Join(getConfigDir(), "config.json")
 	data, err := os.ReadFile(path)
 	if err == nil {
 		_ = json.Unmarshal(data, currentConfig)
 	}
+	if currentConfig.Uuid == "" {
+		currentConfig.Uuid = generateUUID()
+		saveCLIConfig()
+	}
+}
+
+func generateUUID() string {
+	b := make([]byte, 16)
+	_, err := rand.Read(b)
+	if err != nil {
+		for i := range b {
+			b[i] = byte(i)
+		}
+	}
+	return fmt.Sprintf("ap-uuid-%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
 }
 
 func saveCLIConfig() {
@@ -203,4 +221,3 @@ func markFirstRunDone() {
 	currentConfig.FirstRunDone = true
 	saveCLIConfig()
 }
-

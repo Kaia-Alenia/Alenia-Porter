@@ -17,7 +17,18 @@ def main():
     parser.add_argument("--iextra", default="", help="Extra image arguments")
     args = parser.parse_args()
 
-    input_dir = os.path.abspath(args.input_dir)
+    input_path = os.path.abspath(args.input_dir)
+    
+    if not os.path.exists(input_path):
+        print(f"ERROR:File or directory not found: {input_path}", flush=True)
+        sys.exit(1)
+
+    if os.path.isfile(input_path):
+        input_dir = os.path.dirname(input_path)
+        input_files = [input_path]
+    else:
+        input_dir = input_path
+        input_files = None
     
     def on_complete(processed_files, out_dir, total_orig, total_final):
         print(f"DONE:{processed_files}:{out_dir}", flush=True)
@@ -28,6 +39,7 @@ def main():
 
     media_engine.convert_media(
         input_directory=input_dir,
+        input_files=input_files,
         target_audio_format=args.aformat,
         target_video_format=args.vformat,
         target_image_format=args.iformat,

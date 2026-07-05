@@ -129,14 +129,16 @@ func initialModel() mainModel {
 
 func (m mainModel) appendMessage(msg string) mainModel {
 	m.messages = append(m.messages, msg)
-	
+
 	content := strings.Join(m.messages, "\n")
 	if m.currentProgress != "" {
 		spinner := styleInfo.Render(spinnerFrames[m.spinnerIdx])
 		progressLine := "  " + styleProgressLabel.Render(T("processing")) + " " + styleMuted.Render(m.currentProgress) + " " + spinner
 		content += "\n\n" + progressLine
 	}
-	m.viewport.SetContent(content)
+
+	wrappedContent := lipgloss.NewStyle().Width(m.width - 2).Render(content)
+	m.viewport.SetContent(wrappedContent)
 	m.viewport.GotoBottom()
 	return m
 }
@@ -183,7 +185,7 @@ func (m *mainModel) updatePalette() {
 		case optStateImage:
 			choices = imageFormats
 		}
-		
+
 		var filtered []cmdSuggestion
 		for _, c := range choices {
 			if strings.HasPrefix(strings.ToLower(c.Value), strings.ToLower(val)) || strings.HasPrefix(strings.ToLower(c.Label), strings.ToLower(val)) {
@@ -332,7 +334,7 @@ func (m mainModel) handleOptInput(line string) (tea.Model, tea.Cmd) {
 		}
 		m = m.echoInput(line)
 		dir := cleanPath(line)
-		
+
 		v, a, i := countMediaFiles(dir)
 		if v == 0 && a == 0 && i == 0 {
 			m = m.appendError("%s", T("no_media")+" → "+styleUserInput.Render(dir))
@@ -345,9 +347,15 @@ func (m mainModel) handleOptInput(line string) (tea.Model, tea.Cmd) {
 		m = m.appendMessage("  " + styleHeaderLogo.Render(T("summary")))
 		m = m.appendMessage("")
 		m = m.appendMessage(fmt.Sprintf("  %s  %s", styleSummaryKey.Render(fmt.Sprintf("%-10s", T("directory"))), styleUserInput.Render(dir)))
-		if v > 0 { m = m.appendMessage(fmt.Sprintf("  %s  %s", styleSummaryKey.Render(fmt.Sprintf("%-10s", T("video"))), styleSuccess.Render(fmt.Sprintf("%d %s", v, T("files"))))) }
-		if a > 0 { m = m.appendMessage(fmt.Sprintf("  %s  %s", styleSummaryKey.Render(fmt.Sprintf("%-10s", T("audio"))), styleSuccess.Render(fmt.Sprintf("%d %s", a, T("files"))))) }
-		if i > 0 { m = m.appendMessage(fmt.Sprintf("  %s  %s", styleSummaryKey.Render(fmt.Sprintf("%-10s", T("image"))), styleSuccess.Render(fmt.Sprintf("%d %s", i, T("files"))))) }
+		if v > 0 {
+			m = m.appendMessage(fmt.Sprintf("  %s  %s", styleSummaryKey.Render(fmt.Sprintf("%-10s", T("video"))), styleSuccess.Render(fmt.Sprintf("%d %s", v, T("files")))))
+		}
+		if a > 0 {
+			m = m.appendMessage(fmt.Sprintf("  %s  %s", styleSummaryKey.Render(fmt.Sprintf("%-10s", T("audio"))), styleSuccess.Render(fmt.Sprintf("%d %s", a, T("files")))))
+		}
+		if i > 0 {
+			m = m.appendMessage(fmt.Sprintf("  %s  %s", styleSummaryKey.Render(fmt.Sprintf("%-10s", T("image"))), styleSuccess.Render(fmt.Sprintf("%d %s", i, T("files")))))
+		}
 		m = m.appendMessage(sep + "\n")
 
 		m.optDir = dir
@@ -358,7 +366,9 @@ func (m mainModel) handleOptInput(line string) (tea.Model, tea.Cmd) {
 
 	case optStateVideo:
 		m = m.echoInput(line)
-		if line == "" { line = "mp4" }
+		if line == "" {
+			line = "mp4"
+		}
 		parts := strings.SplitN(line, " ", 2)
 		m.optVideo = parts[0]
 		if len(parts) > 1 {
@@ -368,7 +378,9 @@ func (m mainModel) handleOptInput(line string) (tea.Model, tea.Cmd) {
 
 	case optStateAudio:
 		m = m.echoInput(line)
-		if line == "" { line = "mp3" }
+		if line == "" {
+			line = "mp3"
+		}
 		parts := strings.SplitN(line, " ", 2)
 		m.optAudio = parts[0]
 		if len(parts) > 1 {
@@ -378,7 +390,9 @@ func (m mainModel) handleOptInput(line string) (tea.Model, tea.Cmd) {
 
 	case optStateImage:
 		m = m.echoInput(line)
-		if line == "" { line = "webp" }
+		if line == "" {
+			line = "webp"
+		}
 		parts := strings.SplitN(line, " ", 2)
 		m.optImage = parts[0]
 		if len(parts) > 1 {
@@ -423,9 +437,15 @@ func (m mainModel) advanceOptState() (mainModel, tea.Cmd) {
 		m.textInput.Placeholder = T("placeholder_main")
 		m.updatePalette()
 
-		if m.optVideo == "" { m.optVideo = "mp4" }
-		if m.optAudio == "" { m.optAudio = "mp3" }
-		if m.optImage == "" { m.optImage = "webp" }
+		if m.optVideo == "" {
+			m.optVideo = "mp4"
+		}
+		if m.optAudio == "" {
+			m.optAudio = "mp3"
+		}
+		if m.optImage == "" {
+			m.optImage = "webp"
+		}
 
 		m = m.appendInfo(T("starting_format"),
 			styleSuccess.Render(m.optVideo),
@@ -441,7 +461,6 @@ func (m mainModel) advanceOptState() (mainModel, tea.Cmd) {
 	}
 	return m, nil
 }
-
 
 // ═══════════════════════════════════════════════════════════════════════════
 // UPDATE
@@ -626,7 +645,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				selected := m.filteredCmds[m.paletteIdx].cmd
 				m.textInput.SetValue("")
 				m.showPalette = false
-				
+
 				if m.optState != optStateNone {
 					return m.handleOptInput(selected)
 				}
@@ -635,7 +654,7 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			line := m.textInput.Value()
 			m.textInput.SetValue("")
 			m.showPalette = false
-			
+
 			if m.optState != optStateNone {
 				return m.handleOptInput(line)
 			}
@@ -668,12 +687,12 @@ func (m *mainModel) recalcLayout() {
 	}
 
 	// Alturas dinámicas para el header dependiendo del ancho
-	headerLines := strings.Split(renderHeader(m.width), "\n")
-	headerH := len(headerLines) - 1
+	headerStr := renderHeader(m.width)
+	headerH := lipgloss.Height(headerStr)
 	if headerH < 1 {
 		headerH = 5
 	}
-	footerH := 2 // separador + status bar
+	footerH := 2   // separador + status bar
 	inputBoxH := 3 // borde redondeado + 1 línea de texto
 	paletteH := 0
 	if m.showPalette {
@@ -691,14 +710,17 @@ func (m *mainModel) recalcLayout() {
 
 	m.viewport.Width = m.width
 	m.viewport.Height = vpH
-	
+
 	content := strings.Join(m.messages, "\n")
 	if m.currentProgress != "" {
 		spinner := styleInfo.Render(spinnerFrames[m.spinnerIdx])
 		progressLine := "  " + styleProgressLabel.Render(T("processing")) + " " + styleMuted.Render(m.currentProgress) + " " + spinner
 		content += "\n\n" + progressLine
 	}
-	m.viewport.SetContent(content)
+
+	// Wrap text appropriately for the current width
+	wrappedContent := lipgloss.NewStyle().Width(m.width - 2).Render(content)
+	m.viewport.SetContent(wrappedContent)
 	m.viewport.GotoBottom()
 }
 
@@ -792,7 +814,7 @@ func main() {
 			fmt.Println("  version, --version, -v   Muestra la versión de la aplicación")
 			fmt.Println("  help, --help, -h         Muestra esta ayuda")
 			fmt.Println("  /lang [idioma]           Cambia el idioma (ej: /lang en)")
-			fmt.Println("  optimize ...             Ejecuta la optimización directamente")
+			fmt.Println("  optimize [ruta] ...      Ejecuta la optimización directamente en la ruta de archivo o carpeta indicada")
 			fmt.Println("\nEjecuta 'porter' sin argumentos para iniciar la interfaz interactiva.")
 			os.Exit(0)
 		case "optimize":

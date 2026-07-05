@@ -221,7 +221,6 @@ func NewOptimizeForm() *huh.Form {
 	return NewDirForm()
 }
 
-
 type engineProgressMsg struct {
 	text string
 	err  error
@@ -286,7 +285,7 @@ func startEngineCmd(dir, video, vExtra, audio, aExtra, image, iExtra string, set
 
 	scanner := bufio.NewScanner(stdout)
 	setEngineState(engineCmd, scanner)
-	
+
 	return tea.Batch(
 		infoCmd(T("engine_start")),
 		readNextEngineLine(scanner),
@@ -308,6 +307,10 @@ func readNextEngineLine(scanner *bufio.Scanner) tea.Cmd {
 // Keep direct execution intact for CLI flags
 func runDirectOptimize() {
 	optimizeCmd := flag.NewFlagSet("optimize", flag.ContinueOnError)
+	optimizeCmd.Usage = func() {
+		fmt.Printf("Uso: porter optimize [opciones] <directorio_o_archivo>\n\nOpciones:\n")
+		optimizeCmd.PrintDefaults()
+	}
 	optV := optimizeCmd.String("vformat", "mp4", "Target video format")
 	optA := optimizeCmd.String("aformat", "mp3", "Target audio format")
 	optI := optimizeCmd.String("iformat", "webp", "Target image format")
@@ -393,4 +396,59 @@ func runEngine(targetDir, videoFormat, vExtra, audioFormat, aExtra, imageFormat,
 		fail(T("engine_error"), err)
 		fmt.Println()
 	}
+}
+
+func handleMeCommand() {
+	loadCLIConfig()
+	fmt.Println("Perfil y Telemetría")
+	fmt.Printf("Alias (Nickname) actual: %s\n", currentConfig.Nickname)
+	fmt.Printf("UUID: %s\n", currentConfig.Uuid)
+	fmt.Printf("Telemetría activada: %t\n\n", currentConfig.TelemetryEnabled)
+
+	var changeNickname string
+	var newNickname string
+	var telemetry bool = currentConfig.TelemetryEnabled
+
+	form := huh.NewForm(
+		huh.NewGroup(
+			huh.NewSelect[string]().
+				Title("¿Deseas cambiar tu Alias?").
+				Options(
+					huh.NewOption("Sí", "yes"),
+					huh.NewOption("No", "no"),
+				).
+				Value(&changeNickname),
+		),
+	)
+	err := form.Run()
+	if err != nil {
+		return
+	}
+
+	if changeNickname == "yes" {
+		form2 := huh.NewForm(
+			huh.NewGroup(
+				huh.NewInput().
+					Title("Nuevo Alias").
+					Value(&newNickname),
+			),
+		)
+		form2.Run()
+		if newNickname != "" {
+			currentConfig.Nickname = newNickname
+		}
+	}
+
+	form3 := huh.NewForm(
+		huh.NewGroup(
+			huh.NewConfirm().
+				Title("¿Compartir datos de telemetría de forma anónima?").
+				Value(&telemetry),
+		),
+	)
+	form3.Run()
+
+	currentConfig.TelemetryEnabled = telemetry
+	saveCLIConfig()
+	fmt.Println("¡Preferencias guardadas exitosamente!")
 }

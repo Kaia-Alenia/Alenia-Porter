@@ -41,22 +41,34 @@ def load_dotenv():
 
 load_dotenv()
 
-def get_local_uuid():
-    home_dir = os.path.expanduser("~")
-    uuid_file_path = os.path.join(home_dir, ".alenia_uuid")
-    if os.path.exists(uuid_file_path):
+def _load_config():
+    path = get_config_file_path()
+    if os.path.exists(path):
         try:
-            with open(uuid_file_path, "r", encoding="utf-8") as f:
-                return f.read().strip()
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
         except:
             pass
-    import uuid
-    new_uuid = str(uuid.uuid4())
+    return {}
+
+def _save_config(data):
+    path = get_config_file_path()
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     try:
-        with open(uuid_file_path, "w", encoding="utf-8") as f:
-            f.write(new_uuid)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4)
+        return True
     except:
-        pass
+        return False
+
+def get_local_uuid():
+    cfg = _load_config()
+    if "uuid" in cfg and cfg["uuid"]:
+        return cfg["uuid"]
+    import uuid
+    new_uuid = "ap-uuid-" + str(uuid.uuid4())
+    cfg["uuid"] = new_uuid
+    _save_config(cfg)
     return new_uuid
 
 def generate_nickname():
@@ -89,31 +101,18 @@ def generate_nickname():
     return f"{random.choice(adjectives)}-{random.choice(nouns)}"
 
 def get_local_nickname():
-    home_dir = os.path.expanduser("~")
-    nickname_file_path = os.path.join(home_dir, ".alenia_nickname")
-    if os.path.exists(nickname_file_path):
-        try:
-            with open(nickname_file_path, "r", encoding="utf-8") as f:
-                return f.read().strip()
-        except:
-            pass
+    cfg = _load_config()
+    if "nickname" in cfg and cfg["nickname"]:
+        return cfg["nickname"]
     new_nickname = generate_nickname()
-    try:
-        with open(nickname_file_path, "w", encoding="utf-8") as f:
-            f.write(new_nickname)
-    except:
-        pass
+    cfg["nickname"] = new_nickname
+    _save_config(cfg)
     return new_nickname
 
 def set_local_nickname(nickname):
-    home_dir = os.path.expanduser("~")
-    nickname_file_path = os.path.join(home_dir, ".alenia_nickname")
-    try:
-        with open(nickname_file_path, "w", encoding="utf-8") as f:
-            f.write(nickname)
-        return True
-    except:
-        return False
+    cfg = _load_config()
+    cfg["nickname"] = nickname
+    return _save_config(cfg)
 
 
 def get_config_file_path():
@@ -133,42 +132,21 @@ def get_cancel_flag_path():
     return os.path.join(config_folder_path, "alenia_porter_cancel.flag")
 
 def is_first_run():
-    config_path = get_config_file_path()
-    if not os.path.exists(config_path):
-        return True
-    try:
-        with open(config_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return not data.get("first_run_done", False)
-    except:
-        return True
+    return not _load_config().get("first_run_done", False)
 
 def mark_first_run_done():
-    config_path = get_config_file_path()
-    data = {}
-    if os.path.exists(config_path):
-        try:
-            with open(config_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except:
-            pass
-    data["first_run_done"] = True
-    try:
-        os.makedirs(os.path.dirname(config_path), exist_ok=True)
-        with open(config_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4)
-        return True
-    except:
-        return False
+    cfg = _load_config()
+    cfg["first_run_done"] = True
+    return _save_config(cfg)
 
 def get_telemetry_status():
-    config_path = get_config_file_path()
-    if not os.path.exists(config_path): return False
-    with open(config_path, "r", encoding="utf-8") as f:
-        try:
-            return json.load(f).get("telemetry_enabled", False)
-        except:
-            return False
+    return _load_config().get("telemetry_enabled", False)
+
+def set_telemetry_status(status):
+    cfg = _load_config()
+    cfg["telemetry_enabled"] = status
+    _save_config(cfg)
+
 
 def update_telemetry_stats(file_type, file_count, duration_seconds, headless=False):
     if not get_telemetry_status():

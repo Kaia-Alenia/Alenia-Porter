@@ -578,13 +578,13 @@ export default function App() {
       setIsUpdatingVersion(false);
       setUpdateAvailable(false);
       setShowVersionModal(false);
-      addLog("[Sistema] Alenia Porter actualizado exitosamente. Reiniciando...", "success");
+      addLog(t("appWillRestart", "[Sistema] Alenia Porter actualizado exitosamente. Reiniciando..."), "success");
       setMascotState("success");
     };
     (window as any).updateFailed = (errMsg?: string) => {
       setIsUpdatingVersion(false);
       setUpdateProgress(0);
-      addLog(`[Error] Falló la actualización: ${errMsg || "Error desconocido"}`, "error");
+      addLog(t("updateError", "Error al actualizar:") + " " + (errMsg || "Error desconocido"), "error");
     };
   }, []);
 
@@ -756,7 +756,7 @@ export default function App() {
       return merged;
     });
 
-    addLog(`¡Se agregaron ${freshItems.length} archivos a la cola de optimización!`, "success");
+    addLog(t("queueAdded", "{count} archivos agregados").replace("{count}", String(freshItems.length)), "success");
     setMascotState("winking");
     setTimeout(() => setMascotState("idle"), 1500);
   };
@@ -766,11 +766,11 @@ export default function App() {
     appendFilesToQueueRef.current = appendFilesToQueue;
   });
 
-  React.useEffect(() => {
+    React.useEffect(() => {
     (window as any).handleNativeDropResolved = (resolvedFiles: any[]) => {
       try {
         console.log("[CHISMOSO FE] handleNativeDropResolved llamado con:", resolvedFiles);
-        addLog("[CHISMOSO FE] handleNativeDropResolved recibido con " + (resolvedFiles ? resolvedFiles.length : 0) + " archivos", "info");
+        addLog(t("dropNativeReceived", "Archivos nativos recibidos:") + " " + (resolvedFiles ? resolvedFiles.length : 0), "info");
         const validFiles = (resolvedFiles || []).filter(r => !!r).map(r => ({
           name: r.name,
           size: r.size || 0,
@@ -783,7 +783,7 @@ export default function App() {
         }
       } catch (err: any) {
         console.error("[CHISMOSO FE] Error en handleNativeDropResolved:", err);
-        addLog("[CHISMOSO FE] Error procesando drop nativo: " + err.message, "error");
+        addLog(t("dropNativeError", "Error procesando drop nativo") + ": " + err.message, "error");
       }
     };
 
@@ -826,7 +826,7 @@ export default function App() {
     dragCounterRef.current = 0;
     setDragActive(false);
     console.log("[CHISMOSO FE] handleDrop DOM React disparado");
-    addLog("[CHISMOSO FE] Soltado en DOM (React)", "info");
+    addLog(t("dropDOM", "Soltado en DOM (React)"), "info");
 
     const pendingFiles: { name: string; size: number; type: MediaType; path?: string; isDirectory?: boolean }[] = [];
     const isPyWebView = !!(window as any).pywebview;
@@ -868,11 +868,11 @@ export default function App() {
       }
 
       console.log("[CHISMOSO FE] rawPaths extraidos en JS:", rawPaths);
-      addLog("[CHISMOSO FE] rawPaths extraidos en JS: " + rawPaths.length, "info");
+      addLog(t("rawPathsExtracted") + ": " + rawPaths.length, "info");
 
       if (rawPaths.length === 0) {
         console.log("[CHISMOSO FE] rawPaths vacios, esperando handler DOM de pywebview");
-        addLog("[CHISMOSO FE] Esperando handler DOM de pywebview...", "info");
+        addLog(t("waitingHandler"), "info");
         return;
       }
 
@@ -886,7 +886,7 @@ export default function App() {
                 addLog(`📁 ${r.name}: ${r.audio} audio, ${r.video} video, ${r.image} img`, "info");
                 pendingFiles.push({ name: r.name, size: r.size || 0, type: activeMediaType, path: r.path, isDirectory: true });
               } else {
-                addLog(`⚠ Sin archivos compatibles en: ${r.name}`, "error");
+                addLog(t("noCompatibleIn", "Sin archivos compatibles en") + `: ${r.name}`, "error");
               }
             } else {
               pendingFiles.push({ name: r.name, size: r.size || 0, type: r.mediaType as MediaType, path: r.path, isDirectory: false });
@@ -896,11 +896,11 @@ export default function App() {
             appendFilesToQueue(pendingFiles);
           }
         } else {
-          addLog("No se detectaron archivos de medios compatibles.", "error");
+          addLog(t("noCompatibleDetected", "No se detectaron archivos de medios compatibles."), "error");
           setMascotState("error");
         }
       } catch (err) {
-        addLog(`Error: ${err}`, "error");
+        addLog(t("error") + `: ${err}`, "error");
       }
     } else {
       // ── Navegador web estándar: usar webkitGetAsEntry para soporte de carpetas ──
@@ -997,7 +997,7 @@ export default function App() {
       if (pendingFiles.length > 0) {
         appendFilesToQueue(pendingFiles);
       } else {
-        addLog("Ningún archivo compatible con los formatos de Alenia Porter.", "error");
+        addLog(t("errorNoCompatible", "Ningún archivo compatible con los formatos de Alenia Porter."), "error");
       }
     }
   };
@@ -1111,13 +1111,13 @@ export default function App() {
         const explanation = await pywebview.api.explain_command(ffmpegCommand);
         setTechExplanation(explanation);
         setMascotState("winking");
-        addLog("Explicación de comando generada por el analizador local", "success");
+        addLog(t("explanationGenerated", "Explicación de comando generada por el analizador local"), "success");
       } else {
-        throw new Error("El analizador local de Python no está conectado.");
+        throw new Error(t("pyAnalyzerDisconnected", "El analizador local de Python no está conectado."));
       }
     } catch (err: any) {
       console.error(err);
-      addLog(`Error al explicar comando: ${err.message}`, "error");
+      addLog(t("errorExplain", "Error al explicar comando") + `: ${err.message}`, "error");
       setMascotState("error");
     } finally {
       setIsExplaining(false);
@@ -1158,150 +1158,47 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
     link.download = `alenia_crash_dump_${Date.now()}.txt`;
     link.click();
     URL.revokeObjectURL(url);
-    addLog("Archivo alenia_crash_dump.txt descargado para soporte de la comunidad.", "info");
+    addLog(t("crashDumped", "Archivo alenia_crash_dump.txt descargado para soporte de la comunidad."), "info");
   };
 
   // Batch queue processing interval reference
   const processingIntervalRef = useRef<any>(null);
 
-  // Start sequential batch processing with smart cache and checkpointing
-  const startBatchQueueProcessing = () => {
-    if (filesQueue.length === 0) {
-      // If queue is empty, load a dummy file representation
-      if (selectedFile) {
-        setFilesQueue([selectedFile]);
-        setTimeout(() => startBatchQueueIndex(0), 100);
-      }
-      return;
-    }
-    
+  const startBatchQueue = () => {
+    if (filesQueue.length === 0) return;
     setIsProcessingQueue(true);
     setIsPaused(false);
-    setMascotState("thinking");
-    addLog(`[Alenia Batch] Iniciando procesamiento por lotes de ${filesQueue.length} archivo(s).`, "info");
-
-    const resumeIdx = filesQueue.findIndex(f => f.status !== "completed");
-    const activeIdx = resumeIdx === -1 ? 0 : resumeIdx;
-
-    startBatchQueueIndex(activeIdx);
+    addLog(t("batchStart", "Iniciando procesamiento de lotes") + ` ${filesQueue.length}`, "info");
+    
+    // Si llegamos al final, reiniciamos desde el principio (opcional)
+    if (currentQueueIndex >= filesQueue.length) {
+      setCurrentQueueIndex(0);
+      setCheckpointIndex(-1);
+    }
   };
 
-  // Pause batch processing and save checkpoint (Section C of roadmap)
-  const pauseBatchQueueProcessing = () => {
+  const pauseBatchQueue = () => {
     setIsPaused(true);
     setIsProcessingQueue(false);
-    setIsProcessing(false);
-    setMascotState("idle");
-    if (processingIntervalRef.current) {
-      clearInterval(processingIntervalRef.current);
-    }
-
-    addLog(`[Alenia Batch] Procesamiento pausado. Punto de control guardado en archivo #${currentQueueIndex + 1}.`, "info");
-    
-    setFilesQueue(prev => {
-      const updated = [...prev];
-      if (updated[currentQueueIndex] && updated[currentQueueIndex].status === "processing") {
-        updated[currentQueueIndex].status = "pending";
-      }
-      return updated;
-    });
+    setCheckpointIndex(currentQueueIndex); // Guardamos donde se pausó
+    addLog(t("batchPaused", "Procesamiento pausado"), "info");
   };
 
-  // Clean queue list completely
   const clearBatchQueue = () => {
     setFilesQueue([]);
     setCurrentQueueIndex(-1);
     setCheckpointIndex(-1);
     setIsProcessingQueue(false);
-    setIsPaused(false);
     setSelectedFile(null);
-    if (processingIntervalRef.current) {
-      clearInterval(processingIntervalRef.current);
-    }
-    addLog("Cola de procesamiento vaciada.", "info");
+    addLog(t("queueEmpty", "Cola vaciada"), "info");
   };
 
-  const startBatchQueueIndex = (index: number) => {
-    if (index >= filesQueue.length) {
-      setIsProcessingQueue(false);
-      setIsProcessing(false);
-      setProgress(100);
-      setMascotState("success");
-      addLog(`[Alenia Batch] ¡Todos los archivos procesados exitosamente!`, "success");
-      return;
-    }
-
-    const file = filesQueue[index];
+  const processSingleFile = async (file: DemoFile, index: number) => {
+    setIsProcessing(true);
+    setMascotState("thinking");
+    setProgress(0);
     setSelectedFile(file);
     setActiveMediaType(file.type);
-    setCurrentQueueIndex(index);
-    setCheckpointIndex(index);
-
-    setFilesQueue(prev => {
-      const updated = [...prev];
-      updated[index].status = "processing";
-      return updated;
-    });
-
-    setProgress(0);
-    setIsProcessing(true);
-    addLog(`[Alenia FFmpeg] Optimizando archivo (${index + 1}/${filesQueue.length}): ${file.path || file.name}`, "info");
-
-    const targetFormat = file.type === "video" ? videoFormat : file.type === "audio" ? audioFormat : imageFormat;
-    const cacheKey = file.hash ? `${file.hash}-${targetFormat}` : "";
-
-    // Smart-Caching fingerprint matching check! (Phase 6 / v6.4)
-    if (cacheKey && cachedOptimizations[cacheKey] && !(window as any).pywebview) {
-      const hit = cachedOptimizations[cacheKey];
-      addLog(`[Smart-Cache] ¡Coincidencia de huella digital MD5/SHA en el caché local!`, "success");
-      addLog(`[Smart-Cache] Omitiendo compilación redundante para: ${file.name}`, "success");
-      
-      setProgress(100);
-      setFilesQueue(prev => {
-        const updated = [...prev];
-        updated[index].status = "completed";
-        return updated;
-      });
-
-      // Insert hit in local logs immediately
-      const cachedHistoryItem: OptimizationResult = {
-        fileName: file.name,
-        mediaType: file.type,
-        originalSize: file.originalSize,
-        compressedSize: hit.compressedSize,
-        savingsPercent: hit.savingsPercent,
-        format: hit.format,
-        commandUsed: ffmpegCommand,
-        timestamp: new Date().toLocaleTimeString() + " (Cache Hit)"
-      };
-      setOptimizationHistory(prev => [cachedHistoryItem, ...prev]);
-
-      setTimeout(() => {
-        startBatchQueueIndex(index + 1);
-      }, 700);
-      return;
-    }
-
-    const isGpuActive = hardwareAccelerationEnabled && !safeMode;
-    const processStepSpeed = isGpuActive ? 15 : 6; // GPU provides accelerated conversion!
-    
-    addLog(isGpuActive ? `[FFmpeg-WASM] GPU Activo: ${gpuEncoderDetected === "none" ? t("none", "Ninguno") : gpuEncoderDetected}` : `[FFmpeg-WASM] Usando codificación soft (Drivers inactivos / Safe Mode)`, "info");
-
-    let currentPercent = 0;
-    const totalFrames = file.type === "video" ? 360 : 100;
-    const itemMetrics = getSimulatedSizesForFile(file);
-
-      if ((window as any).pywebview) {
-        const filePath = file.path && file.path !== file.name ? file.path : (file.path || null);
-        const isDir = file.isDirectory || false;
-
-        if (!isDir && !filePath) {
-          addLog(`Error: ruta de archivo no disponible para "${file.name}" — usa el selector de archivos nativo.`, "error");
-          setMascotState("error");
-          return;
-        }
-
-        const params = {
           inputDirectory: isDir ? filePath : null,
           input: !isDir && filePath ? filePath : null,
           files: !isDir && filePath ? [filePath] : [],
@@ -1416,7 +1313,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
 
         addLog(`[FFmpeg-WASM] Frame= ${totalFrames} (FPS: ${isGpuActive ? "142" : "54"}) Quality: OK.`, "stdout");
         addLog(`[FFmpeg-WASM] Write output file successful.`, "success");
-        addLog(`¡Optimización finalizada! Se comprimió un ${itemMetrics.savings}% del archivo original.`, "success");
+        addLog(t("optimizationSuccess").replace("{savings}", String(itemMetrics.savings)), "success");
 
         // Advance sequentially
         setTimeout(() => {
@@ -2457,14 +2354,14 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                     if ((window as any).pywebview) {
                       try {
                         (window as any).pywebview.api.mark_first_run_done();
-                        (window as any).pywebview.api.save_appearance_settings({ "alenia_telemetry_enabled": "false", "alenia_telemetry_consent": "declined" });
+                        (window as any).pywebview.api.set_telemetry_status(false);
                       } catch (e) {}
                     }
                     addLog(t("telemetryDeclined", "[System] Telemetry declined. Alenia Porter will run 100% silent."), "info");
                   }}
                   className="py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-[9.5px] rounded-xl transition-all cursor-pointer text-center"
                 >
-                  {t("keepPrivate", "Mantener Privado")}
+                  {t("keepPrivate", "Keep Private")}
                 </button>
                 <button
                   type="button"
@@ -2476,7 +2373,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                     if ((window as any).pywebview) {
                       try {
                         (window as any).pywebview.api.mark_first_run_done();
-                        (window as any).pywebview.api.save_appearance_settings({ "alenia_telemetry_enabled": "true", "alenia_telemetry_consent": "given" });
+                        (window as any).pywebview.api.set_telemetry_status(true);
                       } catch (e) {}
                     }
                     addLog(t("telemetryAccepted", "[System] Thank you! Anonymous telemetry has been enabled."), "success");
@@ -2484,7 +2381,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                   }}
                   className="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-[9.5px] rounded-xl transition-all cursor-pointer text-center shadow-xs"
                 >
-                  {t("shareAndSupport", "Compartir y Apoyar")}
+                  {t("shareAndSupport", "Share and Support")}
                 </button>
               </div>
             </div>

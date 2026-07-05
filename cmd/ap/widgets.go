@@ -10,22 +10,9 @@ import (
 )
 
 // ═══════════════════════════════════════════════════════════════════════════
-// LOGO ASCII  — texto compacto al estilo Gemini CLI
+// LOGO ASCII  —
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Logo braille compacto (líneas 5-36 del kaia_mini_braille.txt, recortado)
-const logoMascot = `⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣶⣶⣶⣶⣶⣶⣶⣶⣦⣄⡀
-⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣤⣀
-⠀⠀⠀⠀⣠⣾⣿⣿⣿⠛⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⣿⣿⣿⣿
-⠀⠀⠀⣴⣿⣿⡿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⡿
-⠀⠀⣸⣿⣿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⠟⠋
-⣶⣾⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿
-⣿⣿⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠇
-⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⣿⣿⡟
-⣿⣿⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⣿⣿
-⣿⣿⣿⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⣿⣿⣇`
-
-// Logo texto "Alenia Porter" en estilo bloque compacto
 const logoText = ` █████╗ ██╗     ███████╗███╗  ██╗██╗ █████╗
 ██╔══██╗██║     ██╔════╝████╗ ██║██║██╔══██╗
 ███████║██║     █████╗  ██╔██╗██║██║███████║
@@ -36,7 +23,6 @@ const logoText = ` █████╗ ██╗     ███████╗█�
 const logoCompact = `▄▀█ █░░ █▀▀ █▄░█ █ ▄▀█   █▀█ █▀█ █▀█ ▀█▀ █▀▀ █▀█
 █▀█ █▄▄ ██▄ █░▀█ █ █▀█   █▀▀ █▄█ █▀▄ ░█░ ██▄ █▀▄`
 
-// renderLogoGradient dibuja el logo ASCII con gradiente azul→cian
 func renderLogoGradient(art string) string {
 	lines := strings.Split(art, "\n")
 	maxLen := 0
@@ -63,7 +49,7 @@ func renderLogoGradient(art string) string {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// HEADER — layout idéntico a Gemini CLI
+// HEADER —
 // ═══════════════════════════════════════════════════════════════════════════
 
 func renderHeader(width int) string {
@@ -104,10 +90,11 @@ func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
 
 	// Lado derecho: idioma y estado
 	nick := getNickname()
+	var right string
 	if isProcessing {
 		right = styleInfo.Render(spinnerFrame+T("footer_proc")) + styleFooterLang.Render("["+currentLang+"] "+nick)
 	} else {
-		right = styleFooterLang.Render("["+currentLang+"] "+nick)
+		right = styleFooterLang.Render("[" + currentLang + "] " + nick)
 	}
 
 	// Calcular padding para separar left y right
@@ -125,7 +112,7 @@ func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// COMMAND PALETTE (sugerencias flotantes estilo Gemini SuggestionsDisplay)
+// COMMAND PALETTE
 // ═══════════════════════════════════════════════════════════════════════════
 
 type cmdSuggestion struct {
@@ -242,7 +229,7 @@ func renderSuggestions(sugs []cmdSuggestion, activeIdx int, width int) string {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// SPINNER (estilo Gemini CliSpinner)
+// SPINNER
 // ═══════════════════════════════════════════════════════════════════════════
 
 var spinnerFrames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}

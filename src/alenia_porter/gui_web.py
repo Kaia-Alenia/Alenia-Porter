@@ -100,6 +100,13 @@ class Api:
     def save_user_configuration(self):
         config_path = porter.get_config_file_path()
         try:
+            import json, os
+            current_config = {}
+            if os.path.exists(config_path):
+                with open(config_path, "r", encoding="utf-8") as f:
+                    current_config = json.load(f)
+            current_config.update(self.configuration_data)
+            self.configuration_data = current_config
             os.makedirs(os.path.dirname(config_path), exist_ok=True)
             with open(config_path, "w", encoding="utf-8") as f:
                 json.dump(self.configuration_data, f, indent=4)
@@ -303,6 +310,7 @@ class Api:
     def set_telemetry_status(self, value):
         self.configuration_data["telemetry_enabled"] = value
         self.save_user_configuration()
+        porter.set_telemetry_status(value)
         return value
 
     def set_nickname(self, nickname):
