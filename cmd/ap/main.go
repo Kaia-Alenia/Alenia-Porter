@@ -112,7 +112,14 @@ func initialModel() mainModel {
 	}
 
 	// Mensaje de bienvenida inicial
-	m = m.appendMessage(styleMuted.Render("  " + T("ready_msg")))
+	if isFirstRun() {
+		m = m.appendMessage(styleInfo.Render("  " + T("welcome_title")))
+		m = m.appendMessage(styleMuted.Render("  " + T("welcome_telemetry")))
+		m = m.appendMessage(styleMuted.Render("  " + T("welcome_me_hint")))
+		markFirstRunDone()
+	} else {
+		m = m.appendMessage(styleMuted.Render("  " + T("ready_msg")))
+	}
 	return m
 }
 
@@ -266,6 +273,11 @@ func (m mainModel) executeCommand(line string) (tea.Model, tea.Cmd) {
 			return m, successMsgCmd("%s: %s", T("lang_changed"), languageLabel(currentLang))
 		}
 		m.langModel = NewLangModel()
+		m.recalcLayout()
+		return m, m.langModel.Init()
+
+	case "/me":
+		m.langModel = NewMeModel()
 		m.recalcLayout()
 		return m, m.langModel.Init()
 
@@ -446,6 +458,9 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 		m.textInput.Width = msg.Width - 6
 		m.recalcLayout()
+		if m.langModel != nil {
+			m.langModel, _ = m.langModel.Update(msg)
+		}
 		return m, nil
 
 	// ─── Spinner tick ───────────────────────────────────────────────────────
@@ -652,8 +667,12 @@ func (m *mainModel) recalcLayout() {
 		return
 	}
 
-	// Alturas fijas
-	headerH := 5 // logo + separador ≈ 5 líneas
+	// Alturas dinámicas para el header dependiendo del ancho
+	headerLines := strings.Split(renderHeader(m.width), "\n")
+	headerH := len(headerLines) - 1
+	if headerH < 1 {
+		headerH = 5
+	}
 	footerH := 2 // separador + status bar
 	inputBoxH := 3 // borde redondeado + 1 línea de texto
 	paletteH := 0

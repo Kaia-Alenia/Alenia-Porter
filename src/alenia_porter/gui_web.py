@@ -133,7 +133,8 @@ class Api:
             "available_themes": self.available_themes,
             "images": images,
             "langCode": self.current_language_code,
-            "languages": list(self.languages_dictionary.keys())
+            "languages": list(self.languages_dictionary.keys()),
+            "is_first_run": porter.is_first_run()
         }
 
     def save_appearance_settings(self, settings):
@@ -147,6 +148,16 @@ class Api:
         
         self.save_user_configuration()
         return self.get_initial_data()
+
+    def mark_first_run_done(self):
+        return porter.mark_first_run_done()
+
+    def get_me_info(self):
+        return {
+            "uuid": porter.get_local_uuid(),
+            "nickname": porter.get_local_nickname(),
+            "telemetry_enabled": porter.get_telemetry_status()
+        }
 
     def set_language(self, lang_code):
         if lang_code in self.languages_dictionary:

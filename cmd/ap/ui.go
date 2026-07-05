@@ -149,6 +149,70 @@ func getHelpText() string {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// FLUJO /me (Identidad y Telemetría)
+// ═══════════════════════════════════════════════════════════════════════════
+
+type MeModel struct {
+	form *huh.Form
+}
+
+func NewMeModel() *MeModel {
+	telVal := getTelemetryEnabled()
+	nickVal := getNickname()
+
+	form := huh.NewForm(
+		huh.NewGroup(
+			huh.NewNote().
+				Title(T("me_info")).
+				Description(fmt.Sprintf("%s\nNickname: %s\nTelemetry: %v", T("welcome_telemetry"), nickVal, telVal)),
+			huh.NewInput().
+				Key("nickname").
+				Title(T("me_nick_prompt")).
+				Value(&nickVal),
+			huh.NewConfirm().
+				Key("telemetry").
+				Title(T("me_tel_prompt")).
+				Value(&telVal),
+		),
+	)
+	form.Init()
+	return &MeModel{form: form}
+}
+
+func (m *MeModel) Init() tea.Cmd {
+	return m.form.Init()
+}
+
+func (m *MeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	form, cmd := m.form.Update(msg)
+	if f, ok := form.(*huh.Form); ok {
+		m.form = f
+		if m.form.State == huh.StateCompleted {
+			nick := m.form.GetString("nickname")
+			tel := m.form.GetBool("telemetry")
+
+			setNickname(nick)
+			setTelemetryEnabled(tel)
+
+			telStr := T("me_tel_off")
+			if tel {
+				telStr = T("me_tel_on")
+			}
+
+			return nil, successMsgCmd("%s / %s", T("me_nick_changed"), telStr)
+		}
+		if m.form.State == huh.StateAborted {
+			return nil, warnCmd(T("cancelled"))
+		}
+	}
+	return m, cmd
+}
+
+func (m *MeModel) View() string {
+	return m.form.View()
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // FORMULAS
 // ═══════════════════════════════════════════════════════════════════════════
 

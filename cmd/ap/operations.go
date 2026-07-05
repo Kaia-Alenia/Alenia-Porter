@@ -277,11 +277,11 @@ func startEngineCmd(dir, video, vExtra, audio, aExtra, image, iExtra string, set
 	engineCmd := getEngineCmd(cmdArgs)
 	stdout, err := engineCmd.StdoutPipe()
 	if err != nil {
-		return failCmd("Failed to create stdout pipe: %v", err)
+		return failCmd(T("stream_error"), err)
 	}
 	engineCmd.Stderr = os.Stderr
 	if err := engineCmd.Start(); err != nil {
-		return failCmd("Failed to start optimization engine: %v", err)
+		return failCmd(T("engine_error"), err)
 	}
 
 	scanner := bufio.NewScanner(stdout)
@@ -319,11 +319,11 @@ func runDirectOptimize() {
 		os.Exit(2)
 	}
 	if !applyLanguage(*optL) {
-		warn("Unsupported language code: %s", *optL)
+		warn(T("unsupported_lang"), *optL)
 	}
 	args := optimizeCmd.Args()
 	if len(args) < 1 {
-		fail("Target directory required.")
+		fail(T("invalid_dir"))
 		os.Exit(1)
 	}
 	runEngine(args[0], *optV, *optVExtra, *optA, *optAExtra, *optI, *optIExtra)
@@ -347,12 +347,12 @@ func runEngine(targetDir, videoFormat, vExtra, audioFormat, aExtra, imageFormat,
 	cmd := getEngineCmd(cmdArgs)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		fail("Failed to create stdout pipe: %v", err)
+		fail(T("stream_error"), err)
 		return
 	}
 	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
-		fail("Failed to start optimization engine: %v", err)
+		fail(T("engine_error"), err)
 		return
 	}
 
@@ -385,12 +385,12 @@ func runEngine(targetDir, videoFormat, vExtra, audioFormat, aExtra, imageFormat,
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Println()
-		warn("Stream error: %v", err)
+		warn(T("stream_error"), err)
 		fmt.Println()
 	}
 	if err := cmd.Wait(); err != nil {
 		fmt.Println()
-		fail("Engine exited with errors: %v", err)
+		fail(T("engine_error"), err)
 		fmt.Println()
 	}
 }

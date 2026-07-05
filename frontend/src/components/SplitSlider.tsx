@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Play, Pause, RefreshCw, Volume2, Maximize2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
+
+const t = (key: string, fallback?: string): string => {
+  return (window as any).i18nData?.[key] || fallback || key;
+};
 
 interface SplitSliderProps {
   mediaType: "video" | "audio" | "image";
@@ -17,7 +20,6 @@ export default function SplitSlider({
   compressedSizeText,
   originalSizeText,
 }: SplitSliderProps) {
-  const { t } = useTranslation();
   const [sliderPosition, setSliderPosition] = useState(50); // percentage
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.8);

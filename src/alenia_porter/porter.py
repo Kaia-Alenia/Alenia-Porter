@@ -132,6 +132,35 @@ def get_cancel_flag_path():
         config_folder_path = os.path.expanduser("~/.config/AleniaStudios/AleniaPorter")
     return os.path.join(config_folder_path, "alenia_porter_cancel.flag")
 
+def is_first_run():
+    config_path = get_config_file_path()
+    if not os.path.exists(config_path):
+        return True
+    try:
+        with open(config_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return not data.get("first_run_done", False)
+    except:
+        return True
+
+def mark_first_run_done():
+    config_path = get_config_file_path()
+    data = {}
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except:
+            pass
+    data["first_run_done"] = True
+    try:
+        os.makedirs(os.path.dirname(config_path), exist_ok=True)
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4)
+        return True
+    except:
+        return False
+
 def get_telemetry_status():
     config_path = get_config_file_path()
     if not os.path.exists(config_path): return False

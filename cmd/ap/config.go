@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -121,3 +122,85 @@ func defaultChoice(items []choice, value string) string {
 	}
 	return ""
 }
+
+// Config persistence
+
+type CLIConfig struct {
+	Lang             string `json:"lang"`
+	Nickname         string `json:"nickname"`
+	TelemetryEnabled bool   `json:"telemetry_enabled"`
+	FirstRunDone     bool   `json:"first_run_done"`
+}
+
+var currentConfig *CLIConfig
+
+func getConfigDir() string {
+	home, _ := os.UserHomeDir()
+	return filepath.Join(home, ".config", "AleniaStudios", "AleniaPorter")
+}
+
+func loadCLIConfig() {
+	if currentConfig != nil {
+		return
+	}
+	currentConfig = &CLIConfig{
+		Lang:             "es",
+		Nickname:         "User",
+		TelemetryEnabled: false,
+		FirstRunDone:     false,
+	}
+	path := filepath.Join(getConfigDir(), "config.json")
+	data, err := os.ReadFile(path)
+	if err == nil {
+		_ = json.Unmarshal(data, currentConfig)
+	}
+}
+
+func saveCLIConfig() {
+	if currentConfig == nil {
+		return
+	}
+	path := filepath.Join(getConfigDir(), "config.json")
+	os.MkdirAll(filepath.Dir(path), 0755)
+	data, err := json.MarshalIndent(currentConfig, "", "  ")
+	if err == nil {
+		_ = os.WriteFile(path, data, 0644)
+	}
+}
+
+func getNickname() string {
+	loadCLIConfig()
+	if currentConfig.Nickname == "" {
+		return "User"
+	}
+	return currentConfig.Nickname
+}
+
+func setNickname(nick string) {
+	loadCLIConfig()
+	currentConfig.Nickname = nick
+	saveCLIConfig()
+}
+
+func getTelemetryEnabled() bool {
+	loadCLIConfig()
+	return currentConfig.TelemetryEnabled
+}
+
+func setTelemetryEnabled(v bool) {
+	loadCLIConfig()
+	currentConfig.TelemetryEnabled = v
+	saveCLIConfig()
+}
+
+func isFirstRun() bool {
+	loadCLIConfig()
+	return !currentConfig.FirstRunDone
+}
+
+func markFirstRunDone() {
+	loadCLIConfig()
+	currentConfig.FirstRunDone = true
+	saveCLIConfig()
+}
+

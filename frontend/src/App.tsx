@@ -377,47 +377,92 @@ export default function App() {
 
   // Load and initialize local parameters and preferences on mount
   useEffect(() => {
-    const storedConsent = localStorage.getItem("alenia_telemetry_consent");
-    const storedEnabled = localStorage.getItem("alenia_telemetry_enabled") === "true";
-    const storedUuid = localStorage.getItem("alenia_user_uuid") || "";
-    const storedNickname = localStorage.getItem("alenia_user_nickname") || "";
-    const storedCustomized = localStorage.getItem("alenia_nickname_customized") === "true";
-    const storedSafeMode = localStorage.getItem("alenia_safe_mode") === "true";
-    const storedHwAcc = localStorage.getItem("alenia_hw_acc") !== "false";
+    let statsInterval: any;
 
-    let finalUuid = storedUuid;
-    let finalNickname = storedNickname;
+    const initPrefs = async () => {
+      let finalUuid = "";
+      let finalNickname = "";
+      let isFirstRun = false;
+      let finalTelemetry = false;
 
-    if (!storedUuid) {
-      finalUuid = "ap-uuid-" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      localStorage.setItem("alenia_user_uuid", finalUuid);
-    }
-    if (!storedNickname) {
-      finalNickname = generateRandomNickname();
-      localStorage.setItem("alenia_user_nickname", finalNickname);
-    }
+      const isPyWebView = !!(window as any).pywebview;
+      if (isPyWebView) {
+         try {
+           const meInfo = await (window as any).pywebview.api.get_me_info();
+           finalUuid = meInfo.uuid;
+           finalNickname = meInfo.nickname;
+           finalTelemetry = meInfo.telemetry_enabled;
+           
+           const initData = await (window as any).pywebview.api.get_initial_data();
+           isFirstRun = initData.is_first_run;
+         } catch (e) {
+           console.error("Failed to load prefs from backend", e);
+         }
+      } 
+      
+      if (!isPyWebView || !finalUuid) {
+        // Fallback or Web mode
+        const storedUuid = localStorage.getItem("alenia_user_uuid") || "";
+        const storedNickname = localStorage.getItem("alenia_user_nickname") || "";
+        finalUuid = storedUuid;
+        finalNickname = storedNickname;
+        
+        if (!storedUuid) {
+          finalUuid = "ap-uuid-" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+          localStorage.setItem("alenia_user_uuid", finalUuid);
+        }
+        if (!storedNickname) {
+          finalNickname = generateRandomNickname();
+          localStorage.setItem("alenia_user_nickname", finalNickname);
+        }
+        
+        const storedConsent = localStorage.getItem("alenia_telemetry_consent");
+        const storedEnabled = localStorage.getItem("alenia_telemetry_enabled") === "true";
+        isFirstRun = (storedConsent === null);
+        finalTelemetry = storedEnabled;
+      }
 
-    setUserUuid(finalUuid);
-    setUserNickname(finalNickname);
-    setNicknameCustomized(storedCustomized);
-    setSafeMode(storedSafeMode);
-    setHardwareAccelerationEnabled(storedHwAcc);
+      setUserUuid(finalUuid);
+      setUserNickname(finalNickname);
+      
+      const storedCustomized = localStorage.getItem("alenia_nickname_customized") === "true";
+      const storedSafeMode = localStorage.getItem("alenia_safe_mode") === "true";
+      const storedHwAcc = localStorage.getItem("alenia_hw_acc") !== "false";
 
-    if (storedConsent === null) {
-      setTelemetryConsentShow(true);
-      setTelemetryEnabled(false); // Default disabled/silent until opt-in
+      setNicknameCustomized(storedCustomized);
+      setSafeMode(storedSafeMode);
+      setHardwareAccelerationEnabled(storedHwAcc);
+
+      if (isFirstRun) {
+        setTelemetryConsentShow(true);
+        setTelemetryEnabled(false); 
+      } else {
+        setTelemetryEnabled(finalTelemetry);
+      }
+
+      const encoders = ["NVIDIA NVENC (h264_nvenc)", "Intel QuickSync (h264_qsv)", "AMD AMF (h264_amf)"];
+      const randomEncoder = encoders[Math.floor((finalUuid.charCodeAt(0) || 0) % encoders.length)];
+      setGpuEncoderDetected(randomEncoder);
+
+      fetchGlobalStats();
+      statsInterval = setInterval(fetchGlobalStats, 30000);
+    };
+
+    if (window.hasOwnProperty('pywebview')) {
+      initPrefs();
     } else {
-      setTelemetryEnabled(storedEnabled);
+      window.addEventListener('pywebviewready', initPrefs);
+      const timer = setTimeout(initPrefs, 1500);
+      return () => {
+        window.removeEventListener('pywebviewready', initPrefs);
+        clearTimeout(timer);
+        if (statsInterval) clearInterval(statsInterval);
+      };
     }
 
-    // Auto-detect a GPU encoder dynamically for simulation matching
-    const encoders = ["NVIDIA NVENC (h264_nvenc)", "Intel QuickSync (h264_qsv)", "AMD AMF (h264_amf)"];
-    const randomEncoder = encoders[Math.floor((finalUuid.charCodeAt(0) || 0) % encoders.length)];
-    setGpuEncoderDetected(randomEncoder);
-
-    fetchGlobalStats();
-    const statsInterval = setInterval(fetchGlobalStats, 30000);
-    return () => clearInterval(statsInterval);
+    return () => {
+      if (statsInterval) clearInterval(statsInterval);
+    };
   }, []);
 
 
@@ -2127,7 +2172,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                     type="text"
                     value={customArgs}
                     onChange={(e) => setCustomArgs(e.target.value)}
-                    placeholder='Ej: -an'
+                    placeholder={t("customArgsPlaceholder", "e.g. -an")}
                     className={`w-full ${THEME_COLORS[themeColor].inputBg} border ${THEME_COLORS[themeColor].inputBorder} ${THEME_COLORS[themeColor].inputText} rounded-lg pl-2.5 pr-8 py-1 text-[11px] focus:outline-none focus:ring-1 ${THEME_COLORS[themeColor].ring} placeholder-gray-400 font-mono`}
                   />
                   <button
@@ -2341,7 +2386,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                         }}
                         className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-bold transition-all cursor-pointer font-mono"
                       >
-                        <span>{t("savedInSource", "¡Listo! Archivos Guardados en Origen")}</span>
+                        <span>{t("savedInSource", "Files saved to source")}</span>
                       </button>
                     </div>
                   </div>
@@ -2385,16 +2430,15 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
               <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                 <div className="flex items-center gap-1.5 text-gray-950 font-display font-black text-xs uppercase tracking-tight">
                   <AlertTriangle size={14} className="text-blue-600 animate-pulse" />
-                  <span>{t("dataPrivacy", "Privacidad de Datos")}</span>
+                  <span>{t("dataPrivacy", "Data Privacy")}</span>
                 </div>
               </div>
               <p className="text-[10px] text-gray-600 leading-relaxed font-mono">
-                ¡Hola! Alenia Porter es una herramienta gratuita y de código abierto.
-                Queremos mejorar continuamente. ¿Nos das permiso para recopilar estadísticas de optimización totalmente anónimas (ahorro de espacio, formatos y tiempos de conversión)?
+                {t("telemetryWelcomeMsg", "Alenia Porter is a free and open-source tool. May we collect anonymous optimization statistics?")}
               </p>
               <div className="flex flex-col gap-1 text-[8.5px] font-mono text-gray-500 bg-gray-50 p-2 rounded-xl">
                 <div className="flex justify-between items-center">
-                  <span>{t("yourAlias", "Tu alias anónimo asignado:")}</span>
+                  <span>{t("yourAlias", "Your assigned anonymous alias:")}</span>
                   <strong className="text-gray-800 bg-gray-200/60 px-2 py-0.5 rounded-md font-bold">{userNickname}</strong>
                 </div>
                 <div className="flex justify-between items-center">
@@ -2410,7 +2454,13 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                     localStorage.setItem("alenia_telemetry_consent", "declined");
                     localStorage.setItem("alenia_telemetry_enabled", "false");
                     setTelemetryConsentShow(false);
-                    addLog("[Sistema] Has rechazado la telemetría. Alenia Porter funcionará de forma 100% silenciosa y sin conexión.", "info");
+                    if ((window as any).pywebview) {
+                      try {
+                        (window as any).pywebview.api.mark_first_run_done();
+                        (window as any).pywebview.api.save_appearance_settings({ "alenia_telemetry_enabled": "false", "alenia_telemetry_consent": "declined" });
+                      } catch (e) {}
+                    }
+                    addLog(t("telemetryDeclined", "[System] Telemetry declined. Alenia Porter will run 100% silent."), "info");
                   }}
                   className="py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-[9.5px] rounded-xl transition-all cursor-pointer text-center"
                 >
@@ -2423,7 +2473,13 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                     localStorage.setItem("alenia_telemetry_consent", "given");
                     localStorage.setItem("alenia_telemetry_enabled", "true");
                     setTelemetryConsentShow(false);
-                    addLog("[Sistema] ¡Muchas gracias! Has activado la telemetría de optimización anónima para la comunidad.", "success");
+                    if ((window as any).pywebview) {
+                      try {
+                        (window as any).pywebview.api.mark_first_run_done();
+                        (window as any).pywebview.api.save_appearance_settings({ "alenia_telemetry_enabled": "true", "alenia_telemetry_consent": "given" });
+                      } catch (e) {}
+                    }
+                    addLog(t("telemetryAccepted", "[System] Thank you! Anonymous telemetry has been enabled."), "success");
                     submitTelemetryEvent("init", 1, 0, 0);
                   }}
                   className="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-[9.5px] rounded-xl transition-all cursor-pointer text-center shadow-xs"
@@ -2441,7 +2497,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
             <div className="bg-white rounded-3xl w-full max-w-[320px] p-5 shadow-2xl border border-gray-100 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200">
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <h3 className="font-display font-extrabold text-xs text-gray-950 tracking-tight uppercase">
-                  {t("versionInfo", "Información de Versión")}
+                  {t("versionInfo", "Version Information")}
                 </h3>
                 <button
                   type="button"
@@ -2456,12 +2512,12 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
 
               <div className="space-y-3">
                 <div className="flex justify-between items-center bg-gray-50 p-2.5 rounded-xl border border-gray-100">
-                  <span className="text-[10px] text-gray-500 font-mono">{t("currentVersion", "Versión Actual")}</span>
+                  <span className="text-[10px] text-gray-500 font-mono">{t("currentVersion", "Current Version")}</span>
                   <span className="text-xs font-bold text-gray-800 bg-gray-200/60 px-2.5 py-0.5 rounded-full font-mono">v{appVersion}</span>
                 </div>
 
                 <div className="flex flex-col gap-1.5 bg-blue-50/40 p-3 rounded-xl border border-blue-100/50">
-                  <span className="text-[9px] text-blue-800 font-mono uppercase tracking-wider font-bold">{t("githubLink", "Enlace a Github")}</span>
+                  <span className="text-[9px] text-blue-800 font-mono uppercase tracking-wider font-bold">{t("githubLink", "GitHub Repository")}</span>
                   <a
                     href="https://github.com/Kaia-Alenia/Alenia-Porter"
                     target="_blank"
@@ -2477,22 +2533,22 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                   <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl flex flex-col gap-2">
                     <div className="flex items-center gap-1.5 text-amber-800 font-bold text-[10px]">
                       <AlertTriangle size={12} className="text-amber-500 animate-bounce" />
-                      <span>{t("newVersionAvailable", "¡NUEVA VERSIÓN DISPONIBLE!")}</span>
+                      <span>{t("newVersionAvailable", "NEW VERSION AVAILABLE!")}</span>
                     </div>
                     <p className="text-[9.5px] text-amber-700 leading-normal">
-                      {t("updateAvailableMsg", `Hay una actualización disponible en GitHub (v${latestVersion}). Se recomienda actualizar para obtener optimizaciones de audio, video e imágenes.`)}
+                      {t("updateAvailableMsg", `An update is available on GitHub (v${latestVersion}). Updating is recommended.`)}
                     </p>
 
                     {isUpdatingVersion ? (
                       <div className="space-y-1.5 mt-1">
                         <div className="flex justify-between text-[8.5px] font-mono text-amber-800 font-bold">
-                          <span>{t("downloadingUpdate", "Descargando actualización...")}</span>
+                          <span>{t("downloadingUpdate", "Downloading update...")}</span>
                           <span>{updateProgress}%</span>
                         </div>
                         <div className="w-full bg-amber-200/60 rounded-full h-1.5 overflow-hidden">
                           <div className="bg-amber-500 h-full transition-all duration-150" style={{ width: `${updateProgress}%` }} />
                         </div>
-                        <p className="text-[8px] text-amber-600 text-center">{t("appWillRestart", "La app se reiniciará automáticamente al terminar")}</p>
+                        <p className="text-[8px] text-amber-600 text-center">{t("appWillRestart", "App will restart automatically when finished")}</p>
                       </div>
                     ) : (
                       <div className="flex flex-col gap-1.5 mt-1">
@@ -2523,7 +2579,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                                 await (window as any).pywebview.api.download_update(dlUrl);
                               } catch (e) {
                                 setIsUpdatingVersion(false);
-                                addLog(`[Error] No se pudo iniciar la actualización: ${e}`, "error");
+                                addLog(`[Error] ${t("updateErrMsg", "Could not start update")}: ${e}`, "error");
                               }
                             } else {
                               const link = updateUrl || "https://github.com/Kaia-Alenia/Alenia-Porter/releases/latest";
@@ -2537,7 +2593,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                                   }
                                 }
                               } catch (e) {
-                                addLog(`[Error] Fallo al abrir enlace: ${e}`, "error");
+                                addLog(`[Error] ${t("openLinkErr", "Failed to open link")}: ${e}`, "error");
                               }
                             }
                           }}
@@ -2637,7 +2693,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                 <div className="space-y-3">
                   {/* Imagen */}
                   <div className="space-y-1">
-                    <span className={`text-[8px] font-mono font-bold ${THEME_COLORS[themeColor].textMuted} uppercase tracking-wider block`}>IMAGEN</span>
+                    <span className={`text-[8px] font-mono font-bold ${THEME_COLORS[themeColor].textMuted} uppercase tracking-wider block`}>{t("labelImage", "IMAGE")}</span>
                     <div className="flex flex-wrap gap-1">
                       {["webp", "jpg", "png", "gif", "bmp", "ico", "tiff"].map((fmt) => (
                         <span key={fmt} className="text-[8px] font-mono font-semibold bg-blue-50 border border-blue-100/50 text-blue-700 px-1.5 py-0.5 rounded">
@@ -2649,7 +2705,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
 
                   {/* Video */}
                   <div className="space-y-1">
-                    <span className={`text-[8px] font-mono font-bold ${THEME_COLORS[themeColor].textMuted} uppercase tracking-wider block`}>VIDEO</span>
+                    <span className={`text-[8px] font-mono font-bold ${THEME_COLORS[themeColor].textMuted} uppercase tracking-wider block`}>{t("labelVideo", "VIDEO")}</span>
                     <div className="flex flex-wrap gap-1">
                       {["mp4", "webm", "gif", "avi", "mkv", "mov", "3gp", "flv", "mpeg"].map((fmt) => (
                         <span key={fmt} className="text-[8px] font-mono font-semibold bg-emerald-50 border border-emerald-100/50 text-emerald-700 px-1.5 py-0.5 rounded">
@@ -2661,7 +2717,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
 
                   {/* Audio */}
                   <div className="space-y-1">
-                    <span className={`text-[8px] font-mono font-bold ${THEME_COLORS[themeColor].textMuted} uppercase tracking-wider block`}>AUDIO</span>
+                    <span className={`text-[8px] font-mono font-bold ${THEME_COLORS[themeColor].textMuted} uppercase tracking-wider block`}>{t("labelAudio", "AUDIO")}</span>
                     <div className="flex flex-wrap gap-1">
                       {["ogg", "opus", "mp3", "wav", "flac", "aac", "amr", "wma"].map((fmt) => (
                         <span key={fmt} className="text-[8px] font-mono font-semibold bg-violet-50 border border-violet-100/50 text-violet-700 px-1.5 py-0.5 rounded">

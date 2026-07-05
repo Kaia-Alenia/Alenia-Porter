@@ -103,11 +103,11 @@ func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
 		styleSecondary.Render(T("footer_hist"))
 
 	// Lado derecho: idioma y estado
-	right := ""
+	nick := getNickname()
 	if isProcessing {
-		right = styleInfo.Render(spinnerFrame+T("footer_proc")) + styleFooterLang.Render("["+currentLang+"]")
+		right = styleInfo.Render(spinnerFrame+T("footer_proc")) + styleFooterLang.Render("["+currentLang+"] "+nick)
 	} else {
-		right = styleFooterLang.Render("[" + currentLang + "]")
+		right = styleFooterLang.Render("["+currentLang+"] "+nick)
 	}
 
 	// Calcular padding para separar left y right
@@ -136,6 +136,7 @@ type cmdSuggestion struct {
 func makeCommands() []cmdSuggestion {
 	return []cmdSuggestion{
 		{"/optimize", T("cmd_optimize")},
+		{"/me", T("cmd_me")},
 		{"/v-crf", T("cmd_vcrf")},
 		{"/v-preset", T("cmd_vpreset")},
 		{"/a-bitrate", T("cmd_abitrate")},

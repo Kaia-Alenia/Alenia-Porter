@@ -201,9 +201,8 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
         if encoder == "gif":
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-vf", "fps=15,scale='min(640,iw)':-2",
-                "-c:v", "gif", "-an", "-threads", "1", output_file_path
+                "-vf", "fps=15,scale='if(gt(iw,640),640,iw)':-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
+                "-loop", "0", "-an", "-threads", "1", output_file_path
             ]
         elif encoder in ("wmv2", "mpeg4", "mpeg2video"):
             ffmpeg_command = [
@@ -296,9 +295,8 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
         elif target_image_format == "gif":
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
-                "-vf", "scale='min(480,iw)':-2",
-                "-threads", "1", output_file_path
+                "-vf", "scale='if(gt(iw,480),480,iw)':-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
+                "-loop", "0", "-threads", "1", output_file_path
             ]
         elif target_image_format == "webp":
             try:
