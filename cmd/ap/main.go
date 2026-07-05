@@ -695,12 +695,9 @@ func (m *mainModel) recalcLayout() {
 	footerH := 2   // separador + status bar
 	inputBoxH := 3 // borde redondeado + 1 línea de texto
 	paletteH := 0
-	if m.showPalette {
-		visible := len(m.filteredCmds)
-		if visible > maxSuggestionsVisible {
-			visible = maxSuggestionsVisible
-		}
-		paletteH = visible + 2 // +2 por bordes del box
+	if m.showPalette && len(m.filteredCmds) > 0 {
+		paletteStr := renderSuggestions(m.filteredCmds, m.paletteIdx, m.width)
+		paletteH = lipgloss.Height(paletteStr)
 	}
 
 	vpH := m.height - headerH - footerH - inputBoxH - paletteH - 1
