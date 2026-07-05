@@ -1164,24 +1164,45 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
   // Batch queue processing interval reference
   const processingIntervalRef = useRef<any>(null);
 
-  const startBatchQueue = () => {
-    if (filesQueue.length === 0) return;
+  const startBatchQueueProcessing = () => {
+    if (filesQueue.length === 0) {
+      if (selectedFile) {
+        setFilesQueue([selectedFile]);
+        setTimeout(() => startBatchQueueIndex(0), 100);
+      }
+      return;
+    }
+    
     setIsProcessingQueue(true);
     setIsPaused(false);
+    setMascotState("thinking");
     addLog(t("batchStart", "Iniciando procesamiento de lotes") + ` ${filesQueue.length}`, "info");
-    
-    // Si llegamos al final, reiniciamos desde el principio (opcional)
-    if (currentQueueIndex >= filesQueue.length) {
-      setCurrentQueueIndex(0);
-      setCheckpointIndex(-1);
-    }
+
+    const resumeIdx = filesQueue.findIndex(f => f.status !== "completed");
+    const activeIdx = resumeIdx === -1 ? 0 : resumeIdx;
+
+    startBatchQueueIndex(activeIdx);
   };
 
-  const pauseBatchQueue = () => {
+  const pauseBatchQueueProcessing = () => {
     setIsPaused(true);
     setIsProcessingQueue(false);
-    setCheckpointIndex(currentQueueIndex); // Guardamos donde se pausó
+    setIsProcessing(false);
+    setMascotState("idle");
+    if (processingIntervalRef.current) {
+      clearInterval(processingIntervalRef.current);
+    }
+
     addLog(t("batchPaused", "Procesamiento pausado"), "info");
+    setCheckpointIndex(currentQueueIndex); // Guardamos donde se pausó
+    
+    setFilesQueue(prev => {
+      const updated = [...prev];
+      if (updated[currentQueueIndex] && updated[currentQueueIndex].status === "processing") {
+        updated[currentQueueIndex].status = "pending";
+      }
+      return updated;
+    });
   };
 
   const clearBatchQueue = () => {
@@ -1189,16 +1210,95 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
     setCurrentQueueIndex(-1);
     setCheckpointIndex(-1);
     setIsProcessingQueue(false);
+    setIsPaused(false);
     setSelectedFile(null);
+    if (processingIntervalRef.current) {
+      clearInterval(processingIntervalRef.current);
+    }
     addLog(t("queueEmpty", "Cola vaciada"), "info");
   };
 
-  const processSingleFile = async (file: DemoFile, index: number) => {
-    setIsProcessing(true);
-    setMascotState("thinking");
-    setProgress(0);
+  const startBatchQueueIndex = (index: number) => {
+    if (index >= filesQueue.length) {
+      setIsProcessingQueue(false);
+      setIsProcessing(false);
+      setProgress(100);
+      setMascotState("success");
+      addLog(t("batchCompleted", "[Alenia Batch] ¡Todos los archivos procesados exitosamente!"), "success");
+      return;
+    }
+
+    const file = filesQueue[index];
     setSelectedFile(file);
     setActiveMediaType(file.type);
+    setCurrentQueueIndex(index);
+    setCheckpointIndex(index);
+
+    setFilesQueue(prev => {
+      const updated = [...prev];
+      updated[index].status = "processing";
+      return updated;
+    });
+
+    setProgress(0);
+    setIsProcessing(true);
+    addLog(`[Alenia FFmpeg] Optimizando archivo (${index + 1}/${filesQueue.length}): ${file.path || file.name}`, "info");
+
+    const targetFormat = file.type === "video" ? videoFormat : file.type === "audio" ? audioFormat : imageFormat;
+    const cacheKey = file.hash ? `${file.hash}-${targetFormat}` : "";
+
+    // Smart-Caching fingerprint matching check! (Phase 6 / v6.4)
+    if (cacheKey && cachedOptimizations[cacheKey] && !(window as any).pywebview) {
+      const hit = cachedOptimizations[cacheKey];
+      addLog(t("cacheMatch", "[Smart-Cache] ¡Coincidencia de huella digital MD5/SHA en el caché local!"), "success");
+      addLog(`${t("cacheSkip", "[Smart-Cache] Omitiendo compilación redundante para: ")}${file.name}`, "success");
+      
+      setProgress(100);
+      setFilesQueue(prev => {
+        const updated = [...prev];
+        updated[index].status = "completed";
+        return updated;
+      });
+
+      // Insert hit in local logs immediately
+      const cachedHistoryItem: OptimizationResult = {
+        fileName: file.name,
+        mediaType: file.type,
+        originalSize: file.originalSize,
+        compressedSize: hit.compressedSize,
+        savingsPercent: hit.savingsPercent,
+        format: hit.format,
+        commandUsed: ffmpegCommand,
+        timestamp: new Date().toLocaleTimeString() + " (Cache Hit)"
+      };
+      setOptimizationHistory(prev => [cachedHistoryItem, ...prev]);
+
+      setTimeout(() => {
+        startBatchQueueIndex(index + 1);
+      }, 700);
+      return;
+    }
+
+    const isGpuActive = hardwareAccelerationEnabled && !safeMode;
+    const processStepSpeed = isGpuActive ? 15 : 6; // GPU provides accelerated conversion!
+    
+    addLog(isGpuActive ? `[FFmpeg-WASM] GPU Activo: ${gpuEncoderDetected === "none" ? t("none", "Ninguno") : gpuEncoderDetected}` : `[FFmpeg-WASM] Usando codificación soft (Drivers inactivos / Safe Mode)`, "info");
+
+    let currentPercent = 0;
+    const totalFrames = file.type === "video" ? 360 : 100;
+    const itemMetrics = getSimulatedSizesForFile(file);
+
+      if ((window as any).pywebview) {
+        const filePath = file.path && file.path !== file.name ? file.path : (file.path || null);
+        const isDir = (file as any).isDirectory || false;
+
+        if (!isDir && !filePath) {
+          addLog(`Error: ruta de archivo no disponible para "${file.name}" — usa el selector de archivos nativo.`, "error");
+          setMascotState("error");
+          return;
+        }
+
+        const params = {
           inputDirectory: isDir ? filePath : null,
           input: !isDir && filePath ? filePath : null,
           files: !isDir && filePath ? [filePath] : [],
