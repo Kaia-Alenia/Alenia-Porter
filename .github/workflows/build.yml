@@ -88,7 +88,7 @@ jobs:
           7z a AleniaPorter-Windows.zip AleniaPorter\
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: AleniaPorter-Windows
           path: AleniaPorter-Windows.zip
@@ -204,7 +204,7 @@ jobs:
           zip -r AleniaPorter-macOS.zip AleniaPorter
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: AleniaPorter-macOS
           path: AleniaPorter-macOS.zip
@@ -292,7 +292,7 @@ jobs:
           tar -czf AleniaPorter-Linux.tar.gz AleniaPorter
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: AleniaPorter-Linux
           path: AleniaPorter-Linux.tar.gz
