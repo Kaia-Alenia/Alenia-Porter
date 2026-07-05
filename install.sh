@@ -60,6 +60,11 @@ cp -a "/tmp/${TARGET_DIR}/." "$INSTALL_DIR/"
 # Limpiar temporales
 rm -rf "/tmp/${ARCHIVE}" "/tmp/${TARGET_DIR}"
 
+# Retrocompatibilidad: renombrar legacy 'ap' a 'porter' si es necesario
+if [ ! -f "$INSTALL_DIR/porter" ] && [ -f "$INSTALL_DIR/ap" ]; then
+    mv "$INSTALL_DIR/ap" "$INSTALL_DIR/porter"
+fi
+
 # Asegurar que sea ejecutable
 chmod +x "$INSTALL_DIR/porter"
 
