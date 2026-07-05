@@ -100,7 +100,9 @@ def download_and_apply_update(download_url, progress_callback, on_ready_to_resta
 
 def create_and_run_trampoline(update_source_dir, system):
     updater_dir = os.path.dirname(os.path.abspath(__file__))
-    if getattr(sys, 'frozen', False) or '__compiled__' in globals():
+    if "ALENIA_PORTER_APP_DIR" in os.environ:
+        app_dir = os.environ["ALENIA_PORTER_APP_DIR"]
+    elif getattr(sys, 'frozen', False) or '__compiled__' in globals():
         app_dir = os.path.dirname(sys.executable)
     else:
         app_dir = os.path.abspath(os.path.join(updater_dir, "..", ".."))
