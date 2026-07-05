@@ -219,7 +219,6 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
         if encoder == "gif":
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
                 "-filter_complex", r"fps=15,scale='min(iw\,640)':-2:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
                 "-loop", "0", "-an", "-threads", "1", output_file_path
             ]
