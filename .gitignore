@@ -63,7 +63,6 @@ telemetry-service/.env
 *.bak
 *_backup.*
 cmd/telemetry/
-tools/
 AleniaPorter
 AleniaPorter.exe
 AleniaPorter-*.zip
