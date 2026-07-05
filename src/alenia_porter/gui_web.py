@@ -443,7 +443,7 @@ class Api:
         video_preset = params.get("preset", "fast")
         image_quality = str(params.get("quality", 80))
 
-        # Si el usuario usó fórmula personalizada → forzar reconversión aunque el archivo ya exista
+        # If the user used a custom formula -> force reconversion even if the file exists
         custom_args = params.get("customArgs", "") or ""
         force_overwrite = bool(custom_args.strip())
 
@@ -537,18 +537,7 @@ def main():
     def on_loaded():
         print("[DND] on_loaded")
         if sys.platform.startswith("linux"):
-            # DESACTIVADO TEMPORALMENTE: el hook nativo de GTK
-            # ("drag-data-received" sobre el WebKitWebView) reproducidamente
-            # congela el puntero del mouse a nivel de TODO el sistema
-            # (no solo la app), sin importar el archivo soltado. Esto apunta
-            # a un conflicto de bajo nivel entre el manejo interno de DND de
-            # WebKitGTK y nuestro handler manual, posiblemente agravado por
-            # el compositor (X11/Wayland). Hasta identificar la causa exacta
-            # de forma segura, dejamos el D&D nativo apagado en Linux para
-            # no arriesgar más congelamientos que requieran reiniciar la PC.
-            # El flujo de "Seleccionar archivos" / "Seleccionar carpeta"
-            # (create_file_dialog) sigue funcionando normalmente, ya que no
-            # toca la maquinaria de GTK DND en absoluto.
+            # TEMPORARILY DISABLED: native GTK hook for D&D causes total system mouse freeze under WebKitGTK. Reverting to fallback selector.
             print("[DND] Native GTK drag-and-drop deshabilitado en Linux (ver comentario en código). Usa los botones de selección de archivos/carpeta.")
             return
         try:

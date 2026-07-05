@@ -1,0 +1,25 @@
+name: PR Security Scan & Comments
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  trivy-scan:
+    name: Trivy Security Scan with Reviewdog
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # Required for reviewdog to comment on the PR
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy with Reviewdog (Filesystem Scan)
+        uses: reviewdog/action-trivy@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          level: warning
+          reporter: github-pr-review # Publishes review comments directly on the PR
+          trivy_command: fs
+          trivy_target: '.'

@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
-const version = "1.7"
+const version = "1.8"
 
 type choice struct {
 	Value string
@@ -137,6 +138,14 @@ type CLIConfig struct {
 var currentConfig *CLIConfig
 
 func getConfigDir() string {
+	if runtime.GOOS == "windows" {
+		localApp := os.Getenv("LOCALAPPDATA")
+		if localApp == "" {
+			home, _ := os.UserHomeDir()
+			localApp = filepath.Join(home, "AppData", "Local")
+		}
+		return filepath.Join(localApp, "AleniaStudios", "AleniaPorter")
+	}
 	home, _ := os.UserHomeDir()
 	return filepath.Join(home, ".config", "AleniaStudios", "AleniaPorter")
 }
@@ -197,6 +206,17 @@ func getNickname() string {
 func setNickname(nick string) {
 	loadCLIConfig()
 	currentConfig.Nickname = nick
+	saveCLIConfig()
+}
+
+func getLanguage() string {
+	loadCLIConfig()
+	return currentConfig.Lang
+}
+
+func setLanguage(lang string) {
+	loadCLIConfig()
+	currentConfig.Lang = lang
 	saveCLIConfig()
 }
 

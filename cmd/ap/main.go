@@ -13,20 +13,12 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// ═══════════════════════════════════════════════════════════════════════════
-// ESTADO DE FOCO
-// ═══════════════════════════════════════════════════════════════════════════
-
 type focusState int
 
 const (
 	InputFocus focusState = iota
 	PaletteFocus
 )
-
-// ═══════════════════════════════════════════════════════════════════════════
-// MODELO PRINCIPAL
-// ═══════════════════════════════════════════════════════════════════════════
 
 type optFlowState int
 
@@ -39,41 +31,32 @@ const (
 )
 
 type mainModel struct {
-	// Layout
 	width  int
 	height int
 
-	// Zona 2: historial scrollable
 	viewport viewport.Model
 	messages []string
 
-	// Zona 3: input
 	textInput textinput.Model
 	focus     focusState
 
-	// Command palette (suggestions)
 	allCmds      []cmdSuggestion
 	filteredCmds []cmdSuggestion
 	paletteIdx   int
 	showPalette  bool
 
-	// Sub-modelos (flujos huh)
 	langModel tea.Model
 
-	// Engine Python
 	engineCmd       *exec.Cmd
 	scanner         *bufio.Scanner
 	processing      bool
 	currentProgress string
 
-	// Spinner
 	spinnerIdx int
 
-	// Historial de inputs del usuario
 	inputHistory []string
 	historyIdx   int
 
-	// Estado pendiente para flujo de optimize
 	optState    optFlowState
 	optDir      string
 	optVideo    string
@@ -111,7 +94,6 @@ func initialModel() mainModel {
 		historyIdx:   -1,
 	}
 
-	// Mensaje de bienvenida inicial
 	if isFirstRun() {
 		m = m.appendMessage(styleInfo.Render("  " + T("welcome_title")))
 		m = m.appendMessage(styleMuted.Render("  " + T("welcome_telemetry")))
@@ -122,10 +104,6 @@ func initialModel() mainModel {
 	}
 	return m
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// HELPERS DE MENSAJES
-// ═══════════════════════════════════════════════════════════════════════════
 
 func (m mainModel) appendMessage(msg string) mainModel {
 	m.messages = append(m.messages, msg)
@@ -167,10 +145,6 @@ func (m mainModel) echoInput(line string) mainModel {
 	echo := "\n" + stylePromptIcon.Render("❯") + " " + styleUserInput.Render(line)
 	return m.appendMessage(echo)
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// PALETTE HELPERS
-// ═══════════════════════════════════════════════════════════════════════════
 
 func (m *mainModel) updatePalette() {
 	val := m.textInput.Value()
@@ -215,17 +189,9 @@ func (m *mainModel) updatePalette() {
 	}
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════════════════════
-
 func (m mainModel) Init() tea.Cmd {
 	return tea.Batch(textinput.Blink, tickCmd())
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// EJECUTAR COMANDO
-// ═══════════════════════════════════════════════════════════════════════════
 
 func (m mainModel) executeCommand(line string) (tea.Model, tea.Cmd) {
 	line = strings.TrimSpace(line)
@@ -233,7 +199,6 @@ func (m mainModel) executeCommand(line string) (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
-	// Guardar en historial
 	m.inputHistory = append(m.inputHistory, line)
 	m.historyIdx = -1
 
@@ -313,10 +278,6 @@ func (m mainModel) executeCommand(line string) (tea.Model, tea.Cmd) {
 		return m, failCmd("%s '%s'", T("unknown_cmd"), cmd)
 	}
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// HANDLE OPT INPUT
-// ═══════════════════════════════════════════════════════════════════════════
 
 func (m mainModel) handleOptInput(line string) (tea.Model, tea.Cmd) {
 	line = strings.TrimSpace(line)
@@ -462,16 +423,11 @@ func (m mainModel) advanceOptState() (mainModel, tea.Cmd) {
 	return m, nil
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// UPDATE
-// ═══════════════════════════════════════════════════════════════════════════
-
 func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {
 
-	// ─── Tamaño de ventana ──────────────────────────────────────────────────
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
@@ -482,7 +438,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 
-	// ─── Spinner tick ───────────────────────────────────────────────────────
 	case tickMsg:
 		m.spinnerIdx = (m.spinnerIdx + 1) % len(spinnerFrames)
 		if m.currentProgress != "" {
@@ -490,7 +445,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, tickCmd()
 
-	// ─── Mensajes del sistema ───────────────────────────────────────────────
 	case logMsg:
 		m = m.appendMessage(string(msg))
 		return m, nil
@@ -519,7 +473,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.recalcLayout()
 		return m, nil
 
-	// ─── Progreso del engine Python ─────────────────────────────────────────
 	case engineProgressMsg:
 		if msg.done {
 			m.processing = false
@@ -562,7 +515,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, readNextEngineLine(m.scanner)
 	}
 
-	// ─── Delegar a flujo de idioma ───────────────────────────────────────────
 	if m.langModel != nil {
 		lang, cmd := m.langModel.Update(msg)
 		if lang == nil {
@@ -577,7 +529,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 
-	// ─── Teclado ─────────────────────────────────────────────────────────────
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.Type {
@@ -601,7 +552,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				return m, nil
 			}
-			// Historial de inputs
 			if len(m.inputHistory) > 0 {
 				if m.historyIdx < len(m.inputHistory)-1 {
 					m.historyIdx++
@@ -619,7 +569,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				return m, nil
 			}
-			// Historial hacia adelante
 			if m.historyIdx > 0 {
 				m.historyIdx--
 				idx := len(m.inputHistory) - 1 - m.historyIdx
@@ -669,7 +618,6 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	// Scroll del viewport con el ratón
 	var cmd tea.Cmd
 	m.viewport, cmd = m.viewport.Update(msg)
 	cmds = append(cmds, cmd)
@@ -677,16 +625,11 @@ func (m mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// RECALC LAYOUT  (exactamente como Gemini: header+viewport+palette?+input+footer)
-// ═══════════════════════════════════════════════════════════════════════════
-
 func (m *mainModel) recalcLayout() {
 	if m.width == 0 {
 		return
 	}
 
-	// Alturas dinámicas para el header dependiendo del ancho
 	headerStr := renderHeader(m.width)
 	headerH := lipgloss.Height(headerStr)
 	if headerH < 1 {
@@ -695,12 +638,9 @@ func (m *mainModel) recalcLayout() {
 	footerH := 2   // separador + status bar
 	inputBoxH := 3 // borde redondeado + 1 línea de texto
 	paletteH := 0
-	if m.showPalette {
-		visible := len(m.filteredCmds)
-		if visible > maxSuggestionsVisible {
-			visible = maxSuggestionsVisible
-		}
-		paletteH = visible + 2 // +2 por bordes del box
+	if m.showPalette && len(m.filteredCmds) > 0 {
+		paletteStr := renderSuggestions(m.filteredCmds, m.paletteIdx, m.width)
+		paletteH = lipgloss.Height(paletteStr)
 	}
 
 	vpH := m.height - headerH - footerH - inputBoxH - paletteH - 1
@@ -724,9 +664,7 @@ func (m *mainModel) recalcLayout() {
 	m.viewport.GotoBottom()
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
 // VIEW  (layout: header | viewport | palette? | input | footer)
-// ═══════════════════════════════════════════════════════════════════════════
 
 func (m mainModel) View() string {
 	// ─── Flujos modales (huh) toman pantalla completa ────────────────────────
@@ -776,9 +714,7 @@ func (m mainModel) View() string {
 	return sb.String()
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
 // MAIN
-// ═══════════════════════════════════════════════════════════════════════════
 
 func main() {
 	var newArgs []string

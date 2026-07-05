@@ -219,7 +219,7 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
         if encoder == "gif":
             ffmpeg_command = [
                 ffmpeg_executable_path, "-y", "-i", absolute_path,
-                "-filter_complex", "fps=15,scale='if(gt(iw,640),640,iw)':-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
+                "-filter_complex", "fps=15,scale='min(iw,640)':-2:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
                 "-loop", "0", "-an", "-threads", "1", output_file_path
             ]
         elif encoder in ("wmv2", "mpeg4", "mpeg2video"):

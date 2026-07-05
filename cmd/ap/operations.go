@@ -94,7 +94,7 @@ if command -v curl &> /dev/null; then
 elif command -v wget &> /dev/null; then
     wget -q --show-progress "$URL" -O "/tmp/${ARCHIVE}"
 else
-    echo "Error: Se requiere 'curl' o 'wget' para actualizar."
+    echo "%[3]s"
     exit 1
 fi
 
@@ -133,8 +133,8 @@ if [ -d "$HOME/.alenia-porter" ]; then
     chmod +x "$HOME/.alenia-porter/porter" "$HOME/.alenia-porter/AleniaPorter" 2>/dev/null || true
 fi
 rm -rf "/tmp/${ARCHIVE}" "/tmp/porter_update_temp"
-echo "¡Alenia Porter actualizado desde GitHub! Por favor, sal (/exit) y reinicia."
-`, projectRoot)
+echo "%[2]s"
+`, projectRoot, T("update_success_msg"), T("update_error_no_curl"))
 
 	return func() tea.Msg {
 		cmdUpdate := exec.Command("bash", "-c", script)
@@ -165,7 +165,7 @@ func NewDirForm() *huh.Form {
 }
 
 // NewFormatsForm — Fase 2: selección de formatos uno por uno
-// Solo incluye grupos para los tipos de archivo que existen en el dir
+// Only include groups for file types that exist in the dir
 func NewFormatsForm(hasVideo, hasAudio, hasImage bool) *huh.Form {
 	var groups []*huh.Group
 
@@ -308,16 +308,16 @@ func readNextEngineLine(scanner *bufio.Scanner) tea.Cmd {
 func runDirectOptimize() {
 	optimizeCmd := flag.NewFlagSet("optimize", flag.ContinueOnError)
 	optimizeCmd.Usage = func() {
-		fmt.Printf("Uso: porter optimize [opciones] <directorio_o_archivo>\n\nOpciones:\n")
+		fmt.Printf("%s\n\n%s:\n", T("cli_usage_optimize"), T("cli_options"))
 		optimizeCmd.PrintDefaults()
 	}
-	optV := optimizeCmd.String("vformat", "mp4", "Target video format")
-	optA := optimizeCmd.String("aformat", "mp3", "Target audio format")
-	optI := optimizeCmd.String("iformat", "webp", "Target image format")
-	optVExtra := optimizeCmd.String("vextra", "", "Extra video ffmpeg args")
-	optAExtra := optimizeCmd.String("aextra", "", "Extra audio ffmpeg args")
-	optIExtra := optimizeCmd.String("iextra", "", "Extra image ffmpeg args")
-	optL := optimizeCmd.String("lang", currentLang, "UI language")
+	optV := optimizeCmd.String("vformat", "mp4", T("cli_target_video"))
+	optA := optimizeCmd.String("aformat", "mp3", T("cli_target_audio"))
+	optI := optimizeCmd.String("iformat", "webp", T("cli_target_image"))
+	optVExtra := optimizeCmd.String("vextra", "", T("cli_extra_video"))
+	optAExtra := optimizeCmd.String("aextra", "", T("cli_extra_audio"))
+	optIExtra := optimizeCmd.String("iextra", "", T("cli_extra_image"))
+	optL := optimizeCmd.String("lang", currentLang, T("cli_lang"))
 	if err := optimizeCmd.Parse(os.Args[2:]); err != nil {
 		os.Exit(2)
 	}
@@ -400,10 +400,10 @@ func runEngine(targetDir, videoFormat, vExtra, audioFormat, aExtra, imageFormat,
 
 func handleMeCommand() {
 	loadCLIConfig()
-	fmt.Println("Perfil y Telemetría")
-	fmt.Printf("Alias (Nickname) actual: %s\n", currentConfig.Nickname)
-	fmt.Printf("UUID: %s\n", currentConfig.Uuid)
-	fmt.Printf("Telemetría activada: %t\n\n", currentConfig.TelemetryEnabled)
+	fmt.Println(T("me_profile_title"))
+	fmt.Printf("%s %s\n", T("me_nick_current"), currentConfig.Nickname)
+	fmt.Printf("%s %s\n", T("me_uuid"), currentConfig.Uuid)
+	fmt.Printf("%s %t\n\n", T("me_telemetry_status"), currentConfig.TelemetryEnabled)
 
 	var changeNickname string
 	var newNickname string
@@ -412,10 +412,10 @@ func handleMeCommand() {
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
-				Title("¿Deseas cambiar tu Alias?").
+				Title(T("me_change_nick_prompt")).
 				Options(
-					huh.NewOption("Sí", "yes"),
-					huh.NewOption("No", "no"),
+					huh.NewOption(T("yes"), "yes"),
+					huh.NewOption(T("no"), "no"),
 				).
 				Value(&changeNickname),
 		),
@@ -429,7 +429,7 @@ func handleMeCommand() {
 		form2 := huh.NewForm(
 			huh.NewGroup(
 				huh.NewInput().
-					Title("Nuevo Alias").
+					Title(T("me_new_nick")).
 					Value(&newNickname),
 			),
 		)
@@ -442,7 +442,7 @@ func handleMeCommand() {
 	form3 := huh.NewForm(
 		huh.NewGroup(
 			huh.NewConfirm().
-				Title("¿Compartir datos de telemetría de forma anónima?").
+				Title(T("me_tel_prompt")).
 				Value(&telemetry),
 		),
 	)
@@ -450,5 +450,5 @@ func handleMeCommand() {
 
 	currentConfig.TelemetryEnabled = telemetry
 	saveCLIConfig()
-	fmt.Println("¡Preferencias guardadas exitosamente!")
+	fmt.Println(T("me_saved"))
 }

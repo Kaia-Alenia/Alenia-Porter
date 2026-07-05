@@ -457,7 +457,7 @@ def main():
             language_toggle_button.config(text=active_translation["btn_lang"])
             patreon_link_button.config(text=active_translation["btn_patreon"])
         
-            # Construir info de formatos traducida
+            # Build translated formats info
             f_info = active_translation.get("formats_images", "IMAGES:") + "\n.png, .jpg, .jpeg, .bmp, .tga, .webp\n\n"
             f_info += active_translation.get("formats_videos", "VIDEO:") + "\n.mp4, .mkv, .webm, .avi, .mov, .wmv, .flv, .m4v, .mpg, .mpeg, .m2v, .3gp, .3g2, .ts, .m2ts, .vob, .ogv, .asf, .divx\n\n"
             f_info += active_translation.get("formats_audio", "AUDIO:") + "\n.wav, .mp3, .flac, .m4a, .ogg, .opus, .aac, .wma, .aiff, .aif, .alac, .amr, .mid, .midi, .mp2, .mpga, .au, .snd, .ra, .rm"
