@@ -9,7 +9,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-
 const logoText = ` █████╗ ██╗     ███████╗███╗  ██╗██╗ █████╗
 ██╔══██╗██║     ██╔════╝████╗ ██║██║██╔══██╗
 ███████║██║     █████╗  ██╔██╗██║██║███████║
@@ -45,7 +44,6 @@ func renderLogoGradient(art string) string {
 	return strings.TrimRight(sb.String(), "\n")
 }
 
-
 func renderHeader(width int) string {
 	var logoStr string
 	if width >= 90 {
@@ -64,7 +62,6 @@ func renderHeader(width int) string {
 	sep := styleBorder.Render(strings.Repeat("─", width))
 	return "\n" + logoStr + "\n" + metaLine + "\n" + sep + "\n"
 }
-
 
 func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
 	left := styleFooterKey.Render("ESC") +
@@ -94,7 +91,6 @@ func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
 	sep := styleBorder.Render(strings.Repeat("─", width))
 	return sep + "\n" + styleMuted.Render(line)
 }
-
 
 type cmdSuggestion struct {
 	cmd  string
@@ -206,7 +202,6 @@ func renderSuggestions(sugs []cmdSuggestion, activeIdx int, width int) string {
 		Render(strings.Join(rows, "\n"))
 }
 
-
 var spinnerFrames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
 
 type tickMsg time.Time
@@ -216,7 +211,6 @@ func tickCmd() tea.Cmd {
 		return tickMsg(t)
 	})
 }
-
 
 func max(a, b int) int {
 	if a > b {

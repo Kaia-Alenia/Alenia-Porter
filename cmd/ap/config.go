@@ -125,7 +125,6 @@ func defaultChoice(items []choice, value string) string {
 	return ""
 }
 
-
 type CLIConfig struct {
 	Lang             string `json:"lang"`
 	Nickname         string `json:"nickname"`

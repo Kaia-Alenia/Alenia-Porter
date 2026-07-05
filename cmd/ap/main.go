@@ -663,7 +663,6 @@ func (m *mainModel) recalcLayout() {
 	m.viewport.GotoBottom()
 }
 
-
 func (m mainModel) View() string {
 	// ─── Flujos modales (huh) toman pantalla completa ────────────────────────
 	if m.langModel != nil {
@@ -703,7 +702,6 @@ func (m mainModel) View() string {
 
 	return sb.String()
 }
-
 
 func main() {
 	var newArgs []string
