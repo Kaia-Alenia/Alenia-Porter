@@ -127,7 +127,7 @@ export default function SplitSlider({
       <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200 text-xs text-gray-600 font-mono">
         <span className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
-          {t("previewTitle", "PREVISUALIZACIÓN DE COMPRESIÓN EN TIEMPO REAL")}
+          {t("previewTitle", "REAL-TIME COMPRESSION PREVIEW")}
         </span>
         <div className="flex items-center gap-3">
           <span className="text-gray-400 text-[10px]">{t("dragToCompare", "Arrastra la barra para comparar")}</span>
@@ -302,7 +302,7 @@ export default function SplitSlider({
 
           <div className="ml-auto flex items-center gap-2 font-mono text-xs text-gray-500">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-            <span>{isPlaying ? t("playingPreview", "Reproduciendo previsualización...") : t("readyToPlay", "Listo para reproducir")}</span>
+            <span>{isPlaying ? t("playingPreview", "Playing preview...") : t("readyToPlay", "Ready to play")}</span>
           </div>
         </div>
       )}

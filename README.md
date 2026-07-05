@@ -2,39 +2,40 @@
 
 # Alenia Porter v6.8
 
-*High-performance universal media optimizer — images, video and audio in one tool.*
+*Universal, high-performance multimedia optimizer — image, video and audio in a single tool.*
 
 ---
 
-**Build & CI**
+**Build and CI**
 <br>
 [![Build Status](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/build.yml/badge.svg)](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/build.yml)
 [![Pages Deploy](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/pages.yml/badge.svg)](https://github.com/Kaia-Alenia/Alenia-Porter/actions/workflows/pages.yml)
 [![GitHub release](https://img.shields.io/github/v/release/Kaia-Alenia/Alenia-Porter?include_prereleases&color=6c8ebf&label=latest)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
 [![Downloads](https://img.shields.io/github/downloads/Kaia-Alenia/Alenia-Porter/total?color=4caf50)](https://github.com/Kaia-Alenia/Alenia-Porter/releases)
 
-**License & Stats**
+**License and Stats**
 <br>
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Coding time (all-time)](https://devglobe.app/api/badge/Kaia-Alenia/coding-time-all.svg?theme=dark)](https://devglobe.app/developers/Kaia-Alenia)
 [![GitGem](https://gitgem.org/api/badge/github/Kaia-Alenia/Alenia-Porter.svg)](https://gitgem.org/github/Kaia-Alenia/Alenia-Porter)
+
 </div>
 
 ---
 
-Alenia Porter is a professional, cross-platform, standalone tool that automates the optimization, compression, and preparation of media assets. It ships with embedded FFmpeg binaries — no external dependencies, no setup friction.
+Alenia Porter is a professional, cross-platform, standalone tool that automates the optimization, compression, and preparation of multimedia assets. It includes embedded FFmpeg binaries — no external dependencies, no prior setup.
 
-Originally designed for game engines (Ren'Py, Godot), it has evolved into a **general-purpose media optimizer** for musicians, video editors, web developers, and content creators.
+Originally designed for game engines (Ren'Py, Godot), it has evolved into a **general-purpose multimedia optimizer** for musicians, video editors, web developers, and content creators.
 
 ---
 
-## IDE Edition (Desktop GUI)
+## IDE Edition (Graphical User Interface)
 
 <div align="center">
 
 <img src="docs/images/ide-dashboard.png" alt="Alenia Porter IDE Dashboard" width="860" />
 
-*Main dashboard — folder selector, format picker, live progress bar*
+*Main panel — folder selector, format selector, real-time progress bar*
 
 </div>
 
@@ -53,31 +54,31 @@ Originally designed for game engines (Ren'Py, Godot), it has evolved into a **ge
 
 <br>
 
-**Quick Start:**
+**Quick start:**
 
 1. Run the **AleniaPorter** executable.
-2. Set a custom nickname on first launch (links your local stats to telemetry anonymously).
-3. Choose your preferred output format for audio (OGG or OPUS), video (WebM or MP4) and images (WebP or JPG).
-4. Click **Select Folder** and pick the source directory.
-5. Processed files are saved to an `Alenia_Optimized/` subfolder, preserving the original directory structure.
+2. Configure a custom nickname on the first startup (links your local stats anonymously).
+3. Choose the preferred output format for audio (OGG or OPUS), video (WebM or MP4), and images (WebP or JPG).
+4. Click on **Select Folder** and select the source directory.
+5. Processed files are saved in an `Alenia_Optimized/` subfolder, respecting the original directory structure.
 
 <div align="center">
 
 <img src="docs/images/ide-settings.png" alt="Alenia Porter Settings Panel" width="860" />
 
-*Format selection, quality sliders, and theme switcher*
+*Format selection, quality controls, and theme selector*
 
 </div>
 
 ---
 
-## CLI Edition (Command Line)
+## CLI Edition (Command Line Interface)
 
 <div align="center">
 
 <img src="docs/images/cli-view-process.gif" alt="Alenia Porter CLI Video" width="860" />
 
-*Main TUI — command palette, history log, and language switcher*
+*Main TUI — command palette, session history, and language selector*
 
 </div>
 
@@ -95,15 +96,15 @@ Originally designed for game engines (Ren'Py, Godot), it has evolved into a **ge
 
 <div align="center">
 
-<img src="docs/images/cli-complete.png" alt="Alenia Porter CLI Conversion Complete" width="860" />
+<img src="docs/images/cli-complete.png" alt="Alenia Porter CLI Complete Conversion" width="860" />
 
-*Conversion summary — files processed, output paths, elapsed time*
+*Conversion summary — processed files, output paths, elapsed time*
 
 </div>
 
 <br>
 
-The CLI is a self-contained **native Go binary** — no Python, no Node, no runtime required. Built for headless servers, CI/CD pipelines, and automation workflows.
+The CLI is a self-contained **native Go binary** — no Python, no Node, no runtime. Designed for headless servers, CI/CD pipelines, and automation workflows.
 
 <div align="center">
 
@@ -113,8 +114,8 @@ The CLI is a self-contained **native Go binary** — no Python, no Node, no runt
 | :---: | :---: |
 | Open **PowerShell as Administrator** and run: | Open a terminal and run: |
 | `irm https://kaia-alenia.github.io/Alenia-Porter/install.ps1 \| iex` | `curl -fsSL https://kaia-alenia.github.io/Alenia-Porter/install.sh \| bash` |
-| Adds `porter.exe` to `%LOCALAPPDATA%\Programs\AleniaPorterCLI` | Adds `porter` symlink to `~/.local/bin` |
-| Requires Windows 10 1607+ | No external dependencies required |
+| Installs `porter.exe` in `%LOCALAPPDATA%\Programs\AleniaPorterCLI` | Adds the symlink `porter` to `~/.local/bin` |
+| Requires Windows 10 1607+ | Requires `git` and `go` installed |
 
 </div>
 
@@ -122,120 +123,40 @@ The CLI is a self-contained **native Go binary** — no Python, no Node, no runt
 
 Once installed, type `porter` in any terminal to open the interactive TUI.
 
-### How the CLI Works
+**Non-interactive mode** (skips the TUI completely, useful for scripting and CI):
 
-The CLI binary (`porter` / `porter.exe`) operates in two distinct modes:
-
-#### 1. Interactive TUI Mode (default)
-
-Running `porter` with no arguments launches the **Bubble Tea TUI** — a fully interactive terminal interface with a command palette, live progress bars, and a scrollable log panel.
-
-The TUI internally spawns the Python media engine as a subprocess when a conversion is triggered, streaming real-time progress lines via stdout. This keeps the Go binary at zero runtime dependencies while delegating all FFmpeg orchestration to the Python engine.
-
-```bash
-porter          # Launch full TUI
+```
+porter version
+porter optimize <directory> --vformat mp4 --aformat mp3 --iformat webp
 ```
 
-**Inside the TUI**, commands use a `/` prefix. Type `/` to see autocomplete suggestions:
+**Inside the TUI**, commands use the `/` prefix. Type `/` to see autocomplete suggestions:
 
 | Command | Description |
 |---------|-------------|
-| `/optimize` | Start a guided conversion — asks for folder, then formats step by step |
-| `/help` | Show all commands and key bindings |
-| `/formulas` | Show FFmpeg codec reference and common settings |
-| `/lang [code]` | Switch language (`en`, `es`, `fr`, `ja`, `zh`, `ru`, `pt-br`, `de`, `pt`) |
-| `/v-preset [value]` | Set video encoding preset (e.g. `slow`, `fast`, `ultrafast`) |
-| `/v-crf [value]` | Set video CRF quality value (e.g. `17`, `23`, `28`) |
-| `/a-bitrate [value]` | Set audio bitrate (e.g. `128k`, `192k`, `320k`) |
-| `/clear` | Clear the session log |
-| `/update` | Run the project update script |
-| `/self-update` | Pull latest source and rebuild the binary |
-| `/exit` | Exit the TUI |
-
-#### 2. Non-Interactive (Direct) Mode
-
-Pass `optimize` as the first argument to skip the TUI entirely and run a batch conversion directly from the shell. This is the recommended mode for scripts, CI/CD pipelines, and automation.
-
-```bash
-porter optimize <path> [flags]
-```
-
-**Available flags:**
-
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--vformat <ext>` | `mp4` | Target video format (`mp4`, `mkv`, `webm`, `gif`, `avi`, `mov`, …) |
-| `--aformat <ext>` | `mp3` | Target audio format (`mp3`, `ogg`, `opus`, `flac`, `wav`, `aac`, …) |
-| `--iformat <ext>` | `webp` | Target image format (`webp`, `jpg`, `png`, `bmp`, `tiff`, `ico`, …) |
-| `--vextra <args>` | _(empty)_ | Extra FFmpeg arguments appended before the output for video files |
-| `--aextra <args>` | _(empty)_ | Extra FFmpeg arguments appended before the output for audio files |
-| `--iextra <args>` | _(empty)_ | Extra FFmpeg arguments appended before the output for image files |
-| `--lang <code>` | _(saved config)_ | Override UI language for this run (`en`, `es`, `fr`, …) |
-
-**Usage examples:**
-
-```bash
-# Convert all media in /assets to MP4, MP3, WebP (defaults)
-porter optimize /assets
-
-# Convert videos to MKV, audio to FLAC, images to PNG
-porter optimize /game/assets --vformat mkv --aformat flac --iformat png
-
-# Convert videos to animated GIF (max 640px wide, 15fps, palette-optimized)
-porter optimize /assets/cutscenes --vformat gif
-
-# Apply a custom CRF value with --vextra
-porter optimize /project/video --vformat mp4 --vextra "-crf 17"
-
-# Use in a GitHub Actions workflow
-porter optimize ./assets/raw --vformat webm --aformat opus --iformat webp
-```
-
-**Other non-TUI commands:**
-
-```bash
-porter version      # Print version and exit
-porter --version
-porter -v
-
-porter help         # Show usage and available flags
-porter --help
-porter -h
-```
-
-#### Internal Architecture
-
-```
-porter (Go binary)
- ├── TUI mode  →  Bubble Tea UI  →  startEngineCmd()
- │                                       └── spawns: python3 -m alenia_porter.headless
- │                                                         ├── argparse (--vformat, --aformat, etc.)
- │                                                         └── media_engine.convert_media()
- │                                                               ├── ThreadPoolExecutor (CPU-1 workers)
- │                                                               ├── FFmpeg subprocess per file
- │                                                               └── stdout: PROGRESS:n/total | DONE:n:path
- └── Direct mode  →  runDirectOptimize()
-                          └── getEngineCmd()  →  same Python engine subprocess
-```
-
-The engine prints structured lines to stdout that the Go binary parses:
-- `PROGRESS:n/total` — incremental progress (one line per file processed)
-- `DONE:n:output_path` — conversion complete with output path
-- `ERROR:message` — fatal engine error
-
-**GPU Acceleration** is handled transparently by the Python engine: at the start of each session it validates hardware encoders (`h264_nvenc`, `h264_qsv`, `h264_amf`) by running a real test frame through them, and automatically falls back to `libx264` / `libvpx-vp9` on systems without a compatible GPU or CUDA drivers.
+| `/optimize` | Starts a guided conversion — asks for the folder and then formats step by step |
+| `/help` | Shows all commands and keyboard shortcuts |
+| `/formulas` | Shows the FFmpeg codec reference and common configurations |
+| `/lang [code]` | Changes the language (`en`, `es`, `fr`, `ja`, `zh`, `ru`, `pt-br`, `de`, `pt`) |
+| `/v-preset [value]` | Sets the video encoding preset (e.g., `slow`, `fast`, `ultrafast`) |
+| `/v-crf [value]` | Sets the video quality CRF value (e.g., `17`, `23`, `28`) |
+| `/a-bitrate [value]` | Sets the audio bitrate (e.g., `128k`, `192k`, `320k`) |
+| `/clear` | Clears the session history |
+| `/update` | Runs the project update script |
+| `/self-update` | Downloads the latest source code and rebuilds the binary |
+| `/exit` | Closes the TUI |
 
 
 ---
 
 ## Supported Input Formats
 
-All formats below are **automatically detected** by scanning source directories recursively.
+All formats below are **automatically detected** when scanning source directories recursively.
 
 ### Audio
 
 | Format | Extension | Notes |
-|--------|-----------|-------|
+|---------|-----------|-------|
 | MP3 | `.mp3` | MPEG Layer 3 |
 | WAV | `.wav` | Uncompressed PCM |
 | FLAC | `.flac` | Lossless |
@@ -244,11 +165,11 @@ All formats below are **automatically detected** by scanning source directories 
 | Opus | `.opus` | Modern, ultra-efficient |
 | M4A | `.m4a` | AAC in MPEG-4 container |
 | WMA | `.wma` | Windows Media Audio |
-| AIFF / AIF | `.aiff` `.aif` | Apple lossless raw |
+| AIFF / AIF | `.aiff` `.aif` | Raw Apple audio |
 | ALAC | `.alac` | Apple Lossless |
-| AMR | `.amr` | Mobile voice codec |
+| AMR | `.amr` | Mobile speech codec |
 | MIDI | `.mid` `.midi` | Sequenced music |
-| MP2 | `.mp2` | Legacy MPEG Layer 2 |
+| MP2 | `.mp2` | MPEG Layer 2 (legacy) |
 | MPGA | `.mpga` | MPEG audio stream |
 | AU / SND | `.au` `.snd` | Unix audio format |
 | RA / RM | `.ra` `.rm` | RealAudio (legacy) |
@@ -256,11 +177,11 @@ All formats below are **automatically detected** by scanning source directories 
 ### Video
 
 | Format | Extension | Notes |
-|--------|-----------|-------|
+|---------|-----------|-------|
 | MP4 | `.mp4` | H.264 / AAC |
 | MKV | `.mkv` | Matroska container |
 | WebM | `.webm` | VP9 / Opus |
-| AVI | `.avi` | Legacy Microsoft container |
+| AVI | `.avi` | Microsoft container (legacy) |
 | MOV | `.mov` | Apple QuickTime |
 | WMV | `.wmv` | Windows Media Video |
 | FLV | `.flv` | Flash Video (legacy) |
@@ -276,29 +197,28 @@ All formats below are **automatically detected** by scanning source directories 
 ### Images
 
 | Format | Extension | Notes |
-|--------|-----------|-------|
+|---------|-----------|-------|
 | PNG | `.png` | Lossless raster |
 | JPEG | `.jpg` `.jpeg` | Lossy, universal |
-| WebP | `.webp` | Modern lossy/lossless |
+| WebP | `.webp` | Modern, lossy/lossless |
 | BMP | `.bmp` | Uncompressed bitmap |
 | TGA | `.tga` | Targa (game textures) |
-| TIFF | `.tiff` | High-quality print |
+| TIFF | `.tiff` | High quality for print |
 | GIF | `.gif` | Animated / legacy |
 | ICO | `.ico` | Windows icon |
-| PDF | `.pdf` | Portable Document (read) |
-| AVIF | `.avif` | AV1 Image Format |
-| APNG | `.apng` | Animated PNG |
+| PDF | `.pdf` | Portable Document Format (reading) |
+| AVIF | `.avif` | Next-gen image format |
 
 ---
 
 ## Output Formats (Conversion Targets)
 
-> **Stability:** `Stable` = dedicated code path | `Risky` = generic FFmpeg fallback, may produce empty/corrupt files | `Broken` = streaming protocol or format with no write support
+> **Stability:** `Stable` = dedicated code path | `Unstable` = generic FFmpeg fallback, might produce empty or corrupt files | `Broken` = streaming protocol or format without write support
 
 ### Audio Output
 
 | Format | Extension | Codec | Stability |
-|--------|-----------|-------|-----------|
+|---------|-----------|-------|-------------|
 | OGG Vorbis | `.ogg` | `libvorbis` | Stable |
 | Opus | `.opus` | `libopus` | Stable |
 | MP3 | `.mp3` | `libmp3lame` | Stable |
@@ -311,7 +231,7 @@ All formats below are **automatically detected** by scanning source directories 
 | AIFF | `.aiff` | `pcm_s16be` | Stable |
 | WavPack | `.wv` | `wavpack` | Stable |
 | AU | `.au` | `pcm_s16be` | Stable |
-| AMR | `.amr` | `amr_nb` (8kHz mono, forced) | Stable |
+| AMR | `.amr` | `amr_nb` (forced 8kHz mono) | Stable |
 | AC3 | `.ac3` | `ac3` | Stable |
 | DTS | `.dts` | `dca` | Stable |
 | CAF | `.caf` | `pcm_s16le` | Stable |
@@ -319,7 +239,7 @@ All formats below are **automatically detected** by scanning source directories 
 ### Video Output
 
 | Format | Extension | Codec | Stability |
-|--------|-----------|-------|-----------|
+|---------|-----------|-------|-------------|
 | MP4 | `.mp4` | `libx264` / NVENC / QSV / AMF | Stable |
 | WebM | `.webm` | `libvpx-vp9` / vp9_nvenc | Stable |
 | MKV | `.mkv` | `libx264` | Stable |
@@ -333,103 +253,103 @@ All formats below are **automatically detected** by scanning source directories 
 | MPEG / MPG / M2V | `.mpeg` `.mpg` `.m2v` | `mpeg2video` | Stable |
 | OGV | `.ogv` | `libtheora` | Stable |
 | GIF | `.gif` | `gif` encoder (15fps, max 640px) | Stable |
-| VOB | `.vob` | Generic fallback — no encoder mapped | Risky |
-| ASF | `.asf` | Generic fallback — no encoder mapped | Risky |
-| RM / RealMedia | `.rm` | Generic fallback — no encoder mapped | Risky |
-| AVIF (video) | `.avif` | Generic fallback — needs `libavif` build | Risky |
-| MXF | `.mxf` | Generic fallback | Risky |
-| NUT | `.nut` | Generic fallback (experimental container) | Risky |
+| VOB | `.vob` | Generic fallback — no assigned encoder | Unstable |
+| ASF | `.asf` | Generic fallback — no assigned encoder | Unstable |
+| RM / RealMedia | `.rm` | Generic fallback — no assigned encoder | Unstable |
+| AVIF (video) | `.avif` | Generic fallback — requires build with `libavif` | Unstable |
+| MXF | `.mxf` | Generic fallback | Unstable |
+| NUT | `.nut` | Generic fallback (experimental container) | Unstable |
 | ADTS | `.adts` | Audio demuxer only — not a video container | Broken |
 | ASF Stream | `.asf_stream` | Streaming protocol — cannot write to file | Broken |
 | FITS | `.fits` | Astronomy image format — not a video container | Broken |
 | RTP / MPEG-TS | `.rtp_mpegts` | Streaming protocol — cannot write to file | Broken |
 | RTSP | `.rtsp` | Streaming protocol — cannot write to file | Broken |
-| WebM Chunk | `.webm_chunk` | Streaming fragment — not a standalone file | Broken |
-| WebM DASH Manifest | `.webm_dash_manifest` | Manifest metadata only | Broken |
+| WebM Chunk | `.webm_chunk` | Streaming fragment — not an independent file | Broken |
+| WebM DASH Manifest | `.webm_dash_manifest` | Metadata manifest only | Broken |
 | YUV4MPEG Pipe | `.yuv4mpegpipe` | Raw pipe format — not a file container | Broken |
 
 ### Image Output
 
 | Format | Extension | Notes | Stability |
-|--------|-----------|-------|-----------|
-| WebP | `.webp` | `libwebp`, quality-controlled via `-q:v` | Stable |
-| JPEG / JPG | `.jpg` `.jpeg` | Quality-mapped to FFmpeg `-q:v` scale | Stable |
+|---------|-----------|-------|-------------|
+| WebP | `.webp` | `libwebp`, quality controlled via `-q:v` | Stable |
+| JPEG / JPG | `.jpg` `.jpeg` | Quality mapped to FFmpeg `-q:v` scale | Stable |
 | PNG | `.png` | Lossless | Stable |
 | BMP | `.bmp` | Uncompressed | Stable |
-| TIFF | `.tiff` | Archival quality | Stable |
+| TIFF | `.tiff` | Archive quality | Stable |
 | TGA | `.tga` | Game textures | Stable |
-| ICO | `.ico` | Auto-scaled to max 256×256, `rgba` pixel format forced | Stable |
+| ICO | `.ico` | Auto-scaled to max 256×256, forced `rgba` pixel format | Stable |
 | PDF | `.pdf` | Via Pillow (not FFmpeg), converts to RGB first | Stable |
-| GIF (from image) | `.gif` | FFmpeg applies 15fps + scale filter to a static image — produces a 1-frame GIF; may look corrupt in some viewers | Risky |
-| AVIF | `.avif` | Falls to generic handler — needs `libavif` FFmpeg build | Risky |
-| APNG | `.apng` | Falls to generic handler — animated PNG muxer unreliable in standard builds | Risky |
-| MJPEG | `.mjpeg` | FFmpeg demuxer, not a standalone image output format | Broken |
+| GIF (from image) | `.gif` | FFmpeg applies 15fps filter + scales to static image — produces a 1-frame GIF; may look corrupt in some viewers | Unstable |
+| AVIF | `.avif` | Falls back to generic handler — requires FFmpeg build with `libavif` | Unstable |
+| APNG | `.apng` | Falls back to generic handler — unreliable animated PNG muxer in standard builds | Unstable |
+| MJPEG | `.mjpeg` | FFmpeg demuxer, not an image output format | Broken |
 | MPJPEG | `.mpjpeg` | Multipart JPEG stream — not a file format | Broken |
 | SMJPEG | `.smjpeg` | Loki game format — no write support in FFmpeg | Broken |
 
 ---
 
-## Pending / Known Issues
+## Todo / Known Issues
 
 | Format | Context | Root Cause |
-|--------|---------|------------|
-| AVIF output | Image + Video | No dedicated handler — falls to generic FFmpeg; requires `libavif` compile-time flag |
-| APNG output | Image | No dedicated handler — animated PNG muxer produces inconsistent results |
-| GIF as image output | Image | Engine applies a video filter (15fps, 480px scale) to static images — 1-frame GIF is created, which may appear corrupt |
-| MJPEG / MPJPEG / SMJPEG | Image output | These are demuxers or streaming formats, not file output containers — selecting them as a target will produce corrupt or empty files |
-| VOB / ASF / RM output | Video | No explicit encoder assigned — falls to generic FFmpeg handler, result varies by source format |
-| ADTS / RTSP / RTP / WebM Chunk / DASH Manifest / YUV4MPEG | Video | Streaming protocols or pipe formats — cannot be used as standalone file output targets |
-| `.wv` input (folder mode) | IDE Edition | WavPack is in the GUI file-picker filter but **missing from `media_engine.py` audio extensions** — will not be detected when scanning a folder |
-| HEIC / HEIF | Any | No FFmpeg encoder without a commercial codec build — not planned |
-| MIDI as audio output | Audio | Sequenced format, not PCM audio — cannot be re-encoded |
+|---------|----------|------------|
+| AVIF Output | Image + Video | No dedicated handler — falls back to generic FFmpeg; requires `libavif` compilation flag |
+| APNG Output | Image | No dedicated handler — animated PNG muxer produces inconsistent results |
+| GIF as image output | Image | The engine applies a video filter (15fps, 480px) to static images — a 1-frame GIF is created which may look corrupt |
+| MJPEG / MPJPEG / SMJPEG | Image output | These are demuxers or streaming formats, not file containers — selecting them as targets yields corrupt or empty files |
+| VOB / ASF / RM Output | Video | No explicit encoder assigned — falls back to generic handler, results vary depending on source format |
+| ADTS / RTSP / RTP / WebM Chunk / DASH Manifest / YUV4MPEG | Video | Streaming protocols or pipe formats — cannot be used as standalone file destinations |
+| `.wv` Input (folder mode) | IDE Edition | WavPack is in the GUI file selector filter but **missing from the audio extensions in `media_engine.py`** — it won't be detected when scanning a folder |
+| HEIC / HEIF | Any | No FFmpeg encoder without a commercial codec — not planned |
+| MIDI as audio output | Audio | Sequenced format, not PCM — cannot be re-encoded |
 | RA / RM as audio output | Audio | RealMedia codec not available in standard FFmpeg distributions |
+| RA / RM Output | Unsupported | RealMedia codec not available in FFmpeg distributions |
 
 ---
 
 ## Architecture
 
 | Component | Technology | Description |
-|-----------|------------|-------------|
-| **IDE Edition** | Python + Nuitka + pywebview | Standalone executable with embedded React UI |
-| **Frontend UI** | React 19 + TypeScript + Vite | Rendered in a system WebView (no browser required) |
+|------------|------------|-------------|
+| **IDE Edition** | Python + Nuitka + pywebview | Standalone executable with integrated React UI |
+| **Frontend UI** | React 19 + TypeScript + Vite | Rendered in system WebView (no browser window) |
 | **Media Engine** | Python + FFmpeg (embedded) | Concurrent processing via `ThreadPoolExecutor` |
 | **CLI Edition** | Go 1.25.11 + Bubble Tea | Native TUI binary, zero dependencies |
 | **CI/CD** | GitHub Actions | Builds + smoke tests on Windows, macOS, Linux |
-| **GPU Acceleration** | NVENC / QSV / AMF (auto-detect) | Used for MP4 and WebM encoding when available |
+| **GPU Acceleration** | NVENC / QSV / AMF (auto-detection) | Used for MP4 and WebM encoding when available |
 
 ---
 
 ## How It Works
 
-1. **Efficient Scanning** — Recursively scans directories by extension, separating audio, video, and image files.
-2. **Concurrent Processing** — Uses `ThreadPoolExecutor` with `(CPU count - 1)` workers. Each FFmpeg subprocess is forced to use a single thread (`-threads 1`) to avoid contention on low-end hardware.
-3. **Smart Deduplication** — A SHA-256 cache (`.alenia_cache.json`) skips already-converted files on subsequent runs.
-4. **GPU Auto-detection** — At runtime, queries FFmpeg's encoder list and validates hardware encoders with a real test frame. Selects NVIDIA NVENC, Intel QSV, or AMD AMF when they actually work, falling back to software encoders (`libx264`, `libvpx-vp9`) automatically.
-5. **Crash Resilience** — On FFmpeg failure, automatically retries in safe mode (software-only, no hardware acceleration). Generates timestamped crash dumps to `~/.config/AleniaStudios/AleniaPorter/` for diagnostics.
-6. **Structured IPC** — The Go CLI binary spawns the Python engine as a subprocess and communicates via structured stdout lines (`PROGRESS:n/total`, `DONE:n:path`, `ERROR:message`), keeping the binary self-contained with zero Python runtime dependency.
+1. **Efficient Scan** — Recursively scans directories by extension, grouping audio, video, and image files.
+2. **Concurrent Processing** — Uses `ThreadPoolExecutor` with `(CPU count - 1)` workers. Each FFmpeg subprocess is forced to a single thread to avoid contention on low-end hardware.
+3. **Smart Deduplication** — A SHA-256 cache (`.alenia_cache.json`) skips already optimized files in subsequent runs.
+4. **GPU Auto-detection** — Queries the FFmpeg encoders list at runtime and selects NVIDIA NVENC, Intel QSV, or AMD AMF when available, falling back to software encoders.
+5. **Fail-Safe Resiliency** — If FFmpeg fails, it automatically retries in safe mode (software-only). Generates timestamped crash dumps for diagnostics.
 
 ---
 
 ## Telemetry and Privacy
 
-Alenia Porter includes a lightweight, **fully opt-in**, asynchronous telemetry system.
+Alenia Porter includes a lightweight, **completely anonymous**, and asynchronous telemetry system.
 
 - **No personal data is collected** — no filenames, no real names, no passwords, no disk contents.
-- **What is sent:** anonymous UUID, chosen nickname, OS type, execution mode (GUI/CLI), output format extension (e.g. `webp`), file count, and elapsed time.
-- **Purpose:** public benchmarks to measure performance across different platforms and hardware configurations.
+- **What is sent:** Anonymous UUID, chosen nickname, OS type, run mode (GUI/CLI), output format extension (e.g., `webp`), file count, and elapsed time.
+- **Purpose:** Public benchmarks to measure performance across different platforms and hardware configurations.
 
 ---
 
 ## CLI vs IDE Edition
 
 | Feature | IDE Edition (GUI) | CLI Edition |
-|---------|-------------------|-------------|
-| **Target Audience** | Content creators, video editors, designers | DevOps, backend devs, CI/CD automation |
-| **Interface** | React UI with dynamic themes | Minimalist Bubble Tea TUI |
-| **Architecture** | Python + pywebview + embedded FFmpeg | Native Go binary, zero dependencies |
-| **Integration** | Standalone Desktop App | Shell scripts, GitHub Actions, Makefiles |
+|----------------|-------------------|-------------|
+| **Target Audience** | Content creators, editors, designers | DevOps, backend devs, CI/CD automation |
+| **Interface** | React UI with dynamic themes | Minimalist TUI with Bubble Tea |
+| **Architecture** | Python + pywebview + integrated FFmpeg | Native Go binary, zero dependencies |
+| **Integration** | Standalone desktop application | Shell scripts, GitHub Actions, Makefiles |
 | **GPU Acceleration** | Auto (NVENC / QSV / AMF) | Auto (same FFmpeg backend) |
-| **Batch Processing** | Folder-based with live progress | Directory or file list via flags |
+| **Batch Processing** | By folder with live progress | Directory or file list via flags |
 | **Performance** | High | Ultra-high (minimal overhead) |
 
 ---
@@ -437,11 +357,17 @@ Alenia Porter includes a lightweight, **fully opt-in**, asynchronous telemetry s
 <div align="center">
 
 **License:** GNU General Public License v3 (GPL v3).
-*Designed to be free, transparent, and accessible to the developer and creator community.*
+
+**Assets and Music License:** Standard Licensing: Alenia Studios Standard (CC BY 4.0 + Additional Terms).
+- **Attribution**: Required to Alenia Studios.
+- **No Resale**: Standalone redistribution or resale is prohibited.
+- **No AI**: Usage for AI training or dataset creation is prohibited.
+- **Commercial Use**: Allowed for games, videos, and projects.
+*Designed to be free, transparent, and accessible to the entire developer and creator community.*
 
 **Official Alenia Studios Email:** contact.aleniastudios@gmail.com
 
 **Developed and translated by Kaia-Alenia Studios**
-US &nbsp; ES &nbsp; FR &nbsp; JP &nbsp; CN &nbsp; RU &nbsp; BR &nbsp; DE
+🇺🇸 US &nbsp; 🇪🇸 ES &nbsp; 🇫🇷 FR &nbsp; 🇯🇵 JP &nbsp; 🇨🇳 CN &nbsp; 🇷🇺 RU &nbsp; 🇧🇷 BR &nbsp; 🇩🇪 DE
 
 </div>

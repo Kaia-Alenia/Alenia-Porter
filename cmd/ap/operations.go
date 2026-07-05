@@ -150,7 +150,6 @@ func cleanPath(p string) string {
 	return p
 }
 
-// NewDirForm — Fase 1: solo pide el directorio
 func NewDirForm() *huh.Form {
 	form := huh.NewForm(
 		huh.NewGroup(
@@ -164,8 +163,6 @@ func NewDirForm() *huh.Form {
 	return form
 }
 
-// NewFormatsForm — Fase 2: selección de formatos uno por uno
-// Only include groups for file types that exist in the dir
 func NewFormatsForm(hasVideo, hasAudio, hasImage bool) *huh.Form {
 	var groups []*huh.Group
 
@@ -203,7 +200,6 @@ func NewFormatsForm(hasVideo, hasAudio, hasImage bool) *huh.Form {
 	}
 
 	if len(groups) == 0 {
-		// fallback — no debería ocurrir
 		groups = append(groups, huh.NewGroup(
 			huh.NewSelect[string]().
 				Key("video").
@@ -216,7 +212,6 @@ func NewFormatsForm(hasVideo, hasAudio, hasImage bool) *huh.Form {
 	return huh.NewForm(groups...)
 }
 
-// NewOptimizeForm queda como alias de compatibilidad (modo directo)
 func NewOptimizeForm() *huh.Form {
 	return NewDirForm()
 }
@@ -230,25 +225,21 @@ type engineProgressMsg struct {
 func getEngineCmd(baseArgs []string) *exec.Cmd {
 	projectRoot := resolveProjectRoot()
 
-	// Check for Windows executable
 	winExe := filepath.Join(projectRoot, "AleniaPorter.exe")
 	if _, err := os.Stat(winExe); err == nil {
 		return exec.Command(winExe, append([]string{"--cli-engine"}, baseArgs...)...)
 	}
 
-	// Check for Linux executable
 	linExe := filepath.Join(projectRoot, "AleniaPorter")
 	if _, err := os.Stat(linExe); err == nil {
 		return exec.Command(linExe, append([]string{"--cli-engine"}, baseArgs...)...)
 	}
 
-	// Check for macOS App Bundle executable
 	macExe := filepath.Join(projectRoot, "AleniaPorter.app", "Contents", "MacOS", "AleniaPorter")
 	if _, err := os.Stat(macExe); err == nil {
 		return exec.Command(macExe, append([]string{"--cli-engine"}, baseArgs...)...)
 	}
 
-	// Fallback for development: use python3
 	srcPath := filepath.Join(projectRoot, "src")
 	if _, err := os.Stat(filepath.Join(srcPath, "alenia_porter")); err != nil {
 		srcPath = filepath.Join(projectRoot, "src")
@@ -304,7 +295,6 @@ func readNextEngineLine(scanner *bufio.Scanner) tea.Cmd {
 	}
 }
 
-// Keep direct execution intact for CLI flags
 func runDirectOptimize() {
 	optimizeCmd := flag.NewFlagSet("optimize", flag.ContinueOnError)
 	optimizeCmd.Usage = func() {

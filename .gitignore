@@ -66,4 +66,4 @@ cmd/telemetry/
 AleniaPorter
 AleniaPorter.exe
 AleniaPorter-*.zip
-AleniaPorter-*.tar.gz
+tools/

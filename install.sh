@@ -27,8 +27,13 @@ if [ "$OS" != "linux" ] && [ "$OS" != "darwin" ]; then
     exit 1
 fi
 
-TARGET="porter-${OS}-${ARCH}"
-ARCHIVE="${TARGET}.tar.gz"
+TARGET_DIR="AleniaPorter"
+if [ "$OS" = "linux" ]; then
+    ARCHIVE="AleniaPorter-Linux.tar.gz"
+else
+    ARCHIVE="AleniaPorter-macOS.zip"
+fi
+
 REPO_URL="https://github.com/Kaia-Alenia/Alenia-Porter"
 DOWNLOAD_URL="${REPO_URL}/releases/latest/download/${ARCHIVE}"
 
@@ -43,13 +48,17 @@ else
 fi
 
 echo "Extrayendo archivos en $INSTALL_DIR..."
-# Extrae el contenido del tar.gz en /tmp
-tar -xzf "/tmp/${ARCHIVE}" -C "/tmp"
+if [ "$OS" = "linux" ]; then
+    tar -xzf "/tmp/${ARCHIVE}" -C "/tmp"
+else
+    unzip -q -o "/tmp/${ARCHIVE}" -d "/tmp"
+fi
+
 # Copia el contenido de la carpeta descomprimida al directorio de instalación
-cp -a "/tmp/${TARGET}/." "$INSTALL_DIR/"
+cp -a "/tmp/${TARGET_DIR}/." "$INSTALL_DIR/"
 
 # Limpiar temporales
-rm -rf "/tmp/${ARCHIVE}" "/tmp/${TARGET}"
+rm -rf "/tmp/${ARCHIVE}" "/tmp/${TARGET_DIR}"
 
 # Asegurar que sea ejecutable
 chmod +x "$INSTALL_DIR/porter"

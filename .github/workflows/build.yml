@@ -65,7 +65,7 @@ jobs:
 
       - name: Build Go CLI
         run: |
-          go build -o porter_launcher.dist\ap.exe .\cmd\ap
+          go build -o porter_launcher.dist\porter.exe .\cmd\ap
 
       - name: Smoke test executable
         run: |
@@ -170,7 +170,7 @@ jobs:
 
       - name: Build Go CLI
         run: |
-          go build -o porter_launcher.dist/ap ./cmd/ap
+          go build -o porter_launcher.dist/porter ./cmd/ap
 
       - name: Debug - list dist contents
         run: find porter_launcher.dist -maxdepth 3
@@ -268,7 +268,7 @@ jobs:
 
       - name: Build Go CLI
         run: |
-          go build -o porter_launcher.dist/ap ./cmd/ap
+          go build -o porter_launcher.dist/porter ./cmd/ap
 
       - name: Smoke test executable
         run: |

@@ -8,13 +8,9 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-// BUBBLETEA MESSAGE TYPES
-
 type logMsg string
 type clearMsg struct{}
 type progressMsg string
-
-// COMANDOS TEA QUE PRODUCEN MENSAJES
 
 func msgCmd(text string) tea.Cmd {
 	return func() tea.Msg { return logMsg(text) }
@@ -40,8 +36,6 @@ func failCmd(format string, a ...interface{}) tea.Cmd {
 	return msgCmd(msg)
 }
 
-// FUNCIONES DE PRINT DIRECTAS (para modo non-interactive / direct optimize)
-
 func info(format string, a ...interface{}) {
 	fmt.Printf("  "+styleInfo.Render("ℹ")+" "+format+"\n", a...)
 }
@@ -61,8 +55,6 @@ func fail(format string, a ...interface{}) {
 func divider() string {
 	return strings.Repeat("─", 56)
 }
-
-// FLUJO DE IDIOMA (huh select)
 
 type LangModel struct {
 	form *huh.Form
@@ -113,8 +105,6 @@ func (m *LangModel) View() string {
 	return m.form.View()
 }
 
-// AYUDA
-
 func getHelpText() string {
 	cmds := makeCommands()
 	var sb strings.Builder
@@ -137,8 +127,6 @@ func getHelpText() string {
 	sb.WriteString(sep + "\n")
 	return sb.String()
 }
-
-// FLUJO /me (Identidad y Telemetría)
 
 type MeModel struct {
 	form *huh.Form
@@ -200,8 +188,6 @@ func (m *MeModel) View() string {
 	return m.form.View()
 }
 
-// FORMULAS
-
 func getFormulasText() string {
 	formulas := []struct {
 		title string
@@ -230,8 +216,6 @@ func getFormulasText() string {
 	sb.WriteString("\n" + sep + "\n")
 	return sb.String()
 }
-
-// HELPERS
 
 func ptr[T any](v T) *T {
 	return &v

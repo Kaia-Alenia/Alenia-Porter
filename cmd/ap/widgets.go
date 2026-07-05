@@ -9,8 +9,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// LOGO ASCII  —
-
 const logoText = ` █████╗ ██╗     ███████╗███╗  ██╗██╗ █████╗
 ██╔══██╗██║     ██╔════╝████╗ ██║██║██╔══██╗
 ███████║██║     █████╗  ██╔██╗██║██║███████║
@@ -46,22 +44,16 @@ func renderLogoGradient(art string) string {
 	return strings.TrimRight(sb.String(), "\n")
 }
 
-// HEADER —
-
 func renderHeader(width int) string {
 	var logoStr string
 	if width >= 90 {
-		// Pantalla amplia: logo bloque completo
 		logoStr = renderLogoGradient(logoText)
 	} else if width >= 60 {
-		// Pantalla mediana: logo compacto 2 líneas
 		logoStr = renderLogoGradient(logoCompact)
 	} else {
-		// Pantalla pequeña: solo mascota 2 líneas
 		logoStr = renderLogoGradient(logoCompact)
 	}
 
-	// Línea de metadata bajo el logo
 	ver := styleHeaderVersion.Render("v" + version)
 	lang := styleMuted.Render("  " + languageLabel(currentLang))
 	hint := styleMuted.Render("  ·  " + T("header_hint"))
@@ -71,10 +63,7 @@ func renderHeader(width int) string {
 	return "\n" + logoStr + "\n" + metaLine + "\n" + sep + "\n"
 }
 
-// FOOTER / STATUS BAR
-
 func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
-	// Lado izquierdo: shortcuts
 	left := styleFooterKey.Render("ESC") +
 		styleSecondary.Render(T("footer_exit")) +
 		styleFooterKey.Render("/") +
@@ -82,7 +71,6 @@ func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
 		styleFooterKey.Render("↑↓") +
 		styleSecondary.Render(T("footer_hist"))
 
-	// Right side: language and status
 	nick := getNickname()
 	var right string
 	if isProcessing {
@@ -91,7 +79,6 @@ func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
 		right = styleFooterLang.Render("[" + currentLang + "] " + nick)
 	}
 
-	// Calcular padding para separar left y right
 	leftW := lipgloss.Width(left)
 	rightW := lipgloss.Width(right)
 	space := width - leftW - rightW - 2 // 2 de padding lateral
@@ -104,8 +91,6 @@ func renderFooter(width int, isProcessing bool, spinnerFrame string) string {
 	sep := styleBorder.Render(strings.Repeat("─", width))
 	return sep + "\n" + styleMuted.Render(line)
 }
-
-// COMMAND PALETTE
 
 type cmdSuggestion struct {
 	cmd  string
@@ -162,7 +147,6 @@ func renderSuggestions(sugs []cmdSuggestion, activeIdx int, width int) string {
 	}
 	visible := sugs[start:end]
 
-	// Calcular ancho máximo de comando
 	maxCmd := 0
 	for _, s := range sugs {
 		if len(s.cmd) > maxCmd {
@@ -187,7 +171,6 @@ func renderSuggestions(sugs []cmdSuggestion, activeIdx int, width int) string {
 			cmdPart = stylePaletteItem.Render(s.cmd)
 		}
 
-		// Padding para alinear descripción
 		padLen := maxCmd - len(s.cmd) + 3
 		pad := strings.Repeat(" ", padLen)
 
@@ -208,7 +191,6 @@ func renderSuggestions(sugs []cmdSuggestion, activeIdx int, width int) string {
 		rows = append(rows, row)
 	}
 
-	// Indicador de más elementos
 	if len(sugs) > end {
 		rows = append(rows, styleMuted.Render(fmt.Sprintf(T("palette_more"), len(sugs)-end)))
 	}
@@ -220,8 +202,6 @@ func renderSuggestions(sugs []cmdSuggestion, activeIdx int, width int) string {
 		Render(strings.Join(rows, "\n"))
 }
 
-// SPINNER
-
 var spinnerFrames = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
 
 type tickMsg time.Time
@@ -231,8 +211,6 @@ func tickCmd() tea.Cmd {
 		return tickMsg(t)
 	})
 }
-
-// HELPER
 
 func max(a, b int) int {
 	if a > b {

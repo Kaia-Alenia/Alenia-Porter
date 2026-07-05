@@ -10,3 +10,6 @@ Interfaz de React/Vite utilizada por el shell de escritorio pywebview.
    `npm install`
 2. Ejecutar la aplicación:
    `npm run dev`
+
+## Licencia
+Este software está bajo la licencia **GNU General Public License v3 (GPL v3)**.
