@@ -49,7 +49,7 @@ def check_for_updates(current_version):
 
 def download_and_apply_update(download_url, progress_callback, on_ready_to_restart):
     try:
-        temp_dir = "AleniaPorter_UpdateTemp"
+        temp_dir = os.path.join(tempfile.gettempdir(), "AleniaPorter_UpdateTemp")
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir)
         os.makedirs(temp_dir)
@@ -99,7 +99,12 @@ def download_and_apply_update(download_url, progress_callback, on_ready_to_resta
         raise
 
 def create_and_run_trampoline(update_source_dir, system):
-    current_dir = os.path.abspath(os.getcwd())
+    updater_dir = os.path.dirname(os.path.abspath(__file__))
+    if getattr(sys, 'frozen', False) or '__compiled__' in globals():
+        app_dir = os.path.dirname(sys.executable)
+    else:
+        app_dir = os.path.abspath(os.path.join(updater_dir, "..", ".."))
+    current_dir = app_dir
     update_source_dir = os.path.abspath(update_source_dir)
     temp_script_dir = tempfile.gettempdir()
     
