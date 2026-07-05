@@ -63,3 +63,7 @@ telemetry-service/.env
 *_backup.*
 cmd/telemetry/
 tools/
+AleniaPorter
+AleniaPorter.exe
+AleniaPorter-*.zip
+AleniaPorter-*.tar.gz
