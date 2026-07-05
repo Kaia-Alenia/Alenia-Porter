@@ -38,7 +38,8 @@ parsed_formats.txt
 patch_locales.py
 verify_formats.py
 verify_build.sh
-test_dir/
+test_dir/*
+!test_dir/generate_test_files.py
 testdir/
 test_assets/
 test_media_conversion/
