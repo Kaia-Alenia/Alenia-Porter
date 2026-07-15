@@ -1,6 +1,6 @@
 <div align="center">
 
-# Alenia Porter v6.8
+# Alenia Porter v7.0
 
 *Optimizador multimedia universal de alto rendimiento — imágenes, video y audio en una sola herramienta.*
 
@@ -356,7 +356,7 @@ Alenia Porter incluye un sistema de telemetría ligero, **totalmente anónimo** 
 **Licencia para Assets y Música:** Standard Licensing: Alenia Studios Standard (CC BY 4.0 + Additional Terms).
 - **Atribución (Attribution)**: Requerida a Alenia Studios.
 - **No Reventa (No Resale)**: Se prohíbe la redistribución o reventa independiente.
-- **No IA (No AI)**: Se prohíbe su uso para entrenamiento de IA o creación de datasets.
+- **No AI**: Se prohíbe su uso para entrenamiento de modelos o creación de datasets.
 - **Uso Comercial (Commercial Use)**: Permitido para juegos, videos y proyectos.
 *Diseñado para ser libre, transparente y accesible para toda la comunidad de desarrolladores y creadores.*
 
