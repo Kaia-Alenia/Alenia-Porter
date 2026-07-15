@@ -97,7 +97,10 @@ def get_best_video_encoder(ffmpeg_executable_path, target_codec):
 def process_single_file_top_level(file_info, target_audio_format, target_video_format, target_image_format, audio_output_directory, video_output_directory, image_output_directory, ffmpeg_executable_path, subprocess_creation_flags, preserve_structure=False, audio_bitrate="192k", video_crf="23", video_preset="veryfast", image_quality="80", safe_mode=False, cache_dict=None, force_overwrite=False, video_extra_args="", audio_extra_args="", image_extra_args=""):
     absolute_path, relative_path, media_type = file_info
     base_name = os.path.splitext(os.path.basename(relative_path))[0]
+    orig_ext = os.path.splitext(os.path.basename(absolute_path))[1].lstrip('.').lower()
     cleaned_base_name = re.sub(r'[^a-zA-Z0-9_]', '_', base_name).lower()
+    if orig_ext:
+        cleaned_base_name = f"{cleaned_base_name}_{orig_ext}"
     output_file_name = f"{cleaned_base_name}.tmp"
     
     target_audio_format = target_audio_format.lower()
@@ -202,6 +205,15 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
             porter.log_error_to_file(f"PIL PDF generation failed for {absolute_path}: {error_details}")
             return (relative_path, media_type, cleaned_base_name, output_file_name, orig_size, 0, False, error_details, file_hash, False)
 
+    def get_safe_audio_bitrate(requested_bitrate, is_opus):
+        if not is_opus: return str(requested_bitrate)
+        try:
+            val_str = str(requested_bitrate).lower().replace("k", "").strip()
+            if int(val_str) > 256:
+                return "256k"
+        except: pass
+        return str(requested_bitrate)
+
     ffmpeg_command = []
 
     if media_type == "video":
@@ -258,7 +270,7 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
                 "-map_metadata", "-1", "-metadata", "software=Optimized in Alenia Porter",
                 "-c:v", encoder, "-crf", str(video_crf), "-b:v", "0",
                 "-cpu-used", cpu_used_val, "-deadline", deadline_val, "-row-mt", "1",
-                "-c:a", "libopus", "-b:a", str(audio_bitrate),
+                "-c:a", "libopus", "-b:a", get_safe_audio_bitrate(audio_bitrate, True),
                 "-threads", "1", output_file_path
             ]
         elif encoder == "libtheora":
@@ -358,7 +370,7 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
         elif codec == "amr_nb":
             ffmpeg_command.extend(["-ar", "8000", "-ac", "1", "-b:a", "12.2k"])
         elif codec not in ("pcm_s16le", "alac"):
-            ffmpeg_command.extend(["-b:a", str(audio_bitrate)])
+            ffmpeg_command.extend(["-b:a", get_safe_audio_bitrate(audio_bitrate, codec == "libopus")])
             
         if codec in ("dca", "aac"):
             ffmpeg_command.extend(["-strict", "-2"])

@@ -408,12 +408,12 @@ class Api:
         input_directory = params.get("inputDirectory")
         input_files = []
         if not input_directory:
-            raw_input = params.get("input")
             raw_files = params.get("files", [])
-            if raw_input:
-                input_files = [raw_input]
-            elif raw_files:
+            raw_input = params.get("input")
+            if raw_files:
                 input_files = [f for f in raw_files if f]
+            elif raw_input:
+                input_files = [raw_input]
 
         if not input_files and not input_directory:
             self.window.evaluate_js('window.conversionComplete(false)')
@@ -426,17 +426,9 @@ class Api:
         audio_fmt = params.get("audioFormat") or (params.get("format", "mp3") if media_type == "audio" else "mp3") or "mp3"
         image_fmt = params.get("imageFormat") or (params.get("format", "jpg") if media_type == "image" else "jpg") or "jpg"
 
-        if is_folder_mode:
-            audio_enabled = True
-            video_enabled = True
-            image_enabled = True
-        else:
-            audio_enabled = (media_type == "audio")
-            video_enabled = (media_type == "video")
-            image_enabled = (media_type == "image")
-            if not audio_enabled and not video_enabled and not image_enabled:
-                self.window.evaluate_js('window.conversionComplete(false)')
-                return
+        audio_enabled = True
+        video_enabled = True
+        image_enabled = True
 
         audio_bitrate = f"{params.get('audioBitrate', 192)}k"
         video_crf = str(params.get("quality", 23))
