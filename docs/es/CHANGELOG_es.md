@@ -1,6 +1,6 @@
 # Changelog
 
-## [6.8.0] - Proyecto Principal
+## [7.0.0] - Proyecto Principal
 ### Corregido
 - **Crítico: crash de encoders de GPU (código de retorno 255 de FFmpeg)** — Los encoders de hardware (`h264_nvenc`, `h264_qsv`, `h264_amf`, `vp9_nvenc`, `vp9_qsv`) ahora se verifican con un frame de prueba real antes de ser seleccionados. En sistemas sin GPU NVIDIA/CUDA compatible, el motor cae correctamente a encoders de software (`libx264`, `libvpx-vp9`) en lugar de fallar con crash.
 - **Conversión de video a GIF rota** — El reintento en modo seguro (activado tras un fallo de FFmpeg) insertaba incorrectamente `-hwaccel none` antes del pipeline `filter_complex` de paleta del GIF, haciendo que el reintento también fallara. El encoder GIF ahora está excluido de la inyección del flag de aceleración por hardware.

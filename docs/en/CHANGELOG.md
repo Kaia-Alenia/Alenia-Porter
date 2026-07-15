@@ -1,6 +1,6 @@
 # Changelog
 
-## [6.8.0] - Main Project
+## [7.0.0] - Main Project
 ### Fixed
 - **i18n Coverage** — Added missing translation keys and replaced hardcoded text in `App.tsx` to ensure full localization when switching languages.
 - **Critical: GPU encoder crash (FFmpeg return code 255)** — Hardware encoders (`h264_nvenc`, `h264_qsv`, `h264_amf`, `vp9_nvenc`, `vp9_qsv`) are now validated with a real test frame before being selected. On systems without NVIDIA CUDA or compatible GPU, the engine correctly falls back to software encoders (`libx264`, `libvpx-vp9`) instead of crashing.
