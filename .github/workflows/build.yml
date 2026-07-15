@@ -259,7 +259,20 @@ jobs:
         env:
           PYTHONPATH: src
         run: |
-          python -m nuitka --standalone --enable-plugin=pywebview --include-package=alenia_porter --include-module=alenia_porter.gui_web --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe --output-filename=AleniaPorter porter_launcher.py
+          python -m nuitka --standalone --enable-plugin=pywebview \
+            --include-package=alenia_porter \
+            --include-package=webview \
+            --include-module=alenia_porter.gui_web \
+            --include-module=unicodedata \
+            --include-module=webview.platforms.gtk \
+            --include-module=webview.platforms.qt \
+            --include-module=webview.platforms.cocoa \
+            --include-module=webview.guilib \
+            --include-data-dir=src/alenia_porter/assets=alenia_porter/assets \
+            --include-data-dir=frontend/dist=frontend/dist \
+            --include-data-files=src/alenia_porter/bin/ffmpeg=alenia_porter/bin/ffmpeg \
+            --include-data-files=src/alenia_porter/bin/ffprobe=alenia_porter/bin/ffprobe \
+            --output-filename=AleniaPorter porter_launcher.py
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -288,6 +301,14 @@ jobs:
       - name: Package build
         run: |
           cp LICENSE porter_launcher.dist/
+          cp update.sh porter_launcher.dist/
+          cp launch.sh porter_launcher.dist/
+          chmod +x porter_launcher.dist/update.sh porter_launcher.dist/launch.sh
+          # Bundle gi (PyGObject) for WebKit2/GTK support
+          GI_PATH=$(python3 -c "import gi, os; print(os.path.dirname(gi.__file__))" 2>/dev/null || true)
+          if [ -n "$GI_PATH" ] && [ -d "$GI_PATH" ]; then
+            cp -a "$GI_PATH" porter_launcher.dist/gi
+          fi
           mv porter_launcher.dist AleniaPorter
           tar -czf AleniaPorter-Linux.tar.gz AleniaPorter
 

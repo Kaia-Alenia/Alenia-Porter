@@ -86,6 +86,48 @@ fi
 
 ln -sf "$INSTALL_DIR/porter" "$BIN_DIR/porter"
 
+# Asegurar permisos ejecutables en scripts auxiliares
+chmod +x "$INSTALL_DIR/update.sh" "$INSTALL_DIR/launch.sh" "$INSTALL_DIR/AleniaPorter" 2>/dev/null || true
+
+# Crear acceso directo .desktop para el IDE (AleniaPorter)
+if [ "$OS" = "linux" ] && [ -f "$INSTALL_DIR/AleniaPorter" ]; then
+    DESKTOP_DIR="$HOME/.local/share/applications"
+    ICONS_DIR="$HOME/.local/share/icons"
+    mkdir -p "$DESKTOP_DIR" "$ICONS_DIR"
+
+    # Copiar icono si existe
+    ICON_SRC="$INSTALL_DIR/alenia_porter/assets/images/logo.png"
+    ICON_ICO="$INSTALL_DIR/alenia_porter/assets/images/logo.ico"
+    if [ -f "$ICON_SRC" ]; then
+        cp "$ICON_SRC" "$ICONS_DIR/alenia-porter.png"
+        ICON_PATH="$ICONS_DIR/alenia-porter.png"
+    elif [ -f "$ICON_ICO" ]; then
+        cp "$ICON_ICO" "$ICONS_DIR/alenia-porter.ico"
+        ICON_PATH="$ICONS_DIR/alenia-porter.ico"
+    else
+        ICON_PATH="utilities-file-archiver"
+    fi
+
+    cat > "$DESKTOP_DIR/alenia-porter.desktop" << DESKTOP
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Alenia Porter
+GenericName=Audio/Video Converter
+Comment=Alenia Porter v6.9 - Conversor de audio y video con IA
+Exec=$INSTALL_DIR/launch.sh
+Icon=$ICON_PATH
+Terminal=false
+Categories=AudioVideo;Audio;Video;Utility;
+Keywords=audio;video;convert;porter;alenia;ffmpeg;
+StartupNotify=true
+StartupWMClass=AleniaPorter
+DESKTOP
+    chmod +x "$DESKTOP_DIR/alenia-porter.desktop"
+    update-desktop-database "$DESKTOP_DIR" 2>/dev/null || true
+    echo -e "${GREEN}✔ Acceso directo del IDE instalado en el menú de aplicaciones.${NC}"
+fi
+
 if [[ ":$PATH:" != *":$BIN_DIR:"* ]]; then
     echo -e "${CYAN}Nota: Agrega $BIN_DIR a tu PATH en ~/.bashrc o ~/.zshrc${NC}"
     echo 'export PATH="$HOME/.local/bin:$PATH"'
