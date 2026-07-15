@@ -7,11 +7,14 @@ import concurrent.futures
 import hashlib
 import json
 import traceback
+import threading
 import shlex
 
 # Import dependencies from porter.py
 from alenia_porter import porter
 import tempfile
+
+VIDEO_SEMAPHORE = threading.Semaphore(max(1, os.cpu_count() // 3))
 
 def stream_files(directory, base_directory, audio_exts, video_exts, image_exts, recursive=True, audio_enabled=True, video_enabled=True, image_enabled=True):
     try:
@@ -390,21 +393,32 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
         if os.path.exists(cancel_flag_path):
             return (relative_path, media_type, cleaned_base_name, output_file_name, orig_size, 0, False, "Cancelled by user", file_hash, False)
 
-        process_handle = subprocess.Popen(
-            ffmpeg_command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            creationflags=subprocess_creation_flags
-        )
-        
-        while process_handle.poll() is None:
-            if os.path.exists(cancel_flag_path):
-                try: process_handle.kill()
-                except: pass
-                return (relative_path, media_type, cleaned_base_name, output_file_name, orig_size, 0, False, "Cancelled by user", file_hash, False)
-            time.sleep(0.5)
+        acquired_semaphore = False
+        if media_type == "video":
+            VIDEO_SEMAPHORE.acquire()
+            acquired_semaphore = True
 
-        stdout_data, stderr_data = process_handle.communicate()
+        try:
+            with tempfile.TemporaryFile() as stderr_file:
+                process_handle = subprocess.Popen(
+                    ffmpeg_command,
+                    stdout=subprocess.DEVNULL,
+                    stderr=stderr_file,
+                    creationflags=subprocess_creation_flags
+                )
+                
+                while process_handle.poll() is None:
+                    if os.path.exists(cancel_flag_path):
+                        try: process_handle.kill()
+                        except: pass
+                        return (relative_path, media_type, cleaned_base_name, output_file_name, orig_size, 0, False, "Cancelled by user", file_hash, False)
+                    time.sleep(0.5)
+
+                stderr_file.seek(0)
+                stderr_data = stderr_file.read()
+        finally:
+            if acquired_semaphore:
+                VIDEO_SEMAPHORE.release()
         
         if process_handle.returncode != 0:
             error_details = stderr_data.decode('utf-8', errors='ignore')

@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-const version = "6.8"
+const version = "1.9"
 
 type choice struct {
 	Value string
