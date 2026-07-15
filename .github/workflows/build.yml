@@ -237,8 +237,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install nuitka ordered-set zstandard pywebview pillow requests imageio
-          sudo apt-get update && sudo apt-get install -y xvfb python3-gi python3-gi-cairo gir1.2-webkit2-4.1 libgirepository1.0-dev
+          sudo apt-get update && sudo apt-get install -y xvfb libgirepository1.0-dev gir1.2-webkit2-4.1 libcairo2-dev pkg-config python3-dev
+          pip install nuitka ordered-set zstandard pywebview PyGObject pillow requests imageio
 
       - name: Install FFmpeg
         run: sudo apt-get install -y ffmpeg
@@ -262,6 +262,7 @@ jobs:
           python -m nuitka --standalone --enable-plugin=pywebview \
             --include-package=alenia_porter \
             --include-package=webview \
+            --include-package=gi \
             --include-module=alenia_porter.gui_web \
             --include-module=unicodedata \
             --include-module=webview.platforms.gtk \
