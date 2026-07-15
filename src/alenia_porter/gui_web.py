@@ -61,7 +61,7 @@ def image_to_base64(path):
             return None
 
 class Api:
-    CURRENT_VERSION = "v6.8"
+    CURRENT_VERSION = "v6.9"
 
     def __init__(self, window):
         self.window = window
