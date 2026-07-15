@@ -2404,7 +2404,7 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
                   <div key={idx} className={`${THEME_COLORS[themeColor].inputBg} border ${THEME_COLORS[themeColor].inputBorder} rounded-xl p-2.5 flex flex-col gap-1 text-[10px] font-mono ${THEME_COLORS[themeColor].textSecondary}`}>
                     <div className={`flex items-center justify-between font-bold ${THEME_COLORS[themeColor].textPrimary}`}>
                       <span className="truncate max-w-[150px]">{item.fileName}</span>
-                      <span className={`${THEME_COLORS[themeColor].formatBadge} uppercase text-[9px]`}>{item.format}</span>
+                      <span className={`${THEME_COLORS[themeColor].accentBadge} uppercase text-[9px]`}>{item.format}</span>
                     </div>
                     <div className={`flex justify-between text-[9px] ${THEME_COLORS[themeColor].textMuted}`}>
                       <span>{formatBytes(item.originalSize)} → <strong className={THEME_COLORS[themeColor].textSecondary}>{formatBytes(item.compressedSize)}</strong></span>
