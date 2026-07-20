@@ -59,7 +59,7 @@ jobs:
           python -m nuitka --standalone --assume-yes-for-downloads --disable-ccache --windows-console-mode=disable --enable-plugin=pywebview --include-package=alenia_porter --include-module=alenia_porter.gui_web --include-module=unicodedata --include-data-dir=src/alenia_porter/assets=alenia_porter/assets --include-data-dir=frontend/dist=frontend/dist --include-data-files=src/alenia_porter/bin/ffmpeg.exe=alenia_porter/bin/ffmpeg.exe --include-data-files=src/alenia_porter/bin/ffprobe.exe=alenia_porter/bin/ffprobe.exe --windows-icon-from-ico=src/alenia_porter/assets/images/logo.ico --output-filename=AleniaPorter.exe porter_launcher.py
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version: '1.25.11'
 
@@ -164,7 +164,7 @@ jobs:
           mv *.app porter_launcher.dist/
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version: '1.25.11'
 
@@ -276,7 +276,7 @@ jobs:
             --output-filename=AleniaPorter porter_launcher.py
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version: '1.25.11'
 
