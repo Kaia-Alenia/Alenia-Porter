@@ -496,7 +496,11 @@ class Api:
     def _update_progress(self, percent):
         self.window.evaluate_js(f'window.updateProgress({percent})')
 
-def main():
+from pathlib import Path
+from datetime import datetime
+import traceback
+
+def _main_inner():
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     if getattr(sys, 'frozen', False) or '__compiled__' in globals():
@@ -514,7 +518,7 @@ def main():
 
     window = webview.create_window(
         'Alenia Porter',
-        url=f"file://{html_path}",
+        url=Path(html_path).as_uri(),
         width=480,
         height=860,
         min_size=(400, 700),
@@ -565,6 +569,41 @@ def main():
     window.events.loaded += on_loaded
 
     webview.start(debug=False, http_server=True)
+
+def _handle_fatal_crash():
+    crash_text = traceback.format_exc()
+    # Write to crash.log
+    log_dir = os.path.join(
+        os.getenv("LOCALAPPDATA", os.path.expanduser("~")),
+        "AleniaStudios", "AleniaPorter"
+    )
+    os.makedirs(log_dir, exist_ok=True)
+    log_path = os.path.join(log_dir, "crash.log")
+    with open(log_path, "a", encoding="utf-8") as f:
+        f.write(f"\n--- {datetime.now().isoformat()} ---\n{crash_text}\n")
+    # Show native dialog
+    try:
+        if sys.platform == "win32":
+            import ctypes
+            ctypes.windll.user32.MessageBoxW(
+                0,
+                f"Alenia Porter crashed.\nDetails saved to:\n{log_path}",
+                "Alenia Porter - Fatal Error",
+                0x10  # MB_ICONERROR
+            )
+        else:
+            import tkinter as tk
+            from tkinter import messagebox
+            root = tk.Tk(); root.withdraw()
+            messagebox.showerror("Alenia Porter", f"Crash log: {log_path}")
+    except Exception:
+        pass
+
+def main():
+    try:
+        _main_inner()
+    except Exception:
+        _handle_fatal_crash()
 
 if __name__ == '__main__':
     main()

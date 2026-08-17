@@ -67,3 +67,7 @@ AleniaPorter
 AleniaPorter.exe
 AleniaPorter-*.zip
 tools/
+
+# Trash and logs
+node_modules_trash_*/
+crash.log
