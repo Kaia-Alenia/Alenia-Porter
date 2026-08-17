@@ -103,7 +103,7 @@ def main():
     import platform
     import json
     
-    CURRENT_VERSION = "v7.0"
+    CURRENT_VERSION = "v7.1"
     
     if "--version" in sys.argv or "-v" in sys.argv:
         print(f"Alenia Porter {CURRENT_VERSION}")
