@@ -10,7 +10,7 @@ import base64
 import urllib.parse
 
 # Ensure the 'src' directory is in the path to allow 'alenia_porter' imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'src')))
 
 from alenia_porter import porter
 from alenia_porter import updater
@@ -508,10 +508,10 @@ def _main_inner():
     else:
         base_dir = os.path.abspath(os.path.join(current_dir, '..', '..'))
 
-    html_path = os.path.join(base_dir, 'frontend', 'dist', 'index.html')
+    html_path = os.path.join(base_dir, 'legacy', 'ide', 'frontend', 'dist', 'index.html')
 
     if not os.path.exists(html_path):
-        print("Error: No se encontró el build de React. Ejecuta 'npm run build' en la carpeta frontend.")
+        print("Error: No se encontró el build de React. Ejecuta 'npm run build' en la carpeta legacy/ide/frontend.")
         sys.exit(1)
 
     api = Api(None) # Initialize api without window first

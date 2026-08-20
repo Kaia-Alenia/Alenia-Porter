@@ -13,9 +13,9 @@ SOURCE_ROOTS=(
     "$HOME/.local/share/porter-src"
 )
 for SRC in "${SOURCE_ROOTS[@]}"; do
-    SRCPY="$SRC/src"
-    if [ -d "$SRCPY/alenia_porter" ] && [ -f "$SRC/src/alenia_porter/gui_web.py" ]; then
-        exec python3 "$SRC/src/alenia_porter/gui_web.py"
+    SRCPY="$SRC/legacy"
+    if [ -d "$SRCPY/ide" ] && [ -f "$SRC/legacy/ide/gui_web.py" ]; then
+        exec python3 "$SRC/legacy/ide/gui_web.py"
     fi
 done
 

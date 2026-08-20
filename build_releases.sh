@@ -26,8 +26,9 @@ build_target() {
     # Compilar el binario de Go
     GOOS=$GOOS GOARCH=$GOARCH go build -o "${BUILD_DIR}/porter" ./cmd/ap
 
-    # Copiar la carpeta src (Python)
+    # Copiar la carpeta src y legacy (Python e IDE)
     cp -r src "${BUILD_DIR}/"
+    cp -r legacy "${BUILD_DIR}/"
 
     # Comprimir en tar.gz
     tar -czf "${DIST_DIR}/${ARCHIVE_NAME}" -C "${DIST_DIR}" "${TARGET_NAME}"

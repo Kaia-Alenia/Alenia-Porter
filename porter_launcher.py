@@ -13,5 +13,5 @@ if __name__ == "__main__":
         from alenia_porter.cli import main
         main()
     else:
-        from alenia_porter.gui_web import main
+        from legacy.ide.gui_web import main
         main()
