@@ -2423,6 +2423,30 @@ Enable 'Modo Seguro (Safe Mode)' in Alenia Porter settings to force standard CPU
         {telemetryConsentShow && (
           <div className="absolute inset-0 bg-slate-950/85 backdrop-blur-xs flex items-end justify-center z-50">
             <div className="bg-white rounded-t-3xl w-full p-5 shadow-2xl border-t border-gray-150 flex flex-col gap-4 animate-in slide-in-from-bottom duration-300">
+              
+              {/* LEGACY WARNING */}
+              <div className="bg-orange-50 border border-orange-200 rounded-xl p-3 flex flex-col gap-2">
+                <h3 className="text-orange-800 font-bold text-xs uppercase tracking-wider">Alenia Porter IDE - Legacy interface</h3>
+                <p className="text-orange-700 text-[10px] leading-tight">
+                  This interface is no longer actively developed.<br/>
+                  New features and format support are available in Porter CLI.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if ((window as any).pywebview) {
+                      // Attempt to open the local README via the backend browser opener
+                      (window as any).pywebview.api.open_in_browser("https://github.com/Kaia-Alenia/Alenia-Porter/blob/main/README.md");
+                    } else {
+                      window.open("https://github.com/Kaia-Alenia/Alenia-Porter/blob/main/README.md", "_blank");
+                    }
+                  }}
+                  className="mt-1 bg-orange-100 hover:bg-orange-200 text-orange-800 text-[9px] font-bold py-1.5 px-3 rounded-lg w-fit transition-colors cursor-pointer"
+                >
+                  View CLI documentation
+                </button>
+              </div>
+
               <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                 <div className="flex items-center gap-1.5 text-gray-950 font-display font-black text-xs uppercase tracking-tight">
                   <AlertTriangle size={14} className="text-blue-600 animate-pulse" />

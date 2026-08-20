@@ -16,6 +16,20 @@ import tempfile
 
 VIDEO_SEMAPHORE = threading.Semaphore(max(1, os.cpu_count() // 3))
 
+_AMR_CODEC_AVAILABLE = None  # lazy check: None = not yet tested
+
+def _check_amr_available(ffmpeg_path):
+    """Return True only if amr_nb encoder is present in this FFmpeg build."""
+    global _AMR_CODEC_AVAILABLE
+    if _AMR_CODEC_AVAILABLE is None:
+        try:
+            r = subprocess.run([ffmpeg_path, "-encoders"],
+                               capture_output=True, text=True, timeout=5)
+            _AMR_CODEC_AVAILABLE = "amr_nb" in r.stdout
+        except Exception:
+            _AMR_CODEC_AVAILABLE = False
+    return _AMR_CODEC_AVAILABLE
+
 def stream_files(directory, base_directory, audio_exts, video_exts, image_exts, recursive=True, audio_enabled=True, video_enabled=True, image_enabled=True):
     try:
         for entry in os.scandir(directory):
@@ -99,8 +113,7 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
     base_name = os.path.splitext(os.path.basename(relative_path))[0]
     orig_ext = os.path.splitext(os.path.basename(absolute_path))[1].lstrip('.').lower()
     cleaned_base_name = re.sub(r'[^a-zA-Z0-9_]', '_', base_name).lower()
-    if orig_ext:
-        cleaned_base_name = f"{cleaned_base_name}_{orig_ext}"
+    # No longer appending original extension to avoid file_mp3.ogg filenames
     output_file_name = f"{cleaned_base_name}.tmp"
     
     target_audio_format = target_audio_format.lower()
@@ -368,6 +381,16 @@ def process_single_file_top_level(file_info, target_audio_format, target_video_f
         if codec == "flac":
             ffmpeg_command.extend(["-sample_fmt", "s16"])
         elif codec == "amr_nb":
+            if not _check_amr_available(ffmpeg_executable_path):
+                return (
+                    relative_path, media_type, cleaned_base_name, output_file_name,
+                    orig_size, 0, False,
+                    "AMR output requires the amr_nb encoder, which is not available in "
+                    "this FFmpeg build. On Ubuntu/Debian install libavcodec-extra and "
+                    "rebuild, or replace the embedded FFmpeg with a static build that "
+                    "includes libopencore-amrnb.",
+                    file_hash, False
+                )
             ffmpeg_command.extend(["-ar", "8000", "-ac", "1", "-b:a", "12.2k"])
         elif codec not in ("pcm_s16le", "alac"):
             ffmpeg_command.extend(["-b:a", get_safe_audio_bitrate(audio_bitrate, codec == "libopus")])

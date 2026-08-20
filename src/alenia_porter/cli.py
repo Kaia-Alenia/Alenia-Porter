@@ -104,9 +104,10 @@ def main():
     import json
     
     CURRENT_VERSION = "v7.1"
+    CLI_VERSION = "2.1"
     
     if "--version" in sys.argv or "-v" in sys.argv:
-        print(f"Alenia Porter {CURRENT_VERSION}")
+        print(f"Alenia Porter CLI v{CLI_VERSION} (Engine {CURRENT_VERSION})")
         sys.exit(0)
         
     if "/lang" in sys.argv:
